@@ -1,10 +1,10 @@
-package com.winey.server.WineyServer;
+package org.winey.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WineyServerApplicationTests {
+class ServerApplicationTests {
 
 	@Test
 	void contextLoads() {
