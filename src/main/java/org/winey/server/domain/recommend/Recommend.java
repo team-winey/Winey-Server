@@ -1,9 +1,6 @@
 package org.winey.server.domain.recommend;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.user.User;
 
@@ -24,8 +21,13 @@ public class Recommend extends AuditingTimeEntity {
     @Column(nullable = false)
     private String recommendTitle;
 
-    @Column(nullable = false)
-    private Long recommendPrice;
+    @Column
+    @Setter
+    private Long recommendWon;
+
+    @Column
+    @Setter
+    private Long recommendPercent;
 
     @Column(nullable = false)
     private String recommendImage;
@@ -38,7 +40,6 @@ public class Recommend extends AuditingTimeEntity {
     public Recommend(String recommendLink, String recommendTitle, Long recommendPrice, String recommendImage, User user) {
         this.recommendLink = recommendLink;
         this.recommendTitle = recommendTitle;
-        this.recommendPrice = recommendPrice;
         this.recommendImage = recommendImage;
         this.user = user;
     }
