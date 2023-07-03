@@ -22,14 +22,27 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Health Check
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// JPA & Database
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'mysql:mysql-connector-java:8.0.32'
+
+	// S3 AWS
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
+
+	// swagger
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+
+//	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.7'
+
 }
 
 tasks.named('test') {
