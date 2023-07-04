@@ -1,18 +1,16 @@
 package org.winey.server.controller.response;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PageResponseDto {
-    private final int totalPageSize;
-    private final int currentPageIndex;
-    private final boolean isEnd;
+    private int totalPageSize;
+    private int currentPageIndex;
+    private boolean isEnd;
 
-    @Builder
-    public PageResponseDto(int totalPageSize, int currentPageIndex, boolean isEnd) {
-        this.totalPageSize = totalPageSize;
-        this.currentPageIndex = currentPageIndex;
-        this.isEnd = isEnd;
+    public static PageResponseDto of(int totalPageSize, int currentPageIndex, boolean isEnd) {
+        return new PageResponseDto(totalPageSize, currentPageIndex, isEnd);
     }
 }

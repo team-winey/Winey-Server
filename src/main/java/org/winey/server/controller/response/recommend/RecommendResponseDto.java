@@ -1,27 +1,24 @@
 package org.winey.server.controller.response.recommend;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RecommendResponseDto {
-    private final Long recommendId;
-    @Setter
+    private Long recommendId;
     private String recommendLink;
-    private final String recommendTitle;
-    @Setter
+    private String recommendTitle;
     private Long recommendWon;
-    @Setter
     private Long recommendPercent;
-    private final String recommendImage;
-    private final LocalDateTime createdAt;
+    private String recommendImage;
+    private LocalDateTime createdAt;
 
-    @Builder
-    public RecommendResponseDto(Long recommendId, String recommendTitle, String recommendImage, LocalDateTime createdAt) {
-        this.recommendId = recommendId;
-        this.recommendTitle = recommendTitle;
-        this.recommendImage = recommendImage;
-        this.createdAt = createdAt;
+    public static RecommendResponseDto of(Long recommendId, String recommendLink, String recommendTitle, Long recommendWon, Long recommendPercent, String recommendImage, LocalDateTime createdAt) {
+        return new RecommendResponseDto(recommendId, recommendLink, recommendTitle, recommendWon, recommendPercent, recommendImage, createdAt);
     }
 }

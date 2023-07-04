@@ -1,21 +1,19 @@
 package org.winey.server.controller.response.recommend;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.winey.server.controller.response.PageResponseDto;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RecommendListResponseDto {
-    private final RecommendResponseUserDto recommendResponseUserDto;
-    private final PageResponseDto pageResponseDto;
-    private final List<RecommendResponseDto> recommendsResponseDto;
+    private RecommendResponseUserDto recommendResponseUserDto;
+    private PageResponseDto pageResponseDto;
+    private List<RecommendResponseDto> recommendsResponseDto;
 
-    @Builder
-    public RecommendListResponseDto(RecommendResponseUserDto recommendResponseUserDto, PageResponseDto pageResponseDto, List<RecommendResponseDto> recommendsResponseDto) {
-        this.recommendResponseUserDto = recommendResponseUserDto;
-        this.pageResponseDto = pageResponseDto;
-        this.recommendsResponseDto = recommendsResponseDto;
+    public static RecommendListResponseDto of(RecommendResponseUserDto recommendResponseUserDto, PageResponseDto pageResponseDto, List<RecommendResponseDto> recommendsResponseDto) {
+        return new RecommendListResponseDto(recommendResponseUserDto, pageResponseDto, recommendsResponseDto);
     }
 }
