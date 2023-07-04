@@ -15,7 +15,8 @@ public class Recommend extends AuditingTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recommendId;
 
-    @Column(nullable = false)
+    @Column
+    @Setter
     private String recommendLink;
 
     @Column(nullable = false)
@@ -37,8 +38,7 @@ public class Recommend extends AuditingTimeEntity {
     private User user;
 
     @Builder
-    public Recommend(String recommendLink, String recommendTitle, Long recommendPrice, String recommendImage, User user) {
-        this.recommendLink = recommendLink;
+    public Recommend(String recommendTitle, String recommendImage, User user) {
         this.recommendTitle = recommendTitle;
         this.recommendImage = recommendImage;
         this.user = user;
