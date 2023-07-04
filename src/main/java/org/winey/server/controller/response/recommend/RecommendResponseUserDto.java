@@ -3,13 +3,13 @@ package org.winey.server.controller.response.recommend;
 import lombok.*;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RecommendResponseUserDto {
-    private final Long userId;
-    private final String nickname;
+    private Long userId;
+    private String nickname;
 
-    @Builder
-    public RecommendResponseUserDto(Long userId, String nickname) {
-        this.userId = userId;
-        this.nickname = nickname;
+    public static RecommendResponseUserDto of(Long userId, String nickname) {
+        return new RecommendResponseUserDto(userId, nickname);
     }
 }
