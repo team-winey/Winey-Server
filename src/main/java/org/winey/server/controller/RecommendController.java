@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
+import org.winey.server.controller.response.recommend.RecommendListResponseDto;
 import org.winey.server.service.RecommendService;
 
 @RestController
@@ -15,7 +16,7 @@ public class RecommendController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<> getRecommend(@RequestParam final int page) {
+    public ApiResponse<RecommendListResponseDto> getRecommend(@RequestParam final int page) {
 
     }
 
