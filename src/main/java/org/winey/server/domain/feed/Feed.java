@@ -28,13 +28,13 @@ public class Feed extends AuditingTimeEntity {
     private String feedImage;
 
     @Column(nullable = false)
-    private Long feed_money;
+    private Long feedMoney;
 
     @Builder
-    public Feed(User user, String feedTitle, String feedImage, Long feed_money){
+    public Feed(User user, String feedTitle, String feedImage, Long feedMoney){
         this.user = user;
         this.feedTitle = feedTitle;
         this.feedImage = feedImage;
-        this.feed_money = feed_money;
+        this.feedMoney = feedMoney;
     }
 }
