@@ -3,6 +3,7 @@ package org.winey.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,12 +13,9 @@ import org.winey.server.controller.response.recommend.RecommendResponseDto;
 import org.winey.server.controller.response.recommend.RecommendResponseUserDto;
 import org.winey.server.domain.recommend.Recommend;
 import org.winey.server.domain.user.User;
-import org.winey.server.exception.Error;
-import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.RecommendRepository;
 import org.winey.server.infrastructure.UserRepository;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +31,9 @@ public class RecommendService {
         RecommendResponseUserDto userInfo = RecommendResponseUserDto.of(user.getUserId(), user.getNickname());
 
         PageRequest pageRequest = PageRequest.of(page, 50);
-        Page<Recommend> recommendPage = recommendRepository.findAllOrderByCreatedAtDesc((Pageable) pageRequest)
-                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_RECOMMEND_PAGE_EXCEPTION, Error.NOT_FOUND_RECOMMEND_PAGE_EXCEPTION.getMessage()));
+        Page<Recommend> recommendPage = recommendRepository.findAllByOrderByCreatedAtDesc(pageRequest);
 
-        PageResponseDto pageInfo = PageResponseDto.of(recommendPage.getTotalPages(), recommendPage.getNumber(), (recommendPage.getTotalPages() < recommendPage.getNumber()));
+        PageResponseDto pageInfo = PageResponseDto.of(recommendPage.getTotalPages(), recommendPage.getNumber() + 1, (recommendPage.getTotalPages() == recommendPage.getNumber() + 1));
 
         List<RecommendResponseDto> recommendInfos = recommendPage.stream()
                 .map(recommend -> RecommendResponseDto.of(
