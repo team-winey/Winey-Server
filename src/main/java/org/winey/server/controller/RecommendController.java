@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.response.recommend.RecommendListResponseDto;
+import org.winey.server.exception.Success;
 import org.winey.server.service.RecommendService;
 
 @RestController
@@ -16,20 +17,9 @@ public class RecommendController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<RecommendListResponseDto> getRecommend(@RequestParam final int page) {
-
+    public ApiResponse<RecommendListResponseDto> getRecommend(@RequestParam final int page, @RequestHeader final Long userId) {
+        return ApiResponse.success(Success.GET_RECOMMEND_LIST_SUCCESS, recommendService.getRecommend(page, userId));
     }
 
-
-    @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<RetrospectResponseDto> getOne(@RequestParam final String date){
-        RetrospectResponseDto data = retrospectService.getOne(date);
-        if (data == null) {
-            return ApiResponse.success(Success.GET_RETROSPECT_NO_CONTENT_SUCCESS);
-        } else {
-            return ApiResponse.success(Success.GET_RETROSPECT_SUCCESS, data);
-        }
-    }
 
 }

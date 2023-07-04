@@ -10,6 +10,11 @@ import org.springframework.http.HttpStatus;
 public enum Success {
 
     /**
+     * 200 OK
+     */
+    GET_RECOMMEND_LIST_SUCCESS(HttpStatus.OK, "추천 위니 전체 조회 성공"),
+
+    /**
      * 201 CREATED
      */
     LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
