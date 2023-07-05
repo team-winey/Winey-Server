@@ -4,10 +4,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -29,6 +31,7 @@ public class Feed extends AuditingTimeEntity {
 
     @Column(nullable = false)
     private Long feedMoney;
+
 
     @Builder
     public Feed(User user, String feedTitle, String feedImage, Long feedMoney){
