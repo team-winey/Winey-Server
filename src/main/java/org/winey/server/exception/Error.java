@@ -16,6 +16,9 @@ public enum Error {
     LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
     INVALID_PASSWORD_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 비밀번호가 입력됐습니다."),
     NOT_FOUND_IMAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 이미지 파일입니다"),
+    VALIDATION_REQUEST_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청값이 입력되지 않았습니다."),
+    VALIDATION_REQUEST_HEADER_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 헤더값이 입력되지 않았습니다."),
+    VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 파라미터값이 입력되지 않았습니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -26,6 +29,7 @@ public enum Error {
      * 404 NOT FOUND
      */
     NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다"),
+    NOT_FOUND_RECOMMEND_PAGE_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 추천 위니 페이지입니다."),
 
     /**
      * 409 CONFLICT
