@@ -20,6 +20,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false, unique = true)
     private String nickname;
 
+    @Setter
     @Column(nullable = false)
     private UserLevel userLevel;
 

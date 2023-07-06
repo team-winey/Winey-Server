@@ -1,9 +1,6 @@
 package org.winey.server.domain.goal;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.user.User;
@@ -28,11 +25,20 @@ public class Goal extends AuditingTimeEntity {
 
     @Column(nullable = false)
     @ColumnDefault("0")
+    @Setter
     private Long duringGoalAmount;
 
     @Column(nullable = false)
     @ColumnDefault("false")
+    @Setter
     private boolean isAttained;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    @Setter
+    private Long duringGoalCount;
+
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
