@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GoalRequestCreateDto {
-    
+    private Long targetMoney;
+    private int targetDay;
 }
