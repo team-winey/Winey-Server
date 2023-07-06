@@ -43,5 +43,7 @@ public class Goal extends AuditingTimeEntity {
         this.targetMoney = targetMoney;
         this.targetDate = targetDate;
         this.user = user;
+        this.duringGoalAmount = 0L;
+        this.isAttained = false;
     }
 }
