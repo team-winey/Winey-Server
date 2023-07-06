@@ -10,6 +10,7 @@ import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.GoalRepository;
@@ -39,12 +40,14 @@ public class FeedService {
                 .user(presentUser)
                 .build();
         feedRepository.save(feed);
-
-        Goal presentGoal = goalRepository.findByUser(userId)
-                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
-        presentGoal.setDuringGoalCount(presentGoal.getDuringGoalCount()+1); //기간 중 달성한 목표개수 늘리기
-        updateDuringGoalByCreateFeed(presentGoal,feed.getFeedMoney(),presentUser);
-
+        System.out.println("여기1");
+        Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
+                .orElseThrow(()-> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
+        System.out.println("여기2");
+        myGoal.setDuringGoalCount(myGoal.getDuringGoalCount()+1); //기간 중 달성한 목표개수 늘리기
+        System.out.println("여기3");
+        updateDuringGoalByCreateFeed(myGoal,feed.getFeedMoney(),presentUser);
+        System.out.println("여기4");
 
         return CreateFeedResponseDto.of(feed.getId(),feed.getCreatedAt());
     }
@@ -61,7 +64,7 @@ public class FeedService {
         }
     }
     private void checkUserLevelUp(User presentUser) {
-        int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser.getUserId(),true); //Goal 중 userid가 맞고 isAttained true 개수 세기
+        int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser,true); //Goal 중 userid가 맞고 isAttained true 개수 세기
         switch (userAchievedGoals){
             case 1:
                 presentUser.setUserLevel(UserLevel.KNIGHT);
@@ -77,8 +80,8 @@ public class FeedService {
         }
     }
     private void updateUserGoalAmount(User presentUser, Long feedMoney,Boolean upOrDown){ //true : 돈 올리기, down : 내리기
-        Optional<Goal> wantUpdateGoal = goalRepository.findByUser(presentUser.getUserId());
-        Goal myGoal = wantUpdateGoal.get();
+        List<Goal> wantUpdateGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser);
+        Goal myGoal = wantUpdateGoal.stream().findFirst().get();
         if (upOrDown){
             myGoal.setDuringGoalAmount(myGoal.getDuringGoalAmount()+feedMoney);
         }

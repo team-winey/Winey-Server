@@ -26,6 +26,11 @@ public enum Error {
     TOKEN_TIME_EXPIRED_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
 
     /**
+     * 403 FORBIDDEN
+     */
+    FEED_FORBIDDEN_EXCEPTION(HttpStatus.FORBIDDEN,"목표를 설정하지 않아 피드를 생성할 수 없습니다."),
+
+    /**
      * 404 NOT FOUND
      */
     NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다"),

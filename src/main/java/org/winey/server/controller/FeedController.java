@@ -26,8 +26,7 @@ public class FeedController {
             @RequestHeader("userId") Long userId,
             @ModelAttribute CreateFeedRequestDto request) {
         String feedImageUrl = s3Service.uploadImage(request.getFeedImage(), "feed");
-        feedService.createFeed(request,userId,feedImageUrl);
-        return ApiResponse.success(Success.CREATE_BOARD_SUCCESS);
+        return ApiResponse.success(Success.CREATE_BOARD_SUCCESS, feedService.createFeed(request,userId,feedImageUrl));
     }
 
 }
