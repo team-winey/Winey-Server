@@ -9,6 +9,8 @@ import org.winey.server.controller.response.goal.GoalResponseCreateDto;
 import org.winey.server.exception.Success;
 import org.winey.server.service.GoalService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/goal")
@@ -18,7 +20,7 @@ public class GoalController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<GoalResponseCreateDto> create(@RequestBody final GoalRequestCreateDto requestDto, @RequestHeader Long userId) {
+    public ApiResponse<GoalResponseCreateDto> create(@RequestBody @Valid final GoalRequestCreateDto requestDto, @RequestHeader Long userId) {
         return ApiResponse.success(Success.CREATE_GOAL_SUCCESS, goalService.createGoal(requestDto, userId));
     }
 }
