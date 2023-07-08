@@ -1,6 +1,8 @@
 package org.winey.server.domain.user;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.recommend.Recommend;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AuditingTimeEntity {
 
@@ -21,6 +24,7 @@ public class User extends AuditingTimeEntity {
     private String nickname;
 
     @Column(nullable = false)
+    @ColumnDefault("1")
     private UserLevel userLevel;
 
     @Column(nullable = false)
@@ -36,9 +40,8 @@ public class User extends AuditingTimeEntity {
     private List<Recommend> recommends;
 
     @Builder
-    public User(String nickname, UserLevel userLevel, Long accumulatedAmount, Long feedCount) {
+    public User(String nickname, Long accumulatedAmount, Long feedCount) {
         this.nickname = nickname;
-        this.userLevel = userLevel;
         this.accumulatedAmount = accumulatedAmount;
         this.feedCount = feedCount;
     }
