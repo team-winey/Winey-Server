@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.user.User;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Goal extends AuditingTimeEntity {
 
@@ -43,7 +45,5 @@ public class Goal extends AuditingTimeEntity {
         this.targetMoney = targetMoney;
         this.targetDate = targetDate;
         this.user = user;
-        this.duringGoalAmount = 0L;
-        this.isAttained = false;
     }
 }
