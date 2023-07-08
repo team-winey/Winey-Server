@@ -2,6 +2,7 @@ package org.winey.server.domain.goal;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.user.User;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Goal extends AuditingTimeEntity {
 
