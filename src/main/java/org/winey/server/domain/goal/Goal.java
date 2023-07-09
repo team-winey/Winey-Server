@@ -33,6 +33,10 @@ public class Goal extends AuditingTimeEntity {
     private Long duringGoalAmount;
 
     @Column(nullable = false)
+    @ColumnDefault("0")
+    private Long duringGoalCount;
+
+    @Column(nullable = false)
     @ColumnDefault("false")
     private boolean isAttained;
 
