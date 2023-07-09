@@ -40,53 +40,27 @@ public class FeedService {
                 .user(presentUser)
                 .build();
         feedRepository.save(feed);
-        System.out.println("여기1");
         Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
                 .orElseThrow(()-> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
-        System.out.println("여기2");
-        myGoal.setDuringGoalCount(myGoal.getDuringGoalCount()+1); //기간 중 달성한 목표개수 늘리기
-        System.out.println("여기3");
-        updateDuringGoalByCreateFeed(myGoal,feed.getFeedMoney(),presentUser);
-        System.out.println("여기4");
-
-        return CreateFeedResponseDto.of(feed.getId(),feed.getCreatedAt());
-    }
-    private void updateDuringGoalByCreateFeed(Goal presentGoal, Long feedMoney, User presentUser){
-        updateUserGoalAmount(presentUser, feedMoney,true); //누적 금액 피드 금액 업데이트
-        if (!presentGoal.isAttained()){ //목표달성을 못한 상태인데
-            if (LocalDate.now().isBefore(presentGoal.getTargetDate())){ //타켓날짜를 지나지 않았으면
-                if (presentGoal.getTargetMoney() <= presentGoal.getDuringGoalAmount()){ //현재까지 누적 + 피드가격으로 업데이트된 금액 >= 목표금액
-                    presentGoal.setAttained(true); // 달성여부 체크
-                    checkUserLevelUp(presentUser); // userLevel 변동사항 체크
-                }
-            }
-
+        if ((myGoal.isAttained() || !(LocalDate.now().isBefore(myGoal.getTargetDate())) || (myGoal.getTargetMoney() < myGoal.getDuringGoalAmount()))){ //만약 목표가 이미 달성되어있거나, 목표일자를 이미 지났거나 목표금액을 이미 넘겼다. -> 업데이트 필요없음
+            System.out.println("이미 목표달성 or 목표일자 넘김 or 목표금액 넘김");
+            return CreateFeedResponseDto.of(feed.getId(),feed.getCreatedAt());
         }
+        myGoal.updateGoalCountAndAmount(myGoal, feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
+        myGoal.updateIsAttained(myGoal); // 달성여부 체크
+        checkUserLevelUp(presentUser); // userLevel 변동사항 체크
+        return CreateFeedResponseDto.of(feed.getId(),feed.getCreatedAt());
     }
     private void checkUserLevelUp(User presentUser) {
         int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser,true); //Goal 중 userid가 맞고 isAttained true 개수 세기
-        switch (userAchievedGoals){
-            case 1:
-                presentUser.setUserLevel(UserLevel.KNIGHT);
-                break;
-            case 3:
-                presentUser.setUserLevel(UserLevel.ARISTOCRAT);
-                break;
-            case 9:
-                presentUser.setUserLevel(UserLevel.EMPEROR);
-                break;
-            default:
-                break;
-        }
-    }
-    private void updateUserGoalAmount(User presentUser, Long feedMoney,Boolean upOrDown){ //true : 돈 올리기, down : 내리기
-        List<Goal> wantUpdateGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser);
-        Goal myGoal = wantUpdateGoal.stream().findFirst().get();
-        if (upOrDown){
-            myGoal.setDuringGoalAmount(myGoal.getDuringGoalAmount()+feedMoney);
-        }
-        else{
-            myGoal.setDuringGoalAmount(myGoal.getDuringGoalAmount()-feedMoney);
+        if (userAchievedGoals<1) {
+            presentUser.setUserLevel(UserLevel.COMMONER);
+        } else if (1<=userAchievedGoals && userAchievedGoals<3) {
+            presentUser.setUserLevel(UserLevel.KNIGHT);
+        } else if (3<=userAchievedGoals && userAchievedGoals<9) {
+            presentUser.setUserLevel(UserLevel.ARISTOCRAT);
+        } else {
+            presentUser.setUserLevel(UserLevel.EMPEROR);
         }
     }
 }
