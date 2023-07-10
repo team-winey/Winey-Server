@@ -13,6 +13,7 @@ public enum Success {
      * 200 OK
      */
     GET_RECOMMEND_LIST_SUCCESS(HttpStatus.OK, "추천 위니 전체 조회 성공"),
+    GET_USER_SUCCESS(HttpStatus.OK, "유저 조회 성공"),
 
     /**
      * 201 CREATED
