@@ -1,9 +1,6 @@
 package org.winey.server.domain.goal;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
@@ -29,12 +26,14 @@ public class Goal extends AuditingTimeEntity {
     private LocalDate targetDate;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
     private Long duringGoalAmount;
 
     @Column(nullable = false)
-    @ColumnDefault("false")
     private boolean isAttained;
+
+    @Column(nullable = false)
+    private Long duringGoalCount;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
@@ -45,5 +44,23 @@ public class Goal extends AuditingTimeEntity {
         this.targetMoney = targetMoney;
         this.targetDate = targetDate;
         this.user = user;
+        this.duringGoalCount = 0L;
+        this.isAttained = false;
+        this.duringGoalAmount = 0L;
+
+    }
+
+    public void updateIsAttained(boolean isAttained) {
+        this.isAttained = isAttained;
+    }
+
+    public void updateGoalCountAndAmount(Long feedMoney, boolean createOrDelete) {
+        if (createOrDelete) {
+            this.duringGoalCount += 1;
+            this.duringGoalAmount += feedMoney;
+        } else {
+            this.duringGoalCount -= 1;
+            this.duringGoalAmount -= feedMoney;
+        }
     }
 }

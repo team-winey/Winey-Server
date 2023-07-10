@@ -4,10 +4,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.winey.server.domain.AuditingTimeEntity;
+import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -16,7 +19,7 @@ public class Feed extends AuditingTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id")
-    private Long id;
+    private Long feedId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
@@ -28,13 +31,14 @@ public class Feed extends AuditingTimeEntity {
     private String feedImage;
 
     @Column(nullable = false)
-    private Long feed_money;
+    private Long feedMoney;
+
 
     @Builder
-    public Feed(User user, String feedTitle, String feedImage, Long feed_money){
+    public Feed(User user, String feedTitle, String feedImage, Long feedMoney){
         this.user = user;
         this.feedTitle = feedTitle;
         this.feedImage = feedImage;
-        this.feed_money = feed_money;
+        this.feedMoney = feedMoney;
     }
 }
