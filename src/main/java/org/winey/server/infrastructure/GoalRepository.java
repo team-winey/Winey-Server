@@ -12,9 +12,12 @@ public interface GoalRepository extends Repository<Goal, Long> {
     Goal save(Goal goal);
 
     // READ
+    List<Goal> findAllByUser(User user);
+
+    int countByUserAndIsAttained(User user, boolean isAttained);
+
     @Query("select g from Goal g where g.user = ?1 order by g.createdAt DESC")
     List<Goal> findByUserOrderByCreatedAtDesc(User user);
-    // UPDATE
 
-    // DELETE
+
 }
