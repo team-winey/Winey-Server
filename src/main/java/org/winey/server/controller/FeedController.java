@@ -29,7 +29,7 @@ public class FeedController {
         return ApiResponse.success(Success.CREATE_BOARD_SUCCESS, feedService.createFeed(request,userId,feedImageUrl));
     }
 
-    @DeleteMapping(value = "/user/{feedId}")
+    @DeleteMapping(value = "/{feedId}")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse deleteFeed(
             @RequestHeader("userId")Long userId,
