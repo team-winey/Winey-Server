@@ -1,5 +1,6 @@
 package org.winey.server.controller.response.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,8 +14,8 @@ public class UserResponseGoalDto {
     private Long duringGoalCount;
     private Long targetMoney;
     private int targetDay;
-    private boolean isOver;
-    private boolean isAttained;
+    private Boolean isOver;
+    private Boolean isAttained;
 
     public static UserResponseGoalDto of(Long duringGoalAmount, Long duringGoalCount, Long targetMoney, int targetDay, boolean isOver, boolean isAttained) {
         return new UserResponseGoalDto(duringGoalAmount, duringGoalCount, targetMoney, targetDay, isOver, isAttained);
