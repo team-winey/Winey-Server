@@ -22,11 +22,22 @@ public class FeedController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<CreateFeedResponseDto> create(
+    public ApiResponse<CreateFeedResponseDto> createFeed(
             @RequestHeader("userId") Long userId,
             @ModelAttribute CreateFeedRequestDto request) {
         String feedImageUrl = s3Service.uploadImage(request.getFeedImage(), "feed");
         return ApiResponse.success(Success.CREATE_BOARD_SUCCESS, feedService.createFeed(request,userId,feedImageUrl));
+    }
+
+    @DeleteMapping(value = "/user/{feedId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse deleteFeed(
+            @RequestHeader("userId")Long userId,
+            @PathVariable Long feedId
+    ){
+        String imageUrl = feedService.deleteFeed(userId,feedId);
+        s3Service.deleteFile(imageUrl);
+        return ApiResponse.success(Success.DELETE_FEED_SUCCESS);
     }
 
 }

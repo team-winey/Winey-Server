@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.winey.server.domain.AuditingTimeEntity;
+import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.user.User;
 
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public class Feed extends AuditingTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id")
-    private Long id;
+    private Long feedId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
