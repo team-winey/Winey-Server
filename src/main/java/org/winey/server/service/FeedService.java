@@ -40,27 +40,30 @@ public class FeedService {
                 .user(presentUser)
                 .build();
         feedRepository.save(feed);
+
         Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
                 .orElseThrow(()-> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
+        myGoal.updateGoalCountAndAmount(myGoal, feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
         if ((myGoal.isAttained() || !(LocalDate.now().isBefore(myGoal.getTargetDate())) || (myGoal.getTargetMoney() < myGoal.getDuringGoalAmount()))){ //만약 목표가 이미 달성되어있거나, 목표일자를 이미 지났거나 목표금액을 이미 넘겼다. -> 업데이트 필요없음
             System.out.println("이미 목표달성 or 목표일자 넘김 or 목표금액 넘김");
             return CreateFeedResponseDto.of(feed.getId(),feed.getCreatedAt());
         }
-        myGoal.updateGoalCountAndAmount(myGoal, feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
-        myGoal.updateIsAttained(myGoal); // 달성여부 체크
+        if (myGoal.getDuringGoalAmount()>= myGoal.getTargetMoney()) {
+            myGoal.updateIsAttained(myGoal); // 달성여부 체크
+        }
         checkUserLevelUp(presentUser); // userLevel 변동사항 체크
         return CreateFeedResponseDto.of(feed.getId(),feed.getCreatedAt());
     }
     private void checkUserLevelUp(User presentUser) {
         int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser,true); //Goal 중 userid가 맞고 isAttained true 개수 세기
         if (userAchievedGoals<1) {
-            presentUser.setUserLevel(UserLevel.COMMONER);
+            presentUser.updateUserLevel(UserLevel.COMMONER);
         } else if (1<=userAchievedGoals && userAchievedGoals<3) {
-            presentUser.setUserLevel(UserLevel.KNIGHT);
+            presentUser.updateUserLevel(UserLevel.KNIGHT);
         } else if (3<=userAchievedGoals && userAchievedGoals<9) {
-            presentUser.setUserLevel(UserLevel.ARISTOCRAT);
+            presentUser.updateUserLevel(UserLevel.ARISTOCRAT);
         } else {
-            presentUser.setUserLevel(UserLevel.EMPEROR);
+            presentUser.updateUserLevel(UserLevel.EMPEROR);
         }
     }
 }

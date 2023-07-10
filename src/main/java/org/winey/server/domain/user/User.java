@@ -46,4 +46,8 @@ public class User extends AuditingTimeEntity {
         this.accumulatedAmount = accumulatedAmount;
         this.feedCount = feedCount;
     }
+
+    public void updateUserLevel(UserLevel userLevel){
+        this.userLevel = userLevel;
+    }
 }
