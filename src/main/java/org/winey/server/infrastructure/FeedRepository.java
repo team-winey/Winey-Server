@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface FeedRepository extends Repository<Feed,Long> {
     void save(Feed feed);
+    Optional<Feed> findByFeedId(Long feedId);
+    void delete(Feed feed);
 }

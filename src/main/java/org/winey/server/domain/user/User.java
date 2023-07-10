@@ -23,9 +23,8 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Setter
     @Column(nullable = false)
-    @ColumnDefault("1")
+    @Enumerated(EnumType.STRING)
     private UserLevel userLevel;
 
     @Column(nullable = false)
@@ -45,6 +44,7 @@ public class User extends AuditingTimeEntity {
         this.nickname = nickname;
         this.accumulatedAmount = accumulatedAmount;
         this.feedCount = feedCount;
+        this.userLevel = UserLevel.COMMONER;
     }
 
     public void updateUserLevel(UserLevel userLevel){

@@ -26,20 +26,13 @@ public class Goal extends AuditingTimeEntity {
     private LocalDate targetDate;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
-    @Setter
     private Long duringGoalAmount;
 
     @Column(nullable = false)
-    @ColumnDefault("false")
-    @Setter
     private boolean isAttained;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
-    @Setter
     private Long duringGoalCount;
-
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,18 +44,23 @@ public class Goal extends AuditingTimeEntity {
         this.targetMoney = targetMoney;
         this.targetDate = targetDate;
         this.user = user;
+        this.duringGoalCount = 0L;
+        this.isAttained = false;
+        this.duringGoalAmount = 0L;
+
     }
-    public void updateIsAttained(Goal presentGoal){
-        presentGoal.isAttained = true;
+
+    public void updateIsAttained(boolean isAttained) {
+        this.isAttained = isAttained;
     }
-    public void updateGoalCountAndAmount(Goal presentGoal, Long feedMoney, boolean createOrDelete){
-        if (createOrDelete){
-            presentGoal.duringGoalCount+=1;
-            presentGoal.duringGoalAmount+=feedMoney;
-        }
-        else {
-            presentGoal.duringGoalCount-=1;
-            presentGoal.duringGoalAmount-=feedMoney;
+
+    public void updateGoalCountAndAmount(Long feedMoney, boolean createOrDelete) {
+        if (createOrDelete) {
+            this.duringGoalCount += 1;
+            this.duringGoalAmount += feedMoney;
+        } else {
+            this.duringGoalCount -= 1;
+            this.duringGoalAmount -= feedMoney;
         }
     }
 }
