@@ -22,6 +22,11 @@ public enum Success {
     SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료됐습니다."),
     CREATE_BOARD_SUCCESS(HttpStatus.CREATED, "게시물 생성이 완료됐습니다."),
     CREATE_GOAL_SUCCESS(HttpStatus.CREATED, "목표 생성이 완료됐습니다."),
+
+    /**
+     * 204 NO CONTENT
+     */
+    DELETE_FEED_SUCCESS(HttpStatus.NO_CONTENT, "피드가 정상적으로 삭제되었습니다.")
     ;
 
     private final HttpStatus httpStatus;
