@@ -46,7 +46,7 @@ public class FeedService {
         myGoal.updateGoalCountAndAmount(myGoal, feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
         if ((myGoal.isAttained() || !(LocalDate.now().isBefore(myGoal.getTargetDate())) || (myGoal.getTargetMoney() < myGoal.getDuringGoalAmount()))){ //만약 목표가 이미 달성되어있거나, 목표일자를 이미 지났거나 목표금액을 이미 넘겼다. -> 업데이트 필요없음
             System.out.println("이미 목표달성 or 목표일자 넘김 or 목표금액 넘김");
-            return CreateFeedResponseDto.of(feed.getId(),feed.getCreatedAt());
+            return CreateFeedResponseDto.of(feed햐.getId(),feed.getCreatedAt());
         }
         if (myGoal.getDuringGoalAmount()>= myGoal.getTargetMoney()) {
             myGoal.updateIsAttained(myGoal); // 달성여부 체크
