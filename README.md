@@ -1,6 +1,10 @@
 # Winey-Server
-## 👩🏻‍💻 팀원 소개
+<div align="center">
+<img width="360" alt="image" src="https://github.com/team-winey/Winey-Server/assets/49307946/93be3bfe-bd34-471a-978a-edaf248894b7">
+</div>
 
+## 👩🏻‍💻 팀원 소개
+<div align="center">
 <table>
     <tr align="center">
               <td style="min-width: 200px;">
@@ -26,8 +30,11 @@
 </table>
 
 협업 노션: https://empty-weaver-a9f.notion.site/Server-ba05f43a9dfe44de969af9a27cea4481?pvs=4
+</div>
+
 
 ## 📱 합리적인 소비를 하고싶지만 실패하는 사람들을 위한 서비스, 위니(Winey)!! 
+<div align="center">
 
 ### 🧐 마이페이지 API
 현재 내가 절약해서 나의 레벨과 정보들을 조회할 수 있는 API를 제공합니다.
@@ -57,7 +64,7 @@
 
 <hr/>
 <br />
-
+</div>
 
 ## 🛠 기술 스택
 
@@ -72,7 +79,7 @@
 |Programming Language|<img alt="RED" src ="https://img.shields.io/badge/JAVA-004027.svg?&style=for-the-badge&logo=Jameson&logoColor=white"/>|
 |API|![REST](https://img.shields.io/badge/Rest-4B3263?style=for-the-badge&logo=rest&logoColor=white)                                     
 |Version Control|![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white) |
-|CI/CD|![Jenkins](https://img.shields.io/badge/Jenkins-%D24939.svg?style=for-the-badge&logo=Jenkins&logoColor=white)|
+|CI/CD|![Slack](https://img.shields.io/badge/Slack-%4A154B.svg?style=for-the-badge&logo=Slack&logoColor=white)|
 <br />
 
 
