@@ -53,12 +53,7 @@ public class Goal extends AuditingTimeEntity {
         this.user = user;
     }
     public void updateIsAttained(Goal presentGoal){
-        if (presentGoal.duringGoalAmount>=presentGoal.targetMoney){
-            presentGoal.isAttained = true;
-        }
-        else{
-            presentGoal.isAttained = false;
-        }
+        presentGoal.isAttained = true;
     }
     public void updateGoalCountAndAmount(Goal presentGoal, Long feedMoney, boolean createOrDelete){
         if (createOrDelete){
