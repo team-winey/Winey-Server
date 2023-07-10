@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-class UserResponseGoalDto {
+public class UserResponseGoalDto {
     private Long duringGoalAmount;
     private Long duringGoalCount;
     private Long targetMoney;

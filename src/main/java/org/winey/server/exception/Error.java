@@ -30,6 +30,7 @@ public enum Error {
      */
     NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다"),
     NOT_FOUND_RECOMMEND_PAGE_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 추천 위니 페이지입니다."),
+    NOT_FOUND_GOAL_EXCEPTION(HttpStatus.NOT_FOUND, "목표가 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT
