@@ -68,23 +68,23 @@ public class FeedService {
 
     @Transactional
     public String deleteFeed(Long userId, Long feedId) {
-        User presentUser = userRepository.findByUserId(userId).get();
-        Goal presentGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst().get();
-        Feed wantDeleteFeed = feedRepository.findByFeedId(feedId).get();
-        if (presentGoal.getCreatedAt() == null) {
-            new BadRequestException(Error.NOT_FOUND_CREATED_AT_EXCEPTION, Error.NOT_FOUND_CREATED_AT_EXCEPTION.getMessage());
-        } else if ((!presentGoal.getCreatedAt().isBefore(wantDeleteFeed.getCreatedAt())) || (!presentGoal.getTargetDate().isAfter(wantDeleteFeed.getCreatedAt().toLocalDate()))) {
+        User presentUser = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        Goal presentGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
+        Feed wantDeleteFeed = feedRepository.findByFeedId(feedId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
+
+        if ((!presentGoal.getCreatedAt().isBefore(wantDeleteFeed.getCreatedAt())) || (!presentGoal.getTargetDate().isAfter(wantDeleteFeed.getCreatedAt().toLocalDate()))) {
             feedRepository.delete(wantDeleteFeed);
             return wantDeleteFeed.getFeedImage();
         }
         presentGoal.updateGoalCountAndAmount(wantDeleteFeed.getFeedMoney(), false);
-        if (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount()) { //현재까지 누적 + 피드가격으로 업데이트된 금액 >= 목표금액
+        if (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount()) {
             presentGoal.updateIsAttained(false); // 달성여부 체크
             checkUserLevelUp(presentUser); // userLevel 변동사항 체크
         }
         feedRepository.delete(wantDeleteFeed);
         return wantDeleteFeed.getFeedImage();
-
-
     }
 }
