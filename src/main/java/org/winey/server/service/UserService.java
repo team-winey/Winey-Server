@@ -15,6 +15,7 @@ import org.winey.server.infrastructure.UserRepository;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Service
@@ -38,9 +39,9 @@ public class UserService {
         Goal presentGoal = goalList.stream().findFirst()
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
 
-        int targetDay = (int) Duration.between(presentGoal.getTargetDate(), presentGoal.getCreatedAt().toLocalDate()).toDays();
-        UserResponseGoalDto goalDto = UserResponseGoalDto.of(presentGoal.getDuringGoalAmount(), presentGoal.getDuringGoalCount(), presentGoal.getTargetMoney(), targetDay, LocalDate.now().isAfter(presentGoal.getTargetDate()), presentGoal.isAttained());
+        int targetDay = (int) Period.between(presentGoal.getCreatedAt().toLocalDate(), presentGoal.getTargetDate()).getDays();
 
+        UserResponseGoalDto goalDto = UserResponseGoalDto.of(presentGoal.getDuringGoalAmount(), presentGoal.getDuringGoalCount(), presentGoal.getTargetMoney(), targetDay, LocalDate.now().isAfter(presentGoal.getTargetDate()), presentGoal.isAttained());
         return UserResponseDto.of(userDto, goalDto);
     }
 }
