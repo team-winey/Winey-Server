@@ -110,7 +110,7 @@ public class S3Service {
 
     // 이미지 삭제
     public void deleteFile(String imageUrl) {
-        String imageKey = imageUrl.substring(56);
+        String imageKey = imageUrl.substring(49);
         amazonS3.deleteObject(bucket, imageKey);
     }
 }

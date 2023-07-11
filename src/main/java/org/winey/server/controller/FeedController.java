@@ -38,6 +38,8 @@ public class FeedController {
             @PathVariable Long feedId
     ){
         String imageUrl = feedService.deleteFeed(userId,feedId);
+        //https://s3.ap-northeast-2.amazonaws.com/winey-s3/feed/image/178bdf26-5eb9-449f-8abf-1716c71cd3fa.png
+        //feed/image/178bdf26-5eb9-449f-8abf-1716c71cd3fa.png
         s3Service.deleteFile(imageUrl);
         return ApiResponse.success(Success.DELETE_FEED_SUCCESS);
     }
