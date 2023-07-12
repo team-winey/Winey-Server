@@ -40,6 +40,7 @@ public class RecommendService {
                         recommend.getCreatedAt()
                 )).collect(Collectors.toList());
 
+
         return RecommendListResponseDto.of(pageInfo, recommendInfos);
 
     }
