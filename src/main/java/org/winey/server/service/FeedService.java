@@ -1,10 +1,18 @@
 package org.winey.server.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.request.CreateFeedRequestDto;
+import org.winey.server.controller.response.PageResponseDto;
 import org.winey.server.controller.response.feed.CreateFeedResponseDto;
+import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
+import org.winey.server.controller.response.feed.GetFeedResponseDto;
+import org.winey.server.controller.response.feed.GetWriterResponseDto;
+import org.winey.server.controller.response.recommend.RecommendResponseDto;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.user.User;
@@ -13,11 +21,14 @@ import org.winey.server.exception.Error;
 import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
+import org.winey.server.infrastructure.FeedLikeRepository;
 import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.UserRepository;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +37,7 @@ public class FeedService {
     private final UserRepository userRepository;
 
     private final GoalRepository goalRepository;
+    private final FeedLikeRepository feedLikeRepository;
 
     @Transactional
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
@@ -86,5 +98,28 @@ public class FeedService {
         }
         feedRepository.delete(wantDeleteFeed);
         return wantDeleteFeed.getFeedImage();
+    }
+
+    public GetAllFeedResponseDto getAllFeed(int page, Long userId){
+        PageRequest pageRequest = PageRequest.of(page, 50);
+        Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedAtDesc(pageRequest);
+        PageResponseDto pageInfo = PageResponseDto.of(feedPage.getTotalPages(), feedPage.getNumber() + 1, (feedPage.getTotalPages() == feedPage.getNumber() + 1));
+        User user = userRepository.findByUserId(userId).orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        List<GetFeedResponseDto> feeds = feedPage.stream()
+                .map(feed -> GetFeedResponseDto.of(
+                        feed.getFeedId(),
+                        feed.getUser().getUserId(),
+                        feed.getUser().getNickname(),
+                        feed.getUser().getUserLevel().getLevelNumber(),
+                        feed.getFeedTitle(),
+                        feed.getFeedImage(),
+                        feed.getFeedMoney(),
+                        feedLikeRepository.existsByFeedAndUser(feed,user), //현재 접속한 유저가 좋아요 눌렀는지
+                        feedLikeRepository.countByFeed(feed),              //해당 피드의 좋아요 개수 세기.
+                        feed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
+                )).collect(Collectors.toList());
+        return GetAllFeedResponseDto.of(pageInfo,feeds);
+
+
     }
 }
