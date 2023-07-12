@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.feed.CreateFeedResponseDto;
+import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
+import org.winey.server.controller.response.recommend.RecommendListResponseDto;
 import org.winey.server.exception.Success;
 import org.winey.server.external.client.aws.S3Service;
 import org.winey.server.service.FeedService;
@@ -36,8 +38,15 @@ public class FeedController {
             @PathVariable Long feedId
     ){
         String imageUrl = feedService.deleteFeed(userId,feedId);
+        //https://s3.ap-northeast-2.amazonaws.com/winey-s3/feed/image/178bdf26-5eb9-449f-8abf-1716c71cd3fa.png
+        //feed/image/178bdf26-5eb9-449f-8abf-1716c71cd3fa.png
         s3Service.deleteFile(imageUrl);
         return ApiResponse.success(Success.DELETE_FEED_SUCCESS);
     }
 
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<GetAllFeedResponseDto> getAllFeed(@RequestParam int page, @RequestHeader Long userId) {
+        return ApiResponse.success(Success.GET_FEED_LIST_SUCCESS, feedService.getAllFeed(page, userId));
+    }
 }
