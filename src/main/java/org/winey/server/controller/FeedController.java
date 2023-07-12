@@ -8,12 +8,9 @@ import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.feed.CreateFeedResponseDto;
 import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
-import org.winey.server.controller.response.recommend.RecommendListResponseDto;
 import org.winey.server.exception.Success;
 import org.winey.server.external.client.aws.S3Service;
 import org.winey.server.service.FeedService;
-
-import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,5 +45,11 @@ public class FeedController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<GetAllFeedResponseDto> getAllFeed(@RequestParam int page, @RequestHeader Long userId) {
         return ApiResponse.success(Success.GET_FEED_LIST_SUCCESS, feedService.getAllFeed(page, userId));
+    }
+
+    @GetMapping("/myFeed")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<GetAllFeedResponseDto> getMyFeed(@RequestParam int page, @RequestHeader Long userId){
+        return ApiResponse.success(Success.GET_MYFEED_SUCCESS, feedService.getMyFeed(page, userId));
     }
 }
