@@ -35,8 +35,7 @@ public class RecommendService {
                         recommend.getRecommendLink(),
                         recommend.getRecommendTitle(),
                         recommend.getRecommendSubTitle(),
-                        recommend.getRecommendWon(),
-                        recommend.getRecommendPercent(),
+                        recommend.getRecommendPercent() != null ? String.valueOf(recommend.getRecommendPercent()) + "%" : String.valueOf(recommend.getRecommendWon() + "원"),
                         recommend.getRecommendImage(),
                         recommend.getCreatedAt()
                 )).collect(Collectors.toList());
