@@ -8,10 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
-import org.winey.server.controller.response.feed.CreateFeedResponseDto;
-import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
-import org.winey.server.controller.response.feed.GetFeedResponseDto;
-import org.winey.server.controller.response.feed.GetWriterResponseDto;
+import org.winey.server.controller.response.feed.*;
 import org.winey.server.controller.response.recommend.RecommendResponseDto;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
@@ -119,7 +116,27 @@ public class FeedService {
                         feed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
         return GetAllFeedResponseDto.of(pageInfo,feeds);
+    }
 
+    public GetAllFeedResponseDto getMyFeed(int page, Long userId){
+        User myUser = userRepository.findByUserId(userId).orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        PageRequest pageRequest = PageRequest.of(page, 50);
+        Page<Feed> myFeedPage = feedRepository.findAllByUserOrderByCreatedAtDesc(myUser,pageRequest);
+        PageResponseDto pageInfo = PageResponseDto.of(myFeedPage.getTotalPages(), myFeedPage.getNumber() + 1, (myFeedPage.getTotalPages() == myFeedPage.getNumber() + 1));
+        List<GetFeedResponseDto> feeds = myFeedPage.stream()
+                .map(myFeed -> GetFeedResponseDto.of(
+                        myFeed.getFeedId(),
+                        myFeed.getUser().getUserId(),
+                        myFeed.getUser().getNickname(),
+                        myFeed.getUser().getUserLevel().getLevelNumber(),
+                        myFeed.getFeedTitle(),
+                        myFeed.getFeedImage(),
+                        myFeed.getFeedMoney(),
+                        feedLikeRepository.existsByFeedAndUser(myFeed,myUser), //현재 접속한 유저가 좋아요 눌렀는지
+                        feedLikeRepository.countByFeed(myFeed),              //해당 피드의 좋아요 개수 세기.
+                        myFeed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
+                )).collect(Collectors.toList());
+        return GetAllFeedResponseDto.of(pageInfo,feeds);
 
     }
 }
