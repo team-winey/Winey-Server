@@ -34,6 +34,7 @@ public class RecommendService {
                         recommend.getRecommendId(),
                         recommend.getRecommendLink(),
                         recommend.getRecommendTitle(),
+                        recommend.getRecommendSubTitle(),
                         recommend.getRecommendWon(),
                         recommend.getRecommendPercent(),
                         recommend.getRecommendImage(),
