@@ -14,12 +14,11 @@ public class RecommendResponseDto {
     private String recommendLink;
     private String recommendTitle;
     private String recommendSubTitle;
-    private Long recommendWon;
-    private Long recommendPercent;
+    private String recommendDiscount;
     private String recommendImage;
     private LocalDateTime createdAt;
 
-    public static RecommendResponseDto of(Long recommendId, String recommendLink, String recommendTitle, String recommendSubTitle, Long recommendWon, Long recommendPercent, String recommendImage, LocalDateTime createdAt) {
-        return new RecommendResponseDto(recommendId, recommendLink, recommendTitle, recommendSubTitle, recommendWon, recommendPercent, recommendImage, createdAt);
+    public static RecommendResponseDto of(Long recommendId, String recommendLink, String recommendTitle, String recommendSubTitle, String recommendDiscount, String recommendImage, LocalDateTime createdAt) {
+        return new RecommendResponseDto(recommendId, recommendLink, recommendTitle, recommendSubTitle, recommendDiscount, recommendImage, createdAt);
     }
 }
