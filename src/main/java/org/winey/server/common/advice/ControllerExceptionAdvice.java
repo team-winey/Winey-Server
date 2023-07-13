@@ -1,5 +1,6 @@
 package org.winey.server.common.advice;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -38,6 +39,12 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     protected ApiResponse handleMissingRequestParameterException(final MissingServletRequestParameterException e) {
         return ApiResponse.error(Error.VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION, String.format("%s. (%s)", Error.VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION.getMessage(), e.getParameterName()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ApiResponse handleRequestParameterNotValidException(final ConstraintViolationException e) {
+        return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, String.format("%s", e.getConstraintName()));
     }
 
     /**
