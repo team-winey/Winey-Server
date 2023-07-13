@@ -1,5 +1,7 @@
 package org.winey.server.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,12 +17,14 @@ import org.winey.server.service.FeedService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/feed")
+@Tag(name = "Feed", description = "피드 API Document")
 public class FeedController {
     private final S3Service s3Service;
     private final FeedService feedService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "피드를 생성합니다. ")
     public ApiResponse<CreateFeedResponseDto> createFeed(
             @RequestHeader("userId") Long userId,
             @ModelAttribute CreateFeedRequestDto request) {
@@ -30,6 +34,7 @@ public class FeedController {
 
     @DeleteMapping(value = "/{feedId}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "피드를 삭제합니다.")
     public ApiResponse deleteFeed(
             @RequestHeader("userId")Long userId,
             @PathVariable Long feedId
@@ -43,12 +48,14 @@ public class FeedController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "피드 전체를 불러옵니다.")
     public ApiResponse<GetAllFeedResponseDto> getAllFeed(@RequestParam int page, @RequestHeader Long userId) {
         return ApiResponse.success(Success.GET_FEED_LIST_SUCCESS, feedService.getAllFeed(page, userId));
     }
 
     @GetMapping("/myFeed")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "마이 피드 전체를 불러옵니다.")
     public ApiResponse<GetAllFeedResponseDto> getMyFeed(@RequestParam int page, @RequestHeader Long userId){
         return ApiResponse.success(Success.GET_MYFEED_SUCCESS, feedService.getMyFeed(page, userId));
     }
