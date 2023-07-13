@@ -15,6 +15,7 @@ public enum Success {
     GET_RECOMMEND_LIST_SUCCESS(HttpStatus.OK, "추천 위니 전체 조회 성공"),
     GET_FEED_LIST_SUCCESS(HttpStatus.OK, "피드 전체 조회 성공"),
     GET_USER_SUCCESS(HttpStatus.OK, "유저 조회 성공"),
+    GET_MYFEED_SUCCESS(HttpStatus.OK, "마이 피드 조회 성공"),
 
     /**
      * 201 CREATED
