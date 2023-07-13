@@ -23,9 +23,9 @@ public class RecommendController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<RecommendListResponseDto> getRecommend(@RequestParam int page, @RequestHeader Long userId) {
+    public ApiResponse<RecommendListResponseDto> getRecommend(@RequestParam int page) {
         if (page < 1) return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
-        return ApiResponse.success(Success.GET_RECOMMEND_LIST_SUCCESS, recommendService.getRecommend(page, userId));
+        return ApiResponse.success(Success.GET_RECOMMEND_LIST_SUCCESS, recommendService.getRecommend(page));
     }
 
 
