@@ -24,6 +24,10 @@ public class Recommend extends AuditingTimeEntity {
 
     @Column
     @Setter
+    private String recommendSubTitle;
+
+    @Column
+    @Setter
     private Long recommendWon;
 
     @Column
