@@ -8,6 +8,15 @@ import org.winey.server.domain.user.User;
 import java.util.Optional;
 
 public interface FeedLikeRepository extends Repository<FeedLike,Long> {
+    // CREATE
+    void save(FeedLike feedLike);
+
+    // READ
     Boolean existsByFeedAndUser(Feed feed, User user);
     int countByFeed(Feed feed);
+
+    // UPDATE
+
+    // DELETE
+
 }
