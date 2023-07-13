@@ -18,5 +18,5 @@ public interface FeedLikeRepository extends Repository<FeedLike,Long> {
     // UPDATE
 
     // DELETE
-
+    void deleteByFeedAndUser(Feed feed, User user);
 }
