@@ -33,7 +33,7 @@ public class RecommendService {
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         RecommendResponseUserDto userInfo = RecommendResponseUserDto.of(user.getUserId(), user.getNickname());
 
-        PageRequest pageRequest = PageRequest.of(page, 50);
+        PageRequest pageRequest = PageRequest.of(page - 1, 50);
         Page<Recommend> recommendPage = recommendRepository.findAllByOrderByCreatedAtDesc(pageRequest);
 
         PageResponseDto pageInfo = PageResponseDto.of(recommendPage.getTotalPages(), recommendPage.getNumber() + 1, (recommendPage.getTotalPages() == recommendPage.getNumber() + 1));
@@ -50,6 +50,5 @@ public class RecommendService {
                 )).collect(Collectors.toList());
 
         return RecommendListResponseDto.of(userInfo, pageInfo, recommendInfos);
-
     }
 }
