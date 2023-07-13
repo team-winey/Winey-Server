@@ -30,9 +30,9 @@ public class FeedLikeService {
         Boolean isLiked = feedLikeRepository.existsByFeedAndUser(feed, user);
         // 에러 언제 ? -> feedLike = true && isLiked = true
         // feedLike = false && isLiked = false
-//        if (isLiked == feedLike) {
-//            throw new BadRequestException(Error.REQUEST_VALIDATION_EXCEPTION, Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
-//        }
+        if (isLiked == feedLike) {
+            throw new BadRequestException(Error.REQUEST_VALIDATION_EXCEPTION, Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
+        }
 
         if (feedLike) { // 좋아요 생성
             FeedLike like = FeedLike.builder()
