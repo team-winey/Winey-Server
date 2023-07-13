@@ -41,16 +41,17 @@ public class KakaoSocialService extends SocialService {
         KakaoUserResponse userResponse = kakaoApiClient.getUserInformation("Bearer "+tokenResponse.getAccessToken());
         System.out.println(userResponse);
         System.out.println(userResponse.getKakaoAccount().getProfile());
-        System.out.println(userResponse.getKakaoAccount().getProfile().getNickName());
+        System.out.println(userResponse.getKakaoAccount().getProfile().getNickname());
         System.out.println(userResponse.getKakaoAccount().getProfile().getProfileImageUrl());
 
         SocialUser user = SocialUser.of(
-                userResponse.getKakaoAccount().getProfile().getNickName(),
+                userResponse.getKakaoAccount().getProfile().getNickname(),
                 userResponse.getKakaoAccount().getProfile().getProfileImageUrl(),
                 SocialPlatform.KAKAO,
                 tokenResponse.getAccessToken(),
                 tokenResponse.getRefreshToken()
         );
+        System.out.println(user);
         socialUserRepository.save(user);
 
         return user.getId();

@@ -12,6 +12,6 @@ import lombok.*;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KakaoUserProfile {
 
-    private String nickName;
+    private String nickname;
     private String profileImageUrl;
 }
