@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.winey.server.controller.response.PageResponseDto;
-import org.winey.server.controller.response.recommend.RecommendListResponseDto;
-import org.winey.server.controller.response.recommend.RecommendResponseDto;
-import org.winey.server.controller.response.recommend.RecommendResponseUserDto;
 
 import java.util.List;
 
