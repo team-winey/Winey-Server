@@ -39,6 +39,10 @@ public class KakaoSocialService extends SocialService {
 
         //Access Token으로 유저 정보 불러오기
         KakaoUserResponse userResponse = kakaoApiClient.getUserInformation("Bearer "+tokenResponse.getAccessToken());
+        System.out.println(userResponse);
+        System.out.println(userResponse.getKakaoAccount().getProfile());
+        System.out.println(userResponse.getKakaoAccount().getProfile().getNickName());
+        System.out.println(userResponse.getKakaoAccount().getProfile().getProfileImageUrl());
 
         SocialUser user = SocialUser.of(
                 userResponse.getKakaoAccount().getProfile().getNickName(),

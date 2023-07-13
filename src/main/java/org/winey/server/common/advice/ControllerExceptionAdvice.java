@@ -40,14 +40,14 @@ public class ControllerExceptionAdvice {
         return ApiResponse.error(Error.VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION, String.format("%s. (%s)", Error.VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION.getMessage(), e.getParameterName()));
     }
 
-    /**
-     * 500 Internal Server
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    protected ApiResponse<Object> handleException(final Exception e) {
-        return ApiResponse.error(Error.INTERNAL_SERVER_ERROR);
-    }
+//    /**
+//     * 500 Internal Server
+//     */
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ExceptionHandler(Exception.class)
+//    protected ApiResponse<Object> handleException(final Exception e) {
+//        return ApiResponse.error(Error.INTERNAL_SERVER_ERROR);
+//    }
 
     /**
      * custom error
