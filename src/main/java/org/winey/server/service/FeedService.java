@@ -112,7 +112,7 @@ public class FeedService {
                         feed.getFeedImage(),
                         feed.getFeedMoney(),
                         feedLikeRepository.existsByFeedAndUser(feed, user), //현재 접속한 유저가 좋아요 눌렀는지
-                        feedLikeRepository.countByFeed(feed),              //해당 피드의 좋아요 개수 세기.
+                        (long) feedLikeRepository.countByFeed(feed),              //해당 피드의 좋아요 개수 세기.
                         feed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
         return GetAllFeedResponseDto.of(pageInfo, feeds);
@@ -133,7 +133,7 @@ public class FeedService {
                         myFeed.getFeedImage(),
                         myFeed.getFeedMoney(),
                         feedLikeRepository.existsByFeedAndUser(myFeed, myUser), //현재 접속한 유저가 좋아요 눌렀는지
-                        feedLikeRepository.countByFeed(myFeed),              //해당 피드의 좋아요 개수 세기.
+                        (long) feedLikeRepository.countByFeed(myFeed),              //해당 피드의 좋아요 개수 세기.
                         myFeed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
         return GetAllFeedResponseDto.of(pageInfo, feeds);
