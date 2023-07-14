@@ -12,9 +12,10 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         Info info = new Info()
-                .title("Winey-Server")
-                .description("Winey API Document")
+                .title("Winey 서버의 클라 호감작 Swagger")
+                .description("Winey 안드, 아요 화이팅!")
                 .version("1.0.0");
+
 
         return new OpenAPI()
                 .components(new Components())
