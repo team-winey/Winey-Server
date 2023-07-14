@@ -1,5 +1,7 @@
 package org.winey.server.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -17,12 +19,14 @@ import javax.validation.constraints.Size;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/recommend")
+@Tag(name = "Recommend", description = "추천 위니 API Document")
 public class RecommendController {
 
     private final RecommendService recommendService;
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "추천 위니 조회 API", description = "추천 위니를 조회합니다.")
     public ApiResponse<RecommendListResponseDto> getRecommend(@RequestParam int page) {
         if (page < 1) return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_RECOMMEND_LIST_SUCCESS, recommendService.getRecommend(page));
