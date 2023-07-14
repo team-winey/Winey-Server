@@ -44,6 +44,6 @@ public class FeedLikeService {
             feedLikeRepository.deleteByFeedAndUser(feed, user);
         }
 
-        return CreateFeedLikeResponseDto.of(feedId, feedLike, feedLikeRepository.countByFeed(feed));
+        return CreateFeedLikeResponseDto.of(feedId, feedLike, (long) feedLikeRepository.countByFeed(feed));
     }
 }
