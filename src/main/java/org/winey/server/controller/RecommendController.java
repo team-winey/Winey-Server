@@ -28,9 +28,9 @@ public class RecommendController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "추천 위니 조회 API", description = "추천 위니를 조회합니다.")
     public ApiResponse<RecommendListResponseDto> getRecommend(@RequestParam int page) {
-        if (page < 1) return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
+        if (page < 1)
+            return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_RECOMMEND_LIST_SUCCESS, recommendService.getRecommend(page));
     }
-
 
 }
