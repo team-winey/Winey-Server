@@ -27,7 +27,7 @@ public class FeedLikeController {
             @RequestHeader Long userId,
             @PathVariable Long feedId,
             @RequestBody @Valid CreateFeedLikeRequestDto requestDto
-            ) {
+    ) {
         return ApiResponse.success(Success.CREATE_FEED_RESPONSE_SUCCESS, feedLikeService.createFeedLike(userId, feedId, requestDto.getFeedLike()));
     }
 

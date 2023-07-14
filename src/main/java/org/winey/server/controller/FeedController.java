@@ -45,8 +45,6 @@ public class FeedController {
             @PathVariable Long feedId
     ) {
         String imageUrl = feedService.deleteFeed(userId, feedId);
-        //https://s3.ap-northeast-2.amazonaws.com/winey-s3/feed/image/178bdf26-5eb9-449f-8abf-1716c71cd3fa.png
-        //feed/image/178bdf26-5eb9-449f-8abf-1716c71cd3fa.png
         s3Service.deleteFile(imageUrl);
         return ApiResponse.success(Success.DELETE_FEED_SUCCESS);
     }
@@ -55,7 +53,8 @@ public class FeedController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "위니 피드 전체 조회 API", description = "위니 피드 전체를 조회합니다.")
     public ApiResponse<GetAllFeedResponseDto> getAllFeed(@RequestParam int page, @RequestHeader Long userId) {
-        if (page < 1) return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
+        if (page < 1)
+            return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_FEED_LIST_SUCCESS, feedService.getAllFeed(page, userId));
     }
 
@@ -63,7 +62,8 @@ public class FeedController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "마이 피드 조회 API", description = "마이 피드를 조회합니다.")
     public ApiResponse<GetAllFeedResponseDto> getMyFeed(@RequestParam int page, @RequestHeader Long userId) {
-        if (page < 1) return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
+        if (page < 1)
+            return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_MYFEED_SUCCESS, feedService.getMyFeed(page, userId));
     }
 }

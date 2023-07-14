@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 public class CreateFeedLikeResponseDto {
     private Long feedId;
     private Boolean isLiked;
-    private int likes;
+    private Long likes;
 
-    public static CreateFeedLikeResponseDto of(Long feedId, Boolean isLiked, int likes) {
+    public static CreateFeedLikeResponseDto of(Long feedId, Boolean isLiked, Long likes) {
         return new CreateFeedLikeResponseDto(feedId, isLiked, likes);
     }
 }
