@@ -12,6 +12,7 @@ import org.winey.server.controller.response.recommend.RecommendResponseDto;
 import org.winey.server.domain.recommend.Recommend;
 import org.winey.server.infrastructure.RecommendRepository;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecommendService {
     private final RecommendRepository recommendRepository;
+    private final DecimalFormat decFormat = new DecimalFormat("###,###");
 
     @Transactional
     public RecommendListResponseDto getRecommend(int page) {
@@ -33,7 +35,7 @@ public class RecommendService {
                         recommend.getRecommendLink(),
                         recommend.getRecommendTitle(),
                         recommend.getRecommendSubTitle(),
-                        recommend.getRecommendPercent() != null ? String.valueOf(recommend.getRecommendPercent()) + "%" : String.valueOf(recommend.getRecommendWon() + "원"),
+                        recommend.getRecommendPercent() != null ? String.valueOf(recommend.getRecommendPercent()) + "%" : String.valueOf(decFormat.format(recommend.getRecommendWon()) + "원"),
                         recommend.getRecommendImage(),
                         recommend.getCreatedAt()
                 )).collect(Collectors.toList());
