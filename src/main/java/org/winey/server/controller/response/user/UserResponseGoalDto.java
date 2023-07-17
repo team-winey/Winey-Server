@@ -14,11 +14,12 @@ public class UserResponseGoalDto {
     private Long duringGoalCount;
     private Long targetMoney;
     private int targetDay;
+    private int dDay;
     private Boolean isOver;
     private Boolean isAttained;
 
-    public static UserResponseGoalDto of(Long duringGoalAmount, Long duringGoalCount, Long targetMoney, int targetDay, boolean isOver, boolean isAttained) {
-        return new UserResponseGoalDto(duringGoalAmount, duringGoalCount, targetMoney, targetDay, isOver, isAttained);
+    public static UserResponseGoalDto of(Long duringGoalAmount, Long duringGoalCount, Long targetMoney, int targetDay, int dDay, boolean isOver, boolean isAttained) {
+        return new UserResponseGoalDto(duringGoalAmount, duringGoalCount, targetMoney, targetDay, dDay, isOver, isAttained);
     }
 
 }
