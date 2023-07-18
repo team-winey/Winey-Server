@@ -97,6 +97,7 @@ public class FeedService {
         return wantDeleteFeed.getFeedImage();
     }
 
+    @Transactional(readOnly = true)
     public GetAllFeedResponseDto getAllFeed(int page, Long userId) {
         PageRequest pageRequest = PageRequest.of(page - 1, 20);
         Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedAtDesc(pageRequest);
@@ -118,6 +119,7 @@ public class FeedService {
         return GetAllFeedResponseDto.of(pageInfo, feeds);
     }
 
+    @Transactional(readOnly = true)
     public GetAllFeedResponseDto getMyFeed(int page, Long userId) {
         User myUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         PageRequest pageRequest = PageRequest.of(page - 1, 20);
