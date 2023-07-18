@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.domain.SocialPlatform;
+import org.winey.server.domain.user.SocialType;
 import org.winey.server.domain.user.SocialUser;
 import org.winey.server.external.client.kakao.KakaoApiClient;
 import org.winey.server.external.client.kakao.KakaoAuthApiClient;
@@ -44,13 +45,13 @@ public class KakaoSocialService extends SocialService {
         System.out.println(userResponse.getKakaoAccount().getProfile().getNickname());
         System.out.println(userResponse.getKakaoAccount().getProfile().getProfileImageUrl());
 
-        SocialUser user = SocialUser.of(
-                userResponse.getKakaoAccount().getProfile().getNickname(),
-                userResponse.getKakaoAccount().getProfile().getProfileImageUrl(),
-                SocialPlatform.KAKAO,
-                tokenResponse.getAccessToken(),
+        SocialUser user = SocialUser.builder()
+                .nickname(userResponse.getKakaoAccount().getProfile().getNickname())
+                .profileImage(userResponse.getKakaoAccount().getProfile().getProfileImageUrl())
+                .socialType(SocialType.KAKAO)
+                .tokenResponse.getAccessToken(),
                 tokenResponse.getRefreshToken()
-        );
+
         System.out.println(user);
         socialUserRepository.save(user);
 
