@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "유저 생성 API", description = "유저를 서버에 등록합니다.")
+    @Operation(summary = "마이페이지 API", description = "유저의 마이페이지를 조회합니다.")
     public ApiResponse<UserResponseDto> getUser(@RequestHeader Long userId) {
         return ApiResponse.success(Success.GET_USER_SUCCESS, userService.getUser(userId));
     }
