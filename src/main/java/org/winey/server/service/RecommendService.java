@@ -22,9 +22,9 @@ public class RecommendService {
     private final RecommendRepository recommendRepository;
     private final DecimalFormat decFormat = new DecimalFormat("###,###");
 
-    @Transactional
+    @Transactional(readOnly = true)
     public RecommendListResponseDto getRecommend(int page) {
-        PageRequest pageRequest = PageRequest.of(page - 1, 50);
+        PageRequest pageRequest = PageRequest.of(page - 1, 20);
         Page<Recommend> recommendPage = recommendRepository.findAllByOrderByCreatedAtDesc(pageRequest);
 
         PageResponseDto pageInfo = PageResponseDto.of(recommendPage.getTotalPages(), recommendPage.getNumber() + 1, (recommendPage.getTotalPages() == recommendPage.getNumber() + 1));
