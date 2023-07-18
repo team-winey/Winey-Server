@@ -99,7 +99,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public GetAllFeedResponseDto getAllFeed(int page, Long userId) {
-        PageRequest pageRequest = PageRequest.of(page - 1, 20);
+        PageRequest pageRequest = PageRequest.of(page - 1, 10);
         Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedAtDesc(pageRequest);
         PageResponseDto pageInfo = PageResponseDto.of(feedPage.getTotalPages(), feedPage.getNumber() + 1, (feedPage.getTotalPages() == feedPage.getNumber() + 1));
         User user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
@@ -122,7 +122,7 @@ public class FeedService {
     @Transactional(readOnly = true)
     public GetAllFeedResponseDto getMyFeed(int page, Long userId) {
         User myUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        PageRequest pageRequest = PageRequest.of(page - 1, 20);
+        PageRequest pageRequest = PageRequest.of(page - 1, 10);
         Page<Feed> myFeedPage = feedRepository.findAllByUserOrderByCreatedAtDesc(myUser, pageRequest);
         PageResponseDto pageInfo = PageResponseDto.of(myFeedPage.getTotalPages(), myFeedPage.getNumber() + 1, (myFeedPage.getTotalPages() == myFeedPage.getNumber() + 1));
         List<GetFeedResponseDto> feeds = myFeedPage.stream()
