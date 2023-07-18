@@ -8,6 +8,11 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"user_id", "feed_id"}
+        )
+})
 public class FeedLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

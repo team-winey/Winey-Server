@@ -1,7 +1,10 @@
 package org.winey.server.common.advice;
 
+import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -12,11 +15,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.CustomException;
+import org.winey.server.slack.SlackApi;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Objects;
 
 @RestControllerAdvice
+@Component
+@RequiredArgsConstructor
 public class ControllerExceptionAdvice {
+    private final SlackApi slackApi;
+
     /**
      * 400 BAD_REQUEST
      */
@@ -40,15 +50,21 @@ public class ControllerExceptionAdvice {
         return ApiResponse.error(Error.VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION, String.format("%s. (%s)", Error.VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION.getMessage(), e.getParameterName()));
     }
 
-//    /**
-//     * 500 Internal Server
-//     */
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ExceptionHandler(Exception.class)
-//    protected ApiResponse<Object> handleException(final Exception e) {
-//        return ApiResponse.error(Error.INTERNAL_SERVER_ERROR);
-//    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ApiResponse handleRequestParameterNotValidException(final ConstraintViolationException e) {
+        return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, String.format("%s", e.getConstraintName()));
+    }
 
+    /**
+     * 500 Internal Server
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    protected ApiResponse<Object> handleException(final Exception error, final HttpServletRequest request) throws IOException {
+        slackApi.sendAlert(error, request);
+        return ApiResponse.error(Error.INTERNAL_SERVER_ERROR);
+    }
     /**
      * custom error
      */

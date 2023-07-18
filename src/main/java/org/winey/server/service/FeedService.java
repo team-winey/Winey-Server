@@ -97,11 +97,12 @@ public class FeedService {
         return wantDeleteFeed.getFeedImage();
     }
 
-    public GetAllFeedResponseDto getAllFeed(int page, Long userId){
-        PageRequest pageRequest = PageRequest.of(page, 50);
+    @Transactional(readOnly = true)
+    public GetAllFeedResponseDto getAllFeed(int page, Long userId) {
+        PageRequest pageRequest = PageRequest.of(page - 1, 20);
         Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedAtDesc(pageRequest);
         PageResponseDto pageInfo = PageResponseDto.of(feedPage.getTotalPages(), feedPage.getNumber() + 1, (feedPage.getTotalPages() == feedPage.getNumber() + 1));
-        User user = userRepository.findByUserId(userId).orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         List<GetFeedResponseDto> feeds = feedPage.stream()
                 .map(feed -> GetFeedResponseDto.of(
                         feed.getFeedId(),
@@ -111,17 +112,18 @@ public class FeedService {
                         feed.getFeedTitle(),
                         feed.getFeedImage(),
                         feed.getFeedMoney(),
-                        feedLikeRepository.existsByFeedAndUser(feed,user), //현재 접속한 유저가 좋아요 눌렀는지
-                        feedLikeRepository.countByFeed(feed),              //해당 피드의 좋아요 개수 세기.
+                        feedLikeRepository.existsByFeedAndUser(feed, user), //현재 접속한 유저가 좋아요 눌렀는지
+                        (long) feedLikeRepository.countByFeed(feed),              //해당 피드의 좋아요 개수 세기.
                         feed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
-        return GetAllFeedResponseDto.of(pageInfo,feeds);
+        return GetAllFeedResponseDto.of(pageInfo, feeds);
     }
 
-    public GetAllFeedResponseDto getMyFeed(int page, Long userId){
-        User myUser = userRepository.findByUserId(userId).orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        PageRequest pageRequest = PageRequest.of(page, 50);
-        Page<Feed> myFeedPage = feedRepository.findAllByUserOrderByCreatedAtDesc(myUser,pageRequest);
+    @Transactional(readOnly = true)
+    public GetAllFeedResponseDto getMyFeed(int page, Long userId) {
+        User myUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        PageRequest pageRequest = PageRequest.of(page - 1, 20);
+        Page<Feed> myFeedPage = feedRepository.findAllByUserOrderByCreatedAtDesc(myUser, pageRequest);
         PageResponseDto pageInfo = PageResponseDto.of(myFeedPage.getTotalPages(), myFeedPage.getNumber() + 1, (myFeedPage.getTotalPages() == myFeedPage.getNumber() + 1));
         List<GetFeedResponseDto> feeds = myFeedPage.stream()
                 .map(myFeed -> GetFeedResponseDto.of(
@@ -132,11 +134,11 @@ public class FeedService {
                         myFeed.getFeedTitle(),
                         myFeed.getFeedImage(),
                         myFeed.getFeedMoney(),
-                        feedLikeRepository.existsByFeedAndUser(myFeed,myUser), //현재 접속한 유저가 좋아요 눌렀는지
-                        feedLikeRepository.countByFeed(myFeed),              //해당 피드의 좋아요 개수 세기.
+                        feedLikeRepository.existsByFeedAndUser(myFeed, myUser), //현재 접속한 유저가 좋아요 눌렀는지
+                        (long) feedLikeRepository.countByFeed(myFeed),              //해당 피드의 좋아요 개수 세기.
                         myFeed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
-        return GetAllFeedResponseDto.of(pageInfo,feeds);
+        return GetAllFeedResponseDto.of(pageInfo, feeds);
 
     }
 }
