@@ -17,6 +17,7 @@ import org.winey.server.infrastructure.UserRepository;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -41,7 +42,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
 
         int targetDay = (int) Period.between(presentGoal.getCreatedAt().toLocalDate(), presentGoal.getTargetDate()).getDays();
-        int dDay = (int) Period.between(LocalDate.now(), presentGoal.getTargetDate()).getDays();
+        int dDay = (int) ChronoUnit.DAYS.between(LocalDate.now(), presentGoal.getTargetDate());
         UserResponseGoalDto goalDto = UserResponseGoalDto.of(presentGoal.getDuringGoalAmount(), presentGoal.getDuringGoalCount(), presentGoal.getTargetMoney(), targetDay, dDay, LocalDate.now().isAfter(presentGoal.getTargetDate()), presentGoal.isAttained());
         return UserResponseDto.of(userDto, goalDto);
     }
