@@ -25,7 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
@@ -41,7 +41,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
 
         int targetDay = (int) Period.between(presentGoal.getCreatedAt().toLocalDate(), presentGoal.getTargetDate()).getDays();
-        int dDay = (int) Period.between(LocalDate.now(), presentGoal.getTargetDate()).plusDays(1).getDays();
+        int dDay = (int) Period.between(LocalDate.now(), presentGoal.getTargetDate()).getDays();
         UserResponseGoalDto goalDto = UserResponseGoalDto.of(presentGoal.getDuringGoalAmount(), presentGoal.getDuringGoalCount(), presentGoal.getTargetMoney(), targetDay, dDay, LocalDate.now().isAfter(presentGoal.getTargetDate()), presentGoal.isAttained());
         return UserResponseDto.of(userDto, goalDto);
     }
