@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.recommend.Recommend;
@@ -14,8 +13,12 @@ import java.util.List;
 
 @Entity
 @Getter
-@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"email", "socialType"}
+        )
+})
 public class SocialUser extends AuditingTimeEntity {
 
     @Id
@@ -38,7 +41,7 @@ public class SocialUser extends AuditingTimeEntity {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String refreshToken;
 
     @Column(nullable = false)
@@ -51,13 +54,16 @@ public class SocialUser extends AuditingTimeEntity {
     private List<Recommend> recommends;
 
     @Builder
-    public SocialUser(String nickname, String email, String refreshToken, SocialType socialType) {
+    public SocialUser(String nickname, String email, SocialType socialType) {
         this.nickname = nickname;
         this.userLevel = UserLevel.COMMONER;
         this.accumulatedAmount = 0L;
         this.feedCount = 0L;
         this.email = email;
-        this.refreshToken = refreshToken;
         this.socialType = socialType;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
