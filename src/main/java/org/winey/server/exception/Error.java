@@ -21,11 +21,13 @@ public enum Error {
     VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 파라미터값이 입력되지 않았습니다."),
     NOT_FOUND_CREATED_AT_EXCEPTION(HttpStatus.BAD_REQUEST, "요청한 피드의 생성일이 존재하지 않습니다."),
     PAGE_REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "페이지 넘버가 유효하지 않습니다."),
+    REQUEST_METHOD_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 메소드가 잘못됐습니다."),
 
     /**
      * 401 UNAUTHORIZED
      */
     TOKEN_TIME_EXPIRED_EXCEPTION(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+    DELETE_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "삭제 요청 권한이 없습니다."),
 
     /**
      * 403 FORBIDDEN
