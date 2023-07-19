@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -54,6 +56,12 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     protected ApiResponse handleRequestParameterNotValidException(final ConstraintViolationException e) {
         return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, String.format("%s", e.getConstraintName()));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    protected ApiResponse handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+        return ApiResponse.error(Error.REQUEST_METHOD_VALIDATION_EXCEPTION, e.getMessage());
     }
 
     /**
