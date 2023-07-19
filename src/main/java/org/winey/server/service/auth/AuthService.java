@@ -49,13 +49,15 @@ public class AuthService {
     }
 
     private String login(SocialType socialType, String socialAccessToken) {
-        return switch (socialType.toString()) {
-            case "APPLE" :
-                appleSignInService.getAppleData(socialAccessToken);
-            case "KAKAO" :
-                kakaoSignInService.getKakaoData(socialAccessToken);
+        String socialUserId;
+        switch (socialType.toString()) {
+            case "APPLE":
+                socialUserId = appleSignInService.getAppleData(socialAccessToken);
+            case "KAKAO":
+                socialUserId = kakaoSignInService.getKaKaoData(socialAccessToken);
             default:
+                socialUserId = "";
                 throw new RuntimeException();
-        };
+        }
     }
 }

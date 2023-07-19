@@ -14,4 +14,5 @@ public class KakaoUserProfile {
 
     private String nickname;
     private String profileImageUrl;
+    private String email;
 }
