@@ -47,12 +47,6 @@ public class SocialUser extends AuditingTimeEntity {
     @Column(nullable = false)
     private SocialType socialType;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
-    private List<Goal> goals;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
-    private List<Recommend> recommends;
-
     @Builder
     public SocialUser(String nickname, String email, SocialType socialType) {
         this.nickname = nickname;
