@@ -44,17 +44,19 @@ public class KakaoSocialService extends SocialService {
         System.out.println(userResponse.getKakaoAccount().getProfile());
         System.out.println(userResponse.getKakaoAccount().getProfile().getNickname());
         System.out.println(userResponse.getKakaoAccount().getProfile().getProfileImageUrl());
+        System.out.println(userResponse.getKakaoAccount().getProfile().getEmail());
 
         SocialUser user = SocialUser.builder()
                 .nickname(userResponse.getKakaoAccount().getProfile().getNickname())
                 .profileImage(userResponse.getKakaoAccount().getProfile().getProfileImageUrl())
                 .socialType(SocialType.KAKAO)
-                .tokenResponse.getAccessToken(),
-                tokenResponse.getRefreshToken()
+                .accessToken(tokenResponse.getAccessToken())
+                .refreshToken(tokenResponse.getRefreshToken())
+                .build();
 
         System.out.println(user);
         socialUserRepository.save(user);
 
-        return user.getId();
+        return user.getUserId();
     }
 }

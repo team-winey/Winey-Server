@@ -59,7 +59,7 @@ public class SocialUser extends AuditingTimeEntity {
     private List<Recommend> recommends;
 
     @Builder
-    public SocialUser(String nickname,String profileImage, String email, SocialType socialType) {
+    public SocialUser(String nickname,String profileImage, String email, SocialType socialType, String accessToken, String refreshToken) {
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.userLevel = UserLevel.COMMONER;
@@ -67,6 +67,7 @@ public class SocialUser extends AuditingTimeEntity {
         this.feedCount = 0L;
         this.email = email;
         this.socialType = socialType;
+        this.refreshToken = refreshToken;
     }
 
     public void updateRefreshToken(String refreshToken) {
