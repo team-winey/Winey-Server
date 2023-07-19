@@ -65,7 +65,7 @@ public class ControllerExceptionAdvice {
     }
 
     /**
-     * 500 Internal Server
+     * 500 Internal Server Error
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
