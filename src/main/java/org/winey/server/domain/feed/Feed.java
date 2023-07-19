@@ -11,6 +11,7 @@ import org.winey.server.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -33,6 +34,8 @@ public class Feed extends AuditingTimeEntity {
     @Column(nullable = false)
     private Long feedMoney;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "feed", orphanRemoval = true)
+    private List<FeedLike> feedLikes;
 
     @Builder
     public Feed(User user, String feedTitle, String feedImage, Long feedMoney){
