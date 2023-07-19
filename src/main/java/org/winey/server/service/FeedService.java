@@ -18,6 +18,7 @@ import org.winey.server.exception.Error;
 import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
+import org.winey.server.exception.model.UnauthorizedException;
 import org.winey.server.infrastructure.FeedLikeRepository;
 import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.GoalRepository;
@@ -84,12 +85,16 @@ public class FeedService {
         Feed wantDeleteFeed = feedRepository.findByFeedId(feedId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
 
+        if (presentUser != wantDeleteFeed.getUser()) {
+            throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
+        }
+
         if ((!presentGoal.getCreatedAt().isBefore(wantDeleteFeed.getCreatedAt())) || (!presentGoal.getTargetDate().isAfter(wantDeleteFeed.getCreatedAt().toLocalDate()))) {
             feedRepository.delete(wantDeleteFeed);
             return wantDeleteFeed.getFeedImage();
         }
         presentGoal.updateGoalCountAndAmount(wantDeleteFeed.getFeedMoney(), false);
-        if (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount()) {
+        if (presentUser.getUserLevel().getLevelNumber() >= 3 && (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount())) { //귀족 이상이면 강등로직.
             presentGoal.updateIsAttained(false); // 달성여부 체크
             checkUserLevelUp(presentUser); // userLevel 변동사항 체크
         }
@@ -99,7 +104,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public GetAllFeedResponseDto getAllFeed(int page, Long userId) {
-        PageRequest pageRequest = PageRequest.of(page - 1, 20);
+        PageRequest pageRequest = PageRequest.of(page - 1, 10);
         Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedAtDesc(pageRequest);
         PageResponseDto pageInfo = PageResponseDto.of(feedPage.getTotalPages(), feedPage.getNumber() + 1, (feedPage.getTotalPages() == feedPage.getNumber() + 1));
         User user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
@@ -122,7 +127,7 @@ public class FeedService {
     @Transactional(readOnly = true)
     public GetAllFeedResponseDto getMyFeed(int page, Long userId) {
         User myUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        PageRequest pageRequest = PageRequest.of(page - 1, 20);
+        PageRequest pageRequest = PageRequest.of(page - 1, 10);
         Page<Feed> myFeedPage = feedRepository.findAllByUserOrderByCreatedAtDesc(myUser, pageRequest);
         PageResponseDto pageInfo = PageResponseDto.of(myFeedPage.getTotalPages(), myFeedPage.getNumber() + 1, (myFeedPage.getTotalPages() == myFeedPage.getNumber() + 1));
         List<GetFeedResponseDto> feeds = myFeedPage.stream()
