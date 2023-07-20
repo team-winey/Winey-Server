@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.CustomException;
@@ -62,6 +63,12 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ApiResponse handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
         return ApiResponse.error(Error.REQUEST_METHOD_VALIDATION_EXCEPTION, e.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+    public ApiResponse fileSizeLimitExceeded(final MaxUploadSizeExceededException e) {
+       return ApiResponse.error(Error.MAX_UPLOAD_SIZE_EXCEED_EXCEPTION, e.getMessage());
     }
 
     /**
