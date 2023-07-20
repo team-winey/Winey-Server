@@ -23,6 +23,7 @@ public enum Error {
     PAGE_REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "페이지 넘버가 유효하지 않습니다."),
     REQUEST_METHOD_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 메소드가 잘못됐습니다."),
     MAX_UPLOAD_SIZE_EXCEED_EXCEPTION(HttpStatus.PAYLOAD_TOO_LARGE, "파일 용량 초과"),
+    MAX_AMOUNT_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "금액 상한선 초과"),
 
     /**
      * 401 UNAUTHORIZED

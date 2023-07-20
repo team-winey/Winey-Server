@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
@@ -32,7 +33,13 @@ public class FeedController {
     @Operation(summary = "위니 피드 생성 API", description = "위니 피드를 서버에 등록합니다.")
     public ApiResponse<CreateFeedResponseDto> createFeed(
             @RequestHeader("userId") Long userId,
-            @ModelAttribute CreateFeedRequestDto request) {
+            @Valid @ModelAttribute final CreateFeedRequestDto request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ApiResponse.error(Error.MAX_AMOUNT_VALIDATION_EXCEPTION, Error.MAX_AMOUNT_VALIDATION_EXCEPTION.getMessage());
+        }
+
         String feedImageUrl = s3Service.uploadImage(request.getFeedImage(), "feed");
         return ApiResponse.success(Success.CREATE_BOARD_SUCCESS, feedService.createFeed(request, userId, feedImageUrl));
     }
