@@ -11,6 +11,7 @@ import org.winey.server.domain.user.SocialUser;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.SocialUserRepository;
+import org.winey.server.service.auth.apple.AppleLoginService;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -21,11 +22,14 @@ public class AuthService {
     private final SocialUserRepository socialUserRepository;
     private final AppleSignInService appleSignInService;
     private final JwtService jwtService;
+    private final AppleLoginService appleLoginService;
 
     @Transactional
     public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SocialType socialType = SocialType.valueOf(requestDto.getSocialType());
         System.out.println(socialType);
+        String result = appleLoginService.getAppleId(socialAccessToken);
+        System.out.println(result);
         String email = login(socialType, socialAccessToken);
         System.out.println("이메일");
         System.out.println(email);
