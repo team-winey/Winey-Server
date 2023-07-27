@@ -12,18 +12,23 @@ import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.SocialUserRepository;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final SocialUserRepository socialUserRepository;
     private final AppleSignInService appleSignInService;
-    private final KakaoSignInService kakaoSignInService;
     private final JwtService jwtService;
 
     @Transactional
-    public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) {
+    public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SocialType socialType = SocialType.valueOf(requestDto.getSocialType());
+        System.out.println(socialType);
         String email = login(socialType, socialAccessToken);
+        System.out.println("이메일");
+        System.out.println(email);
         Boolean isRegistered = socialUserRepository.existsByEmailAndSocialType(email, socialType);
 
         if (!isRegistered) {
@@ -48,14 +53,15 @@ public class AuthService {
         return SignInResponseDto.of(socialUser.getUserId(), accessToken, refreshToken, socialUser.getEmail(), socialType.toString());
     }
 
-    private String login(SocialType socialType, String socialAccessToken) {
-        return switch (socialType.toString()) {
-            case "APPLE" :
-                appleSignInService.getAppleData(socialAccessToken);
-            case "KAKAO" :
-                kakaoSignInService.getKakaoData(socialAccessToken);
-            default:
-                throw new RuntimeException();
-        };
+    private String login(SocialType socialType, String socialAccessToken) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return appleSignInService.getAppleData(socialAccessToken);
+//        return switch (socialType.toString()) {
+//            case "APPLE" :
+//                appleSignInService.getAppleData(socialAccessToken);
+//            case "KAKAO" :
+//                kakaoSignInService.getKakaoData(socialAccessToken);
+//            default:
+//                throw new RuntimeException();
+//        };
     }
 }

@@ -10,6 +10,9 @@ import org.winey.server.controller.response.auth.SignInResponseDto;
 import org.winey.server.exception.Success;
 import org.winey.server.service.auth.AuthService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -22,8 +25,7 @@ public class AuthController {
     public ApiResponse<SignInResponseDto> signIn(
             @RequestHeader("Authorization") String socialAccessToken,
             @RequestBody SignInRequestDto requestDto
-            )
-    {
+            ) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return ApiResponse.success(Success.SIGNUP_SUCCESS, authService.signIn(socialAccessToken, requestDto));
 
     }
