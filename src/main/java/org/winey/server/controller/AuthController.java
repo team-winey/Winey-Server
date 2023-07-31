@@ -24,6 +24,8 @@ public class AuthController {
             @RequestBody SignInRequestDto requestDto
             )
     {
+
+        System.out.println("여기1");
         return ApiResponse.success(Success.SIGNUP_SUCCESS, authService.signIn(socialAccessToken, requestDto));
 
     }
