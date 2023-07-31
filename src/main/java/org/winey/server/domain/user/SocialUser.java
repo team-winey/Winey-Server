@@ -27,8 +27,6 @@ public class SocialUser extends AuditingTimeEntity {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(nullable = false)
-    private String profileImage;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -59,9 +57,8 @@ public class SocialUser extends AuditingTimeEntity {
     private List<Recommend> recommends;
 
     @Builder
-    public SocialUser(String nickname,String profileImage, String email, SocialType socialType, String accessToken, String refreshToken) {
+    public SocialUser(String nickname, String email, SocialType socialType, String refreshToken) {
         this.nickname = nickname;
-        this.profileImage = profileImage;
         this.userLevel = UserLevel.COMMONER;
         this.accumulatedAmount = 0L;
         this.feedCount = 0L;

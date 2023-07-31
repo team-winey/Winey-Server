@@ -12,6 +12,8 @@ import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.SocialUserRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -22,21 +24,26 @@ public class AuthService {
 
     @Transactional
     public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) {
+        System.out.println("hi3");
         SocialType socialType = SocialType.valueOf(requestDto.getSocialType());
-        String email = login(socialType, socialAccessToken);
+        String email = login(socialAccessToken,socialType);
+        System.out.println(email);
         Boolean isRegistered = socialUserRepository.existsByEmailAndSocialType(email, socialType);
-
+        System.out.println(isRegistered);
         if (!isRegistered) {
             SocialUser socialUser = SocialUser.builder()
-                    .nickname(socialType + email)
+                    .nickname(socialType+"@"+email)
                     .email(email)
                     .socialType(socialType)
+                    .refreshToken("")
                     .build();
+            socialUserRepository.save(socialUser);
+            System.out.println("소셜 유저 회원가입 완료");
         }
-
+        System.out.println("여기를 왜 못넘어오는걸까");
         SocialUser socialUser = socialUserRepository.findByEmailAndSocialType(email, socialType)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-
+        System.out.println("여기를 안넘어오는건가");
         // jwt 발급 (액세스 토큰, 리프레쉬 토큰)
         String accessToken = jwtService.issuedToken(String.valueOf(socialUser.getUserId()), 360 * 60 * 1000L);
         String refreshToken = jwtService.issuedToken(String.valueOf(socialUser.getUserId()), 3 * 24 * 60 * 60 * 1000L);
@@ -48,16 +55,20 @@ public class AuthService {
         return SignInResponseDto.of(socialUser.getUserId(), accessToken, refreshToken, socialUser.getEmail(), socialType.toString());
     }
 
-    private String login(SocialType socialType, String socialAccessToken) {
-        String socialUserId;
+
+    private String login(String socialAccessToken,SocialType socialType) {
+        String socialUserId = "";
+        System.out.println("하이2");
         switch (socialType.toString()) {
             case "APPLE":
                 socialUserId = appleSignInService.getAppleData(socialAccessToken);
+                return socialUserId;
             case "KAKAO":
                 socialUserId = kakaoSignInService.getKaKaoData(socialAccessToken);
-            default:
-                socialUserId = "";
-                throw new RuntimeException();
+                return socialUserId;
         }
+        System.out.println(socialUserId);
+        return socialUserId;
     }
+
 }
