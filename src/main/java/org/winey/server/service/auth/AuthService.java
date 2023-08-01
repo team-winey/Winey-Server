@@ -51,6 +51,14 @@ public class AuthService {
         return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, isRegistered);
     }
 
+    @Transactional
+    public String getAccessToken(String refreshToken) {
+        User user = userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        return jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_ACCESS);
+    }
+
     private String login(SocialType socialType, String socialAccessToken) {
         if (socialType.toString() == "APPLE") {
             return appleSignInService.getAppleId(socialAccessToken);

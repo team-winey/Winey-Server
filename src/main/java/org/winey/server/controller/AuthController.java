@@ -25,4 +25,10 @@ public class AuthController {
             ) {
         return ApiResponse.success(Success.LOGIN_SUCCESS, authService.signIn(socialAccessToken, requestDto));
     }
+
+    @PostMapping("/token")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse getAccessToken(@RequestHeader String refreshToken) {
+        return ApiResponse.success(Success.GET_ACCESS_TOKEN_SUCCESS, authService.getAccessToken(refreshToken));
+    }
 }
