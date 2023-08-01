@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
+import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.goal.GoalRequestCreateDto;
 import org.winey.server.controller.response.goal.GoalResponseCreateDto;
 import org.winey.server.exception.Success;
@@ -25,7 +26,7 @@ public class GoalController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "목표 생성 API", description = "위니 목표를 설정합니다.")
-    public ApiResponse<GoalResponseCreateDto> create(@RequestBody @Valid final GoalRequestCreateDto requestDto, @RequestHeader Long userId) {
+    public ApiResponse<GoalResponseCreateDto> create(@RequestBody @Valid final GoalRequestCreateDto requestDto, @UserId Long userId) {
         return ApiResponse.success(Success.CREATE_GOAL_SUCCESS, goalService.createGoal(requestDto, userId));
     }
 }

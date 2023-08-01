@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.config.jwt.JwtService;
 import org.winey.server.controller.request.auth.SignInRequestDto;
 import org.winey.server.controller.response.auth.SignInResponseDto;
+import org.winey.server.controller.response.auth.TokenResponseDto;
 import org.winey.server.domain.user.SocialType;
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
@@ -49,6 +50,30 @@ public class AuthService {
         user.updateRefreshToken(refreshToken);
 
         return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, isRegistered);
+    }
+
+    @Transactional
+    public TokenResponseDto issueToken(String refreshToken) {
+        jwtService.verifyToken(refreshToken);
+
+        User user = userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        // jwt 발급 (액세스 토큰, 리프레쉬 토큰)
+        String newAccessToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_ACCESS);
+        String newRefreshToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_REFRESH);
+
+        user.updateRefreshToken(newRefreshToken);
+
+        return TokenResponseDto.of(newAccessToken, newRefreshToken);
+    }
+
+    @Transactional
+    public void signOut(Long userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        user.updateRefreshToken(null);
     }
 
     private String login(SocialType socialType, String socialAccessToken) {
