@@ -17,16 +17,12 @@ import org.winey.server.service.auth.AuthService;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("")
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<SignInResponseDto> signIn(
             @RequestHeader("Authorization") String socialAccessToken,
             @RequestBody SignInRequestDto requestDto
-            )
-    {
-
-        System.out.println("여기1");
-        return ApiResponse.success(Success.SIGNUP_SUCCESS, authService.signIn(socialAccessToken, requestDto));
-
+            ) {
+        return ApiResponse.success(Success.LOGIN_SUCCESS, authService.signIn(socialAccessToken, requestDto));
     }
 }

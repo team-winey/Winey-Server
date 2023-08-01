@@ -1,4 +1,4 @@
-package org.winey.server.external.client.kakao.dto.response;
+package org.winey.server.service.auth.kakao.dto.response;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;

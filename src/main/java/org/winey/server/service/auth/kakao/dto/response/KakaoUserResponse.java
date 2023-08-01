@@ -1,7 +1,6 @@
-package org.winey.server.external.client.kakao.dto.response;
+package org.winey.server.service.auth.kakao.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
@@ -10,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class KakaoAccount {
+public class KakaoUserResponse {
 
-    private KakaoUserProfile profile;
+    private KakaoAccount kakaoAccount;
 }
