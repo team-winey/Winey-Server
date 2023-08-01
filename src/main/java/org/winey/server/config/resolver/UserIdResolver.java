@@ -26,7 +26,7 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(@NotNull MethodParameter parameter, ModelAndViewContainer modelAndViewContainer, @NotNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        final String token = request.getHeader("accessToken");
+        final String token = request.getHeader("token");
 
         // 토큰 검증
         if (!jwtService.verifyToken(token)) {
