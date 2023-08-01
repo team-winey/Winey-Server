@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
+import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.feed.CreateFeedResponseDto;
 import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
@@ -32,12 +33,12 @@ public class FeedController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "위니 피드 생성 API", description = "위니 피드를 서버에 등록합니다.")
     public ApiResponse<CreateFeedResponseDto> createFeed(
-            @RequestHeader("userId") Long userId,
+            @UserId Long userId,
             @Valid @ModelAttribute final CreateFeedRequestDto request,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return ApiResponse.error(Error.MAX_AMOUNT_VALIDATION_EXCEPTION, Error.MAX_AMOUNT_VALIDATION_EXCEPTION.getMessage());
+            return ApiResponse.error(Error.REQUEST_VALIDATION_EXCEPTION, Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
         }
 
         String feedImageUrl = s3Service.uploadImage(request.getFeedImage(), "feed");
@@ -48,7 +49,7 @@ public class FeedController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "위니 피드 삭제 API", description = "위니 피드를 서버에서 삭제합니다.")
     public ApiResponse deleteFeed(
-            @RequestHeader("userId") Long userId,
+            @UserId Long userId,
             @PathVariable Long feedId
     ) {
         String imageUrl = feedService.deleteFeed(userId, feedId);
@@ -60,7 +61,7 @@ public class FeedController {
     @ResponseStatus(HttpStatus.OK)
 
     @Operation(summary = "위니 피드 전체 조회 API", description = "위니 피드 전체를 조회합니다.")
-    public ApiResponse<GetAllFeedResponseDto> getAllFeed(@RequestParam int page, @RequestHeader Long userId) {
+    public ApiResponse<GetAllFeedResponseDto> getAllFeed(@RequestParam int page, @UserId Long userId) {
         if (page < 1)
             return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_FEED_LIST_SUCCESS, feedService.getAllFeed(page, userId));
@@ -69,7 +70,7 @@ public class FeedController {
     @GetMapping("/myFeed")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "마이 피드 조회 API", description = "마이 피드를 조회합니다.")
-    public ApiResponse<GetAllFeedResponseDto> getMyFeed(@RequestParam int page, @RequestHeader Long userId) {
+    public ApiResponse<GetAllFeedResponseDto> getMyFeed(@RequestParam int page, @UserId Long userId) {
         if (page < 1)
             return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_MYFEED_SUCCESS, feedService.getMyFeed(page, userId));
