@@ -53,23 +53,26 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponseDto issueToken(Long userId) {
-        User user = userRepository.findByUserId(userId)
+    public TokenResponseDto issueToken(String refreshToken) {
+        jwtService.verifyToken(refreshToken);
+
+        User user = userRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         // jwt 발급 (액세스 토큰, 리프레쉬 토큰)
-        String accessToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_ACCESS);
-        String refreshToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_REFRESH);
+        String newAccessToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_ACCESS);
+        String newRefreshToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_REFRESH);
 
-        user.updateRefreshToken(refreshToken);
+        user.updateRefreshToken(newRefreshToken);
 
-        return TokenResponseDto.of(accessToken, refreshToken);
+        return TokenResponseDto.of(newAccessToken, newRefreshToken);
     }
 
     @Transactional
     public void signOut(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
         user.updateRefreshToken(null);
     }
 

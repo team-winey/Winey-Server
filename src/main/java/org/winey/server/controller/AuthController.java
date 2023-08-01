@@ -30,8 +30,8 @@ public class AuthController {
 
     @PostMapping("/token")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<TokenResponseDto> reissueToken(@UserId Long userId) {
-        return ApiResponse.success(Success.RE_ISSUE_TOKEN_SUCCESS, authService.issueToken(userId));
+    public ApiResponse<TokenResponseDto> reissueToken(@RequestHeader String refreshToken) {
+        return ApiResponse.success(Success.RE_ISSUE_TOKEN_SUCCESS, authService.issueToken(refreshToken));
     }
 
     @PostMapping("/sign-out")
