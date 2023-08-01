@@ -66,6 +66,13 @@ public class AuthService {
         return TokenResponseDto.of(accessToken, refreshToken);
     }
 
+    @Transactional
+    public void signOut(Long userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        user.updateRefreshToken(null);
+    }
+
     private String login(SocialType socialType, String socialAccessToken) {
         if (socialType.toString() == "APPLE") {
             return appleSignInService.getAppleId(socialAccessToken);
