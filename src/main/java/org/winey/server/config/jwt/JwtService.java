@@ -5,7 +5,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.winey.server.exception.Error;
-import org.winey.server.exception.Success;
 import org.winey.server.exception.model.UnauthorizedException;
 
 import javax.annotation.PostConstruct;

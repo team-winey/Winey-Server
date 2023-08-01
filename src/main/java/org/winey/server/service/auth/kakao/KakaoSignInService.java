@@ -1,4 +1,4 @@
-package org.winey.server.service.auth;
+package org.winey.server.service.auth.kakao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
@@ -18,16 +18,13 @@ public class KakaoSignInService {
     @Value("${jwt.KAKAO_URL}")
     private String KAKAO_URL;
 
-    protected String getKaKaoData(String accessToken) {
+    public String getKaKaoId(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        System.out.println("여기가 문젠가?");
         headers.add("Authorization","Bearer "+ accessToken);
         HttpEntity<JsonArray> httpEntity = new HttpEntity<>(headers);
         ResponseEntity<Object> responseData;
         responseData = restTemplate.postForEntity(KAKAO_URL,httpEntity,Object.class);
-        System.out.println(responseData);
-        System.out.println(responseData.getBody());
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(responseData.getBody(), Map.class).get("id").toString(); //소셜 id만 가져오는듯.
     }
