@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
+import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.feedLike.CreateFeedLikeRequestDto;
 import org.winey.server.controller.response.feedLike.CreateFeedLikeResponseDto;
 import org.winey.server.exception.Success;
@@ -24,7 +25,7 @@ public class FeedLikeController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "좋아요를 만드는 API", description = "피드의 좋아요를 생성합니다.")
     public ApiResponse<CreateFeedLikeResponseDto> createFeedLike(
-            @RequestHeader Long userId,
+            @UserId Long userId,
             @PathVariable Long feedId,
             @RequestBody @Valid CreateFeedLikeRequestDto requestDto
     ) {
