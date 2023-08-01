@@ -28,10 +28,14 @@ public class User extends AuditingTimeEntity {
     private UserLevel userLevel;
 
     @Column(nullable = false)
-    private Long accumulatedAmount;
+    private String socialId;
+
+    @Column(nullable = true)
+    private String refreshToken;
 
     @Column(nullable = false)
-    private Long feedCount;
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Goal> goals;
@@ -40,14 +44,18 @@ public class User extends AuditingTimeEntity {
     private List<Recommend> recommends;
 
     @Builder
-    public User(String nickname, Long accumulatedAmount, Long feedCount) {
+    public User(String nickname, String socialId, SocialType socialType) {
         this.nickname = nickname;
-        this.accumulatedAmount = accumulatedAmount;
-        this.feedCount = feedCount;
         this.userLevel = UserLevel.COMMONER;
+        this.socialId = socialId;
+        this.socialType = socialType;
     }
 
     public void updateUserLevel(UserLevel userLevel){
         this.userLevel = userLevel;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
