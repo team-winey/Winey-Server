@@ -37,7 +37,7 @@ public class FeedController {
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return ApiResponse.error(Error.MAX_AMOUNT_VALIDATION_EXCEPTION, Error.MAX_AMOUNT_VALIDATION_EXCEPTION.getMessage());
+            return ApiResponse.error(Error.REQUEST_VALIDATION_EXCEPTION, Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
         }
 
         String feedImageUrl = s3Service.uploadImage(request.getFeedImage(), "feed");
