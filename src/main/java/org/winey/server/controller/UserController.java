@@ -15,6 +15,8 @@ import org.winey.server.exception.model.ConflictException;
 import org.winey.server.service.UserService;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,5 +42,17 @@ public class UserController {
         }
         userService.updateNickname(userId, requestDto);
         return ApiResponse.success(Success.UPDATE_NICKNAME_SUCCESS);
+    }
+
+    @GetMapping("/nickname/is-exist")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "닉네임 중복 확인 API", description = "닉네임 중복을 확인합니다.")
+    public ApiResponse checkNicknameDuplicate(@RequestParam String nickname) {
+        Map<String, Boolean> result = new HashMap<String, Boolean>() {
+            {
+                put("isDuplicated", userService.checkNicknameDuplicate(nickname));
+            }
+        };
+        return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATE_SUCCESS, result);
     }
 }
