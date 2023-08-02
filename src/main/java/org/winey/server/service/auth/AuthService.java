@@ -8,19 +8,24 @@ import org.winey.server.controller.request.auth.SignInRequestDto;
 import org.winey.server.controller.response.auth.SignInResponseDto;
 import org.winey.server.controller.response.auth.TokenResponseDto;
 import org.winey.server.domain.user.SocialType;
+
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.UserRepository;
 import org.winey.server.service.auth.apple.AppleSignInService;
+import org.winey.server.service.auth.kakao.KakaoSignInService;
+
+import javax.validation.constraints.NotNull;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private final AppleSignInService appleSignInService;
+    private final KakaoSignInService kakaoSignInService;
+    private final JwtService jwtService;
 
     private final UserRepository userRepository;
-    private final AppleSignInService appleSignInService;
-    private final JwtService jwtService;
 
     private final Long TOKEN_EXPIRATION_TIME_ACCESS = 360 * 60 * 1000L;
     private final Long TOKEN_EXPIRATION_TIME_REFRESH = 3 * 24 * 60 * 60 * 1000L;
@@ -79,7 +84,11 @@ public class AuthService {
     private String login(SocialType socialType, String socialAccessToken) {
         if (socialType.toString() == "APPLE") {
             return appleSignInService.getAppleId(socialAccessToken);
-        } else {
+        }
+        else if (socialType.toString() == "KAKAO") {
+            return kakaoSignInService.getKaKaoId(socialAccessToken);
+        }
+        else{
             return "ads";
         }
     }
