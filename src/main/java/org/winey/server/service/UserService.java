@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.controller.request.UpdateUserNicknameDto;
 import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.controller.response.user.UserResponseGoalDto;
 import org.winey.server.controller.response.user.UserResponseUserDto;
@@ -45,5 +46,17 @@ public class UserService {
         int dDay = (int) ChronoUnit.DAYS.between(LocalDate.now(), presentGoal.getTargetDate());
         UserResponseGoalDto goalDto = UserResponseGoalDto.of(presentGoal.getDuringGoalAmount(), presentGoal.getDuringGoalCount(), presentGoal.getTargetMoney(), targetDay, dDay, LocalDate.now().isAfter(presentGoal.getTargetDate()), presentGoal.isAttained());
         return UserResponseDto.of(userDto, goalDto);
+    }
+
+    @Transactional
+    public void updateNickname(Long userId, UpdateUserNicknameDto requestDto) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        user.updateNickname(requestDto.getNickname());
+    }
+
+    public Boolean checkNicknameDuplicate(String nickname) {
+        return userRepository.existsByNickname(nickname);
     }
 }
