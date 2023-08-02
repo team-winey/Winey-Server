@@ -80,7 +80,6 @@ public class ControllerExceptionAdvice {
         slackApi.sendAlert(error, request);
         return ApiResponse.error(Error.INTERNAL_SERVER_ERROR);
     }
-
     /**
      * custom error
      */
