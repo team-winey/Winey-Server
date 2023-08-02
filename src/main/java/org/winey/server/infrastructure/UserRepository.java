@@ -19,6 +19,7 @@ public interface UserRepository extends Repository<User, Long> {
 
     Optional<User> findByRefreshToken(String refreshToken);
 
+    Boolean existsByNickname(String nickname);
 
 
     // UPDATE
