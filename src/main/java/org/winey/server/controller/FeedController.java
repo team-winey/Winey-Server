@@ -59,6 +59,7 @@ public class FeedController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
+
     @Operation(summary = "위니 피드 전체 조회 API", description = "위니 피드 전체를 조회합니다.")
     public ApiResponse<GetAllFeedResponseDto> getAllFeed(@RequestParam int page, @UserId Long userId) {
         if (page < 1)
