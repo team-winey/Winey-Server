@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
+import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.recommend.Recommend;
 
@@ -42,6 +43,8 @@ public class User extends AuditingTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Recommend> recommends;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
+    private List<Feed> feeds;
 
     @Builder
     public User(String nickname, String socialId, SocialType socialType) {
