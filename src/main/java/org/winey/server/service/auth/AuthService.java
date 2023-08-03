@@ -1,5 +1,7 @@
 package org.winey.server.service.auth;
 
+import com.sun.net.httpserver.Authenticator;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,16 +9,22 @@ import org.winey.server.config.jwt.JwtService;
 import org.winey.server.controller.request.auth.SignInRequestDto;
 import org.winey.server.controller.response.auth.SignInResponseDto;
 import org.winey.server.controller.response.auth.TokenResponseDto;
+import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.user.SocialType;
 
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
+import org.winey.server.exception.model.UnprocessableEntityException;
+import org.winey.server.infrastructure.FeedRepository;
+import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.UserRepository;
 import org.winey.server.service.auth.apple.AppleSignInService;
 import org.winey.server.service.auth.kakao.KakaoSignInService;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +37,15 @@ public class AuthService {
 
     private final Long TOKEN_EXPIRATION_TIME_ACCESS = 360 * 60 * 1000L;
     private final Long TOKEN_EXPIRATION_TIME_REFRESH = 3 * 24 * 60 * 60 * 1000L;
+    private final GoalRepository goalRepository;
+
+    private final FeedRepository feedRepository;
 
     @Transactional
     public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) {
         SocialType socialType = SocialType.valueOf(requestDto.getSocialType());
         String socialId = login(socialType, socialAccessToken);
+        System.out.println("여기2");
 
         Boolean isRegistered = userRepository.existsBySocialIdAndSocialType(socialId, socialType);
 
@@ -86,10 +98,26 @@ public class AuthService {
             return appleSignInService.getAppleId(socialAccessToken);
         }
         else if (socialType.toString() == "KAKAO") {
+            System.out.println("여기1");
             return kakaoSignInService.getKaKaoId(socialAccessToken);
         }
         else{
             return "ads";
+        }
+    }
+
+    @Transactional
+    public void withdraw(Long userId){
+        if (userRepository.findByUserId(userId).isEmpty()) {
+            new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage());
+        }
+        Long res = userRepository.deleteByUserId(userId);
+        System.out.println(res + "삭제되었습니다.");
+        if (res==1){
+            signOut(userId);
+        }
+        else{
+            new UnprocessableEntityException(Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION, Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION.getMessage());
         }
     }
 }

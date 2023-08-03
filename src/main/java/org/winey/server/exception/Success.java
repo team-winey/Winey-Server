@@ -31,7 +31,9 @@ public enum Success {
     /**
      * 204 NO CONTENT
      */
-    DELETE_FEED_SUCCESS(HttpStatus.NO_CONTENT, "피드가 정상적으로 삭제되었습니다.")
+    DELETE_FEED_SUCCESS(HttpStatus.NO_CONTENT, "피드가 정상적으로 삭제되었습니다."),
+
+    DELETE_USER_SUCCESS(HttpStatus.NO_CONTENT, "회원 탈퇴가 정상적으로 이루어졌습니다.")
     ;
 
     private final HttpStatus httpStatus;
