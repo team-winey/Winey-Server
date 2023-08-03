@@ -61,4 +61,8 @@ public class User extends AuditingTimeEntity {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

@@ -24,10 +24,12 @@ public interface UserRepository extends Repository<User, Long> {
 
     Optional<User> findByRefreshToken(String refreshToken);
 
-    long deleteByUserId(Long userId);
+    Boolean existsByNickname(String nickname);
+
 
     // UPDATE
 
     // DELETE
+    long deleteByUserId(Long userId);
 
 }
