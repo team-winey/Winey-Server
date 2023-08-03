@@ -55,6 +55,8 @@ public enum Error {
      * 409 CONFLICT
      */
     ALREADY_EXIST_USER_EXCEPTION(HttpStatus.CONFLICT, "이미 존재하는 유저입니다"),
+    ALREADY_EXIST_NICKNAME_EXCEPTION(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다"),
+
 
     /**
      * 422 UNPROCESSABLE ENTITY

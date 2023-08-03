@@ -18,6 +18,8 @@ public enum Success {
     GET_MYFEED_SUCCESS(HttpStatus.OK, "마이 피드 조회 성공"),
 
     RE_ISSUE_TOKEN_SUCCESS(HttpStatus.OK, "토큰 재발급 성공"),
+    UPDATE_NICKNAME_SUCCESS(HttpStatus.OK, "닉네임 변경 성공"),
+    CHECK_NICKNAME_DUPLICATE_SUCCESS(HttpStatus.OK, "닉네임 중복 확인 성공"),
     /**
      * 201 CREATED
      */
