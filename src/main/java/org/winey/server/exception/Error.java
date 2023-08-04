@@ -57,6 +57,12 @@ public enum Error {
     ALREADY_EXIST_USER_EXCEPTION(HttpStatus.CONFLICT, "이미 존재하는 유저입니다"),
     ALREADY_EXIST_NICKNAME_EXCEPTION(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다"),
 
+
+    /**
+     * 422 UNPROCESSABLE ENTITY
+     */
+    UNPROCESSABLE_ENTITY_DELETE_EXCEPTION(HttpStatus.UNPROCESSABLE_ENTITY, "클라의 요청을 이해했지만 삭제하지 못했습니다."),
+
     /**
      * 500 INTERNAL SERVER ERROR
      */
