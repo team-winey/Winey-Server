@@ -40,4 +40,11 @@ public class AuthController {
         authService.signOut(userId);
         return ApiResponse.success(Success.SIGNOUT_SUCCESS);
     }
+
+    @DeleteMapping("/withdraw")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse withdraw(@UserId Long userId){
+        authService.withdraw(userId);
+        return ApiResponse.success(Success.DELETE_USER_SUCCESS);
+    }
 }
