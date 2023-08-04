@@ -108,16 +108,18 @@ public class AuthService {
 
     @Transactional
     public void withdraw(Long userId){
-        if (userRepository.findByUserId(userId).isEmpty()) {
-            new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage());
+        User user = userRepository.findByUserId(userId).orElse(null);
+        if (user == null) {
+            throw new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage());
         }
-        Long res = userRepository.deleteByUserId(userId);
-        System.out.println(res + "삭제되었습니다.");
-        if (res==1){
-            signOut(userId);
-        }
-        else{
-            new UnprocessableEntityException(Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION, Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION.getMessage());
+        System.out.println("User: " + user);
+        System.out.println("Goals: " + user.getGoals());
+        System.out.println("Recommends: " + user.getRecommends());
+        System.out.println("Feeds: " + user.getFeeds());
+        Long res = userRepository.deleteByUserId(userId); //res가 삭제된 컬럼의 개수 즉, 1이 아니면 뭔가 알 수 없는 에러.
+        System.out.println(res + "개의 컬럼이 삭제되었습니다.");
+        if (res!=1){
+            throw new UnprocessableEntityException(Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION, Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION.getMessage());
         }
     }
 }
