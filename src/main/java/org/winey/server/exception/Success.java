@@ -29,6 +29,8 @@ public enum Success {
     CREATE_BOARD_SUCCESS(HttpStatus.CREATED, "게시물 생성이 완료됐습니다."),
     CREATE_GOAL_SUCCESS(HttpStatus.CREATED, "목표 생성이 완료됐습니다."),
     CREATE_FEED_RESPONSE_SUCCESS(HttpStatus.CREATED, "피드 반응 생성이 완료됐습니다."),
+    CREATE_COMMENT_RESPONSE_SUCCESS(HttpStatus.CREATED, "댓글 생성이 완료됐습니다."),
+
 
     /**
      * 204 NO CONTENT
