@@ -35,4 +35,15 @@ public class CommentController {
         return ApiResponse.success(Success.CREATE_COMMENT_RESPONSE_SUCCESS, commentService.createComment(userId, feedId, requestDto.getContent()));
     }
 
+    @DeleteMapping(value = "/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "댓글 삭제 API", description = "피드의 댓글을 삭제합니다.")
+    public ApiResponse deleteComment(
+            @UserId Long userId,
+            @PathVariable Long commentId
+    ) {
+        commentService.deleteComment(userId, commentId);
+        return ApiResponse.success(Success.DELETE_COMMENT_SUCCESS);
+    }
+
 }

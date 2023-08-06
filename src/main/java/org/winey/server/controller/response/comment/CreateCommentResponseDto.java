@@ -11,11 +11,11 @@ import org.winey.server.domain.user.User;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateCommentResponseDto {
-    private Long feedId;
+    private Long commentId;
     private Long commentCounter;
     private User author;
 
-    public static CreateCommentResponseDto of(Long feedId, Long commentCounter,User author) {
-        return new CreateCommentResponseDto(feedId, commentCounter,author);
+    public static CreateCommentResponseDto of(Long commentId, Long commentCounter,User author) {
+        return new CreateCommentResponseDto(commentId, commentCounter,author);
     }
 }
