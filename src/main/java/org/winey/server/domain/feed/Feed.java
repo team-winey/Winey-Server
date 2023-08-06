@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.winey.server.domain.AuditingTimeEntity;
+import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.user.User;
 
@@ -36,6 +37,9 @@ public class Feed extends AuditingTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "feed", orphanRemoval = true)
     private List<FeedLike> feedLikes;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "feed", orphanRemoval = true)
+    private List<Comment> comment;
 
     @Builder
     public Feed(User user, String feedTitle, String feedImage, Long feedMoney){
