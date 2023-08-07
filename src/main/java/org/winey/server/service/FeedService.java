@@ -8,8 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
+import org.winey.server.controller.response.comment.CreateCommentResponseDto;
+import org.winey.server.controller.response.comment.GetCommentResponseDto;
 import org.winey.server.controller.response.feed.*;
 import org.winey.server.controller.response.recommend.RecommendResponseDto;
+import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.user.User;
@@ -19,10 +22,7 @@ import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
-import org.winey.server.infrastructure.FeedLikeRepository;
-import org.winey.server.infrastructure.FeedRepository;
-import org.winey.server.infrastructure.GoalRepository;
-import org.winey.server.infrastructure.UserRepository;
+import org.winey.server.infrastructure.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,6 +36,7 @@ public class FeedService {
 
     private final GoalRepository goalRepository;
     private final FeedLikeRepository feedLikeRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
@@ -144,6 +145,36 @@ public class FeedService {
                         myFeed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
         return GetAllFeedResponseDto.of(pageInfo, feeds);
+    }
+
+    @Transactional(readOnly = true)
+    public GetFeedDetailResponseDto getFeedDetail(Long feedId, Long userId) {
+        Feed detailFeed = feedRepository.findByFeedId(feedId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
+        User connectedUser = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        List<GetCommentResponseDto> comments = commentRepository.findAllByFeedOrderByCreatedAtDesc(detailFeed)
+                .stream().map(comment -> GetCommentResponseDto.of(
+                        comment.getCommentId(),
+                        comment.getUser(),
+                        comment.getContent(),
+                        comment.getCreatedAt().toLocalDate()
+                )).collect(Collectors.toList());
+
+        GetFeedResponseDto detailResponse = GetFeedResponseDto.of(
+                detailFeed.getFeedId(),
+                detailFeed.getUser().getUserId(),
+                detailFeed.getUser().getNickname(),
+                detailFeed.getUser().getUserLevel().getLevelNumber(),
+                detailFeed.getFeedTitle(),
+                detailFeed.getFeedImage(),
+                detailFeed.getFeedMoney(),
+                feedLikeRepository.existsByFeedAndUser(detailFeed, connectedUser), //현재 접속한 유저가 detail feed에 좋아요 눌렀는지
+                (long) feedLikeRepository.countByFeed(detailFeed),              //해당 피드의 좋아요 개수 세기.
+                detailFeed.getCreatedAt().toLocalDate()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
+        );
+
+        return GetFeedDetailResponseDto.of(detailResponse, comments);
 
     }
 }
