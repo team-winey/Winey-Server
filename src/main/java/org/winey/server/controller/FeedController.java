@@ -13,6 +13,7 @@ import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.feed.CreateFeedResponseDto;
 import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
+import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.Success;
 import org.winey.server.external.client.aws.S3Service;
@@ -74,5 +75,11 @@ public class FeedController {
         if (page < 1)
             return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_MYFEED_SUCCESS, feedService.getMyFeed(page, userId));
+    }
+    @GetMapping("/detail")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "피드 detail 조회 API", description = "피드 detail을 조회합니다.")
+    public ApiResponse<GetFeedDetailResponseDto> getFeedDetail(@PathVariable Long feedId, @UserId Long userId) {
+        return ApiResponse.success(Success.GET_DETAIL_SUCCESS, feedService.getFeedDetail(feedId, userId));
     }
 }

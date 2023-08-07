@@ -25,7 +25,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping(value = "/{feedId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "댓글을 만드는 API", description = "피드의 댓글을 생성합니다.")
     public ApiResponse<CreateCommentResponseDto> createComment(
             @UserId Long userId,
