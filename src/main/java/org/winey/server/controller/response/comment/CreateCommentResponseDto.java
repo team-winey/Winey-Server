@@ -13,9 +13,11 @@ import org.winey.server.domain.user.User;
 public class CreateCommentResponseDto {
     private Long commentId;
     private Long commentCounter;
-    private User author;
+    private String author;
 
-    public static CreateCommentResponseDto of(Long commentId, Long commentCounter,User author) {
-        return new CreateCommentResponseDto(commentId, commentCounter,author);
+    private String content;
+
+    public static CreateCommentResponseDto of(Long commentId, Long commentCounter,String author, String content) {
+        return new CreateCommentResponseDto(commentId, commentCounter,author, content);
     }
 }
