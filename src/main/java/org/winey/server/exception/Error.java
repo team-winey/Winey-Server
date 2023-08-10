@@ -46,10 +46,11 @@ public enum Error {
     /**
      * 404 NOT FOUND
      */
-    NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다"),
+    NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
     NOT_FOUND_RECOMMEND_PAGE_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 추천 위니 페이지입니다."),
-    NOT_FOUND_GOAL_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 목표입니다"),
-    NOT_FOUND_FEED_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 피드입니다"),
+    NOT_FOUND_GOAL_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 목표입니다."),
+    NOT_FOUND_FEED_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 피드입니다."),
+    NOT_FOUND_COMMENT_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
 
     /**
      * 409 CONFLICT
