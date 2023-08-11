@@ -35,7 +35,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    private final Long TOKEN_EXPIRATION_TIME_ACCESS = 360 * 60 * 1000L;
+    private final Long TOKEN_EXPIRATION_TIME_ACCESS = 3 * 60 * 1000L;
     private final Long TOKEN_EXPIRATION_TIME_REFRESH = 3 * 24 * 60 * 60 * 1000L;
     private final GoalRepository goalRepository;
 
