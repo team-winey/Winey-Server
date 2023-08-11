@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
+import org.winey.server.controller.response.notification.GetAllNotiResponseDto;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.Success;
 import org.winey.server.service.FeedService;

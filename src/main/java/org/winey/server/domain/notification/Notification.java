@@ -1,9 +1,6 @@
 package org.winey.server.domain.notification;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.winey.server.domain.user.User;
 
 import javax.persistence.*;
@@ -27,16 +24,18 @@ public class Notification {
     private NotiType notiType;
 
     private boolean isChecked; //유저가 이 알림을 체크했는지
+    private Integer LinkId;
 
     @Builder
-    public Notification(User user, NotiType notiType, NotiFeed notiFeed, String notiMessage, boolean isChecked){
+    public Notification(User user, NotiType notiType, String notiMessage, boolean isChecked){
         this.notiUser = user;
         this.notiType = notiType;
         this.notiMessage = notiMessage;
         this.isChecked = isChecked;
     }
-
-
+    public void updateLinkId(Integer linkId) {
+        this.LinkId = linkId;
+    }
 
 
 }
