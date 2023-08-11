@@ -38,7 +38,7 @@ public class CommentService {
                 .feed(feed)
                 .build();
         commentRepository.save(comment);
-        return CreateCommentResponseDto.of(comment.getCommentId(), commentRepository.countByFeed(feed),user);
+        return CreateCommentResponseDto.of(comment.getCommentId(), commentRepository.countByFeed(feed),user.getNickname(), comment.getContent());
     }
 
     @Transactional
