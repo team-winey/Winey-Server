@@ -9,7 +9,7 @@ import org.winey.server.domain.user.User;
 import java.util.List;
 
 public interface NotiRepository extends Repository<Notification,Long>{
-    void save(Feed feed);
+    void save(Notification notification);
 
     List<Notification> findAllByUserOrderByCreatedAtDesc(User user);
 

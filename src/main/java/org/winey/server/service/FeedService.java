@@ -15,6 +15,8 @@ import org.winey.server.controller.response.recommend.RecommendResponseDto;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
+import org.winey.server.domain.notification.NotiType;
+import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
@@ -38,6 +40,8 @@ public class FeedService {
     private final FeedLikeRepository feedLikeRepository;
     private final CommentRepository commentRepository;
 
+    private final NotiRepository notiRepository;
+
     @Transactional
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
         User presentUser = userRepository.findByUserId(userId)
@@ -59,21 +63,53 @@ public class FeedService {
         }
         if (myGoal.getDuringGoalAmount() >= myGoal.getTargetMoney()) {
             myGoal.updateIsAttained(true); // 달성여부 체크
-            checkUserLevelUp(presentUser); // userLevel 변동사항 체크
+            if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
+                switch (checkUserLevelUp(presentUser)){
+                    case 2:
+                        Notification noti2 = Notification.builder()
+                                .notiType(NotiType.RANKUPTO2)
+                                .notiMessage(NotiType.RANKUPTO2.getType())
+                                .isChecked(false)
+                                .user(presentUser)
+                                .build();
+                        notiRepository.save(noti2);
+                    case 3:
+                        Notification noti3 = Notification.builder()
+                                .notiType(NotiType.RANKUPTO3)
+                                .notiMessage(NotiType.RANKUPTO3.getType())
+                                .isChecked(false)
+                                .user(presentUser)
+                                .build();
+                        notiRepository.save(noti3);
+                    case 4:
+                        Notification noti4 = Notification.builder()
+                                .notiType(NotiType.RANKUPTO4)
+                                .notiMessage(NotiType.RANKUPTO4.getType())
+                                .isChecked(false)
+                                .user(presentUser)
+                                .build();
+                        notiRepository.save(noti4);
+
+                }
+            }
         }
         return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
     }
 
-    private void checkUserLevelUp(User presentUser) {
+    private int checkUserLevelUp(User presentUser) {
         int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser, true); //Goal 중 userid가 맞고 isAttained true 개수 세기
         if (userAchievedGoals < 1) {
             presentUser.updateUserLevel(UserLevel.COMMONER);
+            return 1;
         } else if (userAchievedGoals < 3) {
             presentUser.updateUserLevel(UserLevel.KNIGHT);
+            return 2;
         } else if (userAchievedGoals < 9) {
             presentUser.updateUserLevel(UserLevel.ARISTOCRAT);
+            return 3;
         } else {
             presentUser.updateUserLevel(UserLevel.EMPEROR);
+            return 4;
         }
     }
 
@@ -97,7 +133,26 @@ public class FeedService {
         presentGoal.updateGoalCountAndAmount(wantDeleteFeed.getFeedMoney(), false);
         if (presentUser.getUserLevel().getLevelNumber() >= 3 && (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount())) { //귀족 이상이면 강등로직.
             presentGoal.updateIsAttained(false); // 달성여부 체크
-            checkUserLevelUp(presentUser); // userLevel 변동사항 체크
+            if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
+                switch (checkUserLevelUp(presentUser)){
+                    case 3:
+                        Notification noti3 = Notification.builder()
+                                .notiType(NotiType.DELETERANKDOWNTO3)
+                                .notiMessage(NotiType.DELETERANKDOWNTO3.getType())
+                                .isChecked(false)
+                                .user(presentUser)
+                                .build();
+                        notiRepository.save(noti3);
+                    case 2:
+                        Notification noti2 = Notification.builder()
+                                .notiType(NotiType.DELETERANKDOWNTO2)
+                                .notiMessage(NotiType.DELETERANKDOWNTO2.getType())
+                                .isChecked(false)
+                                .user(presentUser)
+                                .build();
+                        notiRepository.save(noti2);
+                }
+            }
         }
         feedRepository.delete(wantDeleteFeed);
         return wantDeleteFeed.getFeedImage();
