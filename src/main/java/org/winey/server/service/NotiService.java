@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class NotiService {
     private final NotiRepository notiRepository;
     private final UserRepository userRepository;
+
     @Transactional(readOnly = true)
     public GetAllNotiResponseDto getAllNoti(Long userId) {
         User currentUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
@@ -39,8 +40,18 @@ public class NotiService {
                         noti.getNotiMessage(),
                         noti.getNotiType(),
                         noti.isChecked(),
-                        noti.getLinkId()
+                        noti.getLinkId() == null ? 0 : noti.getLinkId()
                 )).collect(Collectors.toList());
         return GetAllNotiResponseDto.of(response);
+    }
+
+    public void checkAllNoti(Long userId) {     // 내가 체크 안했던 애들을 찾아서 다 체크 true 해버리기. 특정 조건 url을 타면 ㅇㅇ
+        User currentUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        List<Notification> notifications = notiRepository.findByNotiReciverAndIsCheckedFalse(currentUser);
+        notifications.stream().forEach
+                (notification -> {
+                    notification.updateIsChecked();
+                    notiRepository.save(notification);
+                });
     }
 }

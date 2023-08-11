@@ -16,6 +16,8 @@ public enum Success {
     GET_FEED_LIST_SUCCESS(HttpStatus.OK, "피드 전체 조회 성공"),
     GET_USER_SUCCESS(HttpStatus.OK, "유저 조회 성공"),
     GET_MYFEED_SUCCESS(HttpStatus.OK, "마이 피드 조회 성공"),
+    GET_NOTIFICATIONS_SUCCESS(HttpStatus.OK, "알림 리스트 조회 성공"),
+    CHECK_ALL_NOTIFICATIONS(HttpStatus.OK, "알림 리스트 체크 성공"),
 
     GET_DETAIL_SUCCESS(HttpStatus.OK, "피드 디테일 페이지 조회 성공"),
 
