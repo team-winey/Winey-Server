@@ -76,10 +76,10 @@ public class FeedController {
             return ApiResponse.error(Error.PAGE_REQUEST_VALIDATION_EXCEPTION, Error.PAGE_REQUEST_VALIDATION_EXCEPTION.getMessage());
         return ApiResponse.success(Success.GET_MYFEED_SUCCESS, feedService.getMyFeed(page, userId));
     }
-    @GetMapping("/detail")
+    @GetMapping(value = "/{feedId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "피드 detail 조회 API", description = "피드 detail을 조회합니다.")
-    public ApiResponse<GetFeedDetailResponseDto> getFeedDetail(@PathVariable Long feedId, @UserId Long userId) {
+    public ApiResponse<GetFeedDetailResponseDto> getFeedDetail(@UserId Long userId, @PathVariable Long feedId) {
         return ApiResponse.success(Success.GET_DETAIL_SUCCESS, feedService.getFeedDetail(feedId, userId));
     }
 }
