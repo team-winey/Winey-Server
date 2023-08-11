@@ -41,6 +41,9 @@ public class Notification {
     public void updateLinkId(Long linkId) {
         this.linkId = linkId;
     }
+    public void updateIsChecked() {
+        this.isChecked = true;
+    }
 
 
 }

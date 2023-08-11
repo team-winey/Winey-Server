@@ -13,4 +13,11 @@ public interface NotiRepository extends Repository<Notification,Long>{
 
     List<Notification> findAllByUserOrderByCreatedAtDesc(User user);
 
+    List<Notification> findByNotiReciverAndIsCheckedFalse(User notiReciver);
+
+    long countByNotiReciverAndIsCheckedFalse(User notiReciver);
+
+
+
+
 }

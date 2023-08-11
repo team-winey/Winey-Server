@@ -23,10 +23,18 @@ public class NotiController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-
     @Operation(summary = "위니 알림 전체 조회 API", description = "위니 알림 전체를 조회합니다.")
     public ApiResponse<GetAllNotiResponseDto> getAllNoti(@UserId Long userId) {
-        return ApiResponse.success(Success.GET_FEED_LIST_SUCCESS, notiService.getAllNoti(userId));
+        return ApiResponse.success(Success.GET_NOTIFICATIONS_SUCCESS, notiService.getAllNoti(userId));
     }
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "위니 안읽은 알림 전체 확인 API", description = "위니 알림 전체를 확인합니다.")
+    public ApiResponse checkAllNoti(@UserId Long userId){
+        notiService.checkAllNoti(userId);
+        return ApiResponse.success(Success.CHECK_ALL_NOTIFICATIONS);
+    }
+
 
 }
