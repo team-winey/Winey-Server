@@ -70,7 +70,8 @@ public class FeedService {
                                 .notiType(NotiType.RANKUPTO2)
                                 .notiMessage(NotiType.RANKUPTO2.getType())
                                 .isChecked(false)
-                                .user(presentUser)
+                                .notiSender(presentUser)
+                                .notiReciver(presentUser)
                                 .build();
                         notiRepository.save(noti2);
                     case 3:
@@ -78,7 +79,8 @@ public class FeedService {
                                 .notiType(NotiType.RANKUPTO3)
                                 .notiMessage(NotiType.RANKUPTO3.getType())
                                 .isChecked(false)
-                                .user(presentUser)
+                                .notiSender(presentUser)
+                                .notiReciver(presentUser)
                                 .build();
                         notiRepository.save(noti3);
                     case 4:
@@ -86,7 +88,8 @@ public class FeedService {
                                 .notiType(NotiType.RANKUPTO4)
                                 .notiMessage(NotiType.RANKUPTO4.getType())
                                 .isChecked(false)
-                                .user(presentUser)
+                                .notiSender(presentUser)
+                                .notiReciver(presentUser)
                                 .build();
                         notiRepository.save(noti4);
 
@@ -140,7 +143,8 @@ public class FeedService {
                                 .notiType(NotiType.DELETERANKDOWNTO3)
                                 .notiMessage(NotiType.DELETERANKDOWNTO3.getType())
                                 .isChecked(false)
-                                .user(presentUser)
+                                .notiSender(presentUser)
+                                .notiReciver(presentUser)
                                 .build();
                         notiRepository.save(noti3);
                     case 2:
@@ -148,7 +152,8 @@ public class FeedService {
                                 .notiType(NotiType.DELETERANKDOWNTO2)
                                 .notiMessage(NotiType.DELETERANKDOWNTO2.getType())
                                 .isChecked(false)
-                                .user(presentUser)
+                                .notiSender(presentUser)
+                                .notiReciver(presentUser)
                                 .build();
                         notiRepository.save(noti2);
                 }
