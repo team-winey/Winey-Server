@@ -29,7 +29,7 @@ public class Notification {
     private boolean isChecked; //유저가 이 알림을 체크했는지
 
     @Builder
-    public Notification(User user, NotiType notiType, String notiMessage, boolean isChecked){
+    public Notification(User user, NotiType notiType, NotiFeed notiFeed, String notiMessage, boolean isChecked){
         this.notiUser = user;
         this.notiType = notiType;
         this.notiMessage = notiMessage;
