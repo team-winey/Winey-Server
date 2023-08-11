@@ -35,6 +35,7 @@ public class NotiService {
                 .map(noti -> GetNotiResponseDto.of(
                         noti.getNotiId(),
                         noti.getNotiSender().getNickname(),
+                        noti.getNotiReciver().getNickname(),
                         noti.getNotiMessage(),
                         noti.getNotiType(),
                         noti.isChecked(),

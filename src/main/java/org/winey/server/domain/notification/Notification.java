@@ -28,7 +28,7 @@ public class Notification {
     private NotiType notiType;
 
     private boolean isChecked; //유저가 이 알림을 체크했는지
-    private Integer LinkId;
+    private Long linkId; //링크 타고 갈 피드 아이디
 
     @Builder
     public Notification(User notiReciver, User notiSender, NotiType notiType, String notiMessage, boolean isChecked){
@@ -38,8 +38,8 @@ public class Notification {
         this.notiMessage = notiMessage;
         this.isChecked = isChecked;
     }
-    public void updateLinkId(Integer linkId) {
-        this.LinkId = linkId;
+    public void updateLinkId(Long linkId) {
+        this.linkId = linkId;
     }
 
 
