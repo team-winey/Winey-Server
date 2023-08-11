@@ -15,8 +15,12 @@ public class Notification {
     private Long notiId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    private User notiUser;
+    @JoinColumn(name="receive_user")
+    private User notiReciver;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="request_user")
+    private User notiSender;
 
     private String notiMessage;
     @Column(nullable = false)
@@ -27,8 +31,9 @@ public class Notification {
     private Integer LinkId;
 
     @Builder
-    public Notification(User user, NotiType notiType, String notiMessage, boolean isChecked){
-        this.notiUser = user;
+    public Notification(User notiReciver, User notiSender, NotiType notiType, String notiMessage, boolean isChecked){
+        this.notiReciver = notiReciver;
+        this.notiSender = notiSender;
         this.notiType = notiType;
         this.notiMessage = notiMessage;
         this.isChecked = isChecked;

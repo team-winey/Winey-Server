@@ -34,7 +34,7 @@ public class NotiService {
         List<GetNotiResponseDto> response = notifications.stream()
                 .map(noti -> GetNotiResponseDto.of(
                         noti.getNotiId(),
-                        noti.getNotiUser().getNickname(),
+                        noti.getNotiSender().getNickname(),
                         noti.getNotiMessage(),
                         noti.getNotiType(),
                         noti.isChecked(),
