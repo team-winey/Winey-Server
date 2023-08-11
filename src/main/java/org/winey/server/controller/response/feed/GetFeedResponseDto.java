@@ -25,11 +25,11 @@ public class GetFeedResponseDto {
     private Long feedMoney;
     private Boolean isLiked;
     private Long likes;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
 
     public static GetFeedResponseDto of(Long feedId,Long userId, String nickName, int writerLevel,String feedTitle, String feedImage,
-                                 Long feedMoney, Boolean isLiked, Long likes, LocalDate createdAt){
+                                 Long feedMoney, Boolean isLiked, Long likes, LocalDateTime createdAt){
         return new GetFeedResponseDto(feedId,userId,nickName,writerLevel, feedTitle, feedImage, feedMoney, isLiked, likes, createdAt);
     }
 }
