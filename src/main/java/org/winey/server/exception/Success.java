@@ -17,6 +17,8 @@ public enum Success {
     GET_USER_SUCCESS(HttpStatus.OK, "유저 조회 성공"),
     GET_MYFEED_SUCCESS(HttpStatus.OK, "마이 피드 조회 성공"),
 
+    GET_DETAIL_SUCCESS(HttpStatus.OK, "피드 디테일 페이지 조회 성공"),
+
     RE_ISSUE_TOKEN_SUCCESS(HttpStatus.OK, "토큰 재발급 성공"),
     UPDATE_NICKNAME_SUCCESS(HttpStatus.OK, "닉네임 변경 성공"),
     CHECK_NICKNAME_DUPLICATE_SUCCESS(HttpStatus.OK, "닉네임 중복 확인 성공"),
