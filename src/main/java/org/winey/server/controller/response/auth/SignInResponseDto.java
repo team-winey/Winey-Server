@@ -10,12 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SignInResponseDto {
     private Long userId;
-    private String refreshToken;
     private String accessToken;
-
+    private String refreshToken;
     private Boolean isRegistered;
 
-    public static SignInResponseDto of(Long userId, String refreshToken, String accessToken, Boolean isRegistered) {
-        return new SignInResponseDto(userId, refreshToken, accessToken, isRegistered);
+    public static SignInResponseDto of(Long userId, String accessToken, String refreshToken, Boolean isRegistered) {
+        return new SignInResponseDto(userId, accessToken, refreshToken, isRegistered);
     }
 }
