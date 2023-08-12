@@ -18,15 +18,13 @@ import java.time.LocalDate;
 public class GetNotiResponseDto {
     private Long notiId;
     // user부분
-    private String notiSender; //알림을 일으킨 유저. 등급 상승등은 본인 닉네임.
-
     private String notiReceiver; //알림 받은 유저 닉네임.
     private String notiMessage;
     private NotiType notiType;
     private boolean isChecked; //유저가 이 알림을 체크했는지
     private Long LinkId; //좋아요, 댓글일 경우에는 feedid를 넘기고 아니면 안넘어감.
 
-    public static GetNotiResponseDto of(Long notiId, String notiSender, String notiReceiver, String notiMessage, NotiType notiType, boolean isChecked, Long linkId){
-        return new GetNotiResponseDto(notiId,notiSender,notiReceiver,notiMessage,notiType,isChecked,linkId);
+    public static GetNotiResponseDto of(Long notiId,String notiReceiver, String notiMessage, NotiType notiType, boolean isChecked, Long linkId){
+        return new GetNotiResponseDto(notiId,notiReceiver,notiMessage,notiType,isChecked,linkId);
     }
 }
