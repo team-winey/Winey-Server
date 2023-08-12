@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.controller.response.comment.CreateCommentResponseDto;
 import org.winey.server.controller.response.feedLike.CreateFeedLikeResponseDto;
 import org.winey.server.domain.comment.Comment;
+import org.winey.server.domain.notification.NotiType;
+import org.winey.server.domain.notification.Notification;
 import org.winey.server.exception.model.UnauthorizedException;
 import org.winey.server.exception.model.UnprocessableEntityException;
 import org.winey.server.infrastructure.CommentRepository;
@@ -14,6 +16,7 @@ import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.FeedRepository;
+import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
 
 
@@ -23,6 +26,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
     private final CommentRepository commentRepository;
+    private final NotiRepository notiRepository;
 
     @Transactional
     public CreateCommentResponseDto createComment(Long userId, Long feedId, String content) {
@@ -38,6 +42,15 @@ public class CommentService {
                 .feed(feed)
                 .build();
         commentRepository.save(comment);
+
+        Notification notification = Notification.builder() //누군가가 내 피드에 댓글을 달았어요~
+                .notiReciver(feed.getUser())
+                .notiType(NotiType.COMMENTNOTI)
+                .notiSender(user)
+                .notiMessage(NotiType.COMMENTNOTI.getType())
+                .isChecked(false)
+                .build();
+        notification.updateLinkId(feedId);
         return CreateCommentResponseDto.of(comment.getCommentId(), commentRepository.countByFeed(feed),user.getNickname(), comment.getContent());
     }
 

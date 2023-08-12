@@ -14,6 +14,8 @@ public interface GoalRepository extends Repository<Goal, Long> {
     // READ
 
     int countByUserAndIsAttained(User user, boolean isAttained);
+    @Query("SELECT g FROM Goal g WHERE g.createdAt IN (SELECT MAX(g2.createdAt) FROM Goal g2 WHERE g2.user = g.user)")
+    List<Goal> findLatestGoalsForEachUser();
 
     @Query("select g from Goal g where g.user = ?1 order by g.createdAt DESC")
     List<Goal> findByUserOrderByCreatedAtDesc(User user);
