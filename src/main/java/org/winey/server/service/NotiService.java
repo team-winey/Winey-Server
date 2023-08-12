@@ -39,23 +39,25 @@ public class NotiService {
     @Transactional(readOnly = true)
     public GetAllNotiResponseDto getAllNoti(Long userId) {
         User currentUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        List<Notification> notifications = notiRepository.findAllByNotiReciverOrderByCreatedAtDesc(currentUser);
+        List<Notification> notifications = notiRepository.findAllByNotiReceiverOrderByCreatedAtDesc(currentUser);
+        if (notifications.isEmpty()){
+            throw new NotFoundException(Error.NOT_FOUND_NOTIFICATION_EXCEPTION, Error.NOT_FOUND_NOTIFICATION_EXCEPTION.getMessage());
+        }
         List<GetNotiResponseDto> response = notifications.stream()
                 .map(noti -> GetNotiResponseDto.of(
                         noti.getNotiId(),
-                        noti.getNotiSender().getNickname(),
-                        noti.getNotiReciver().getNickname(),
+                        noti.getNotiReceiver().getNickname(),
                         noti.getNotiMessage(),
                         noti.getNotiType(),
                         noti.isChecked(),
-                        noti.getLinkId() == null ? 0 : noti.getLinkId()
+                        noti.getLinkId()
                 )).collect(Collectors.toList());
         return GetAllNotiResponseDto.of(response);
     }
 
     public void checkAllNoti(Long userId) {     // 내가 체크 안했던 애들을 찾아서 다 체크 true 해버리기. 특정 조건 url을 타면 ㅇㅇ
         User currentUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        List<Notification> notifications = notiRepository.findByNotiReciverAndIsCheckedFalse(currentUser);
+        List<Notification> notifications = notiRepository.findByNotiReceiverAndIsCheckedFalse(currentUser);
         notifications.stream().forEach
                 (notification -> {
                     notification.updateIsChecked();
@@ -75,11 +77,11 @@ public class NotiService {
             if (currentGoal.getTargetDate().isBefore(today)) {
                 Notification notification = Notification.builder()
                         .notiType(NotiType.GOALFAILED)
-                        .notiSender(currentGoal.getUser())
                         .notiReciver(currentGoal.getUser())
                         .notiMessage(NotiType.GOALFAILED.getType())
                         .isChecked(false)
                         .build();
+                notification.updateLinkId(null);
                 notiRepository.save(notification);
             }
         }

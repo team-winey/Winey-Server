@@ -30,7 +30,7 @@ public class NotiController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "위니 안읽은 알림 전체 확인 API", description = "위니 알림 전체를 확인합니다.")
+    @Operation(summary = "위니 안읽은 알림 읽음처리 API", description = "위니 알림 전체를 읽음처리 합니다.")
     public ApiResponse checkAllNoti(@UserId Long userId){
         notiService.checkAllNoti(userId);
         return ApiResponse.success(Success.CHECK_ALL_NOTIFICATIONS);

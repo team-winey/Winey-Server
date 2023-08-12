@@ -17,11 +17,7 @@ public class Notification extends AuditingTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="receive_user")
-    private User notiReciver;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="request_user")
-    private User notiSender;
+    private User notiReceiver;
 
     private String notiMessage;
     @Column(nullable = false)
@@ -32,9 +28,8 @@ public class Notification extends AuditingTimeEntity {
     private Long linkId; //링크 타고 갈 피드 아이디
 
     @Builder
-    public Notification(User notiReciver, User notiSender, NotiType notiType, String notiMessage, boolean isChecked){
-        this.notiReciver = notiReciver;
-        this.notiSender = notiSender;
+    public Notification(User notiReciver, NotiType notiType, String notiMessage, boolean isChecked){
+        this.notiReceiver = notiReciver;
         this.notiType = notiType;
         this.notiMessage = notiMessage;
         this.isChecked = isChecked;

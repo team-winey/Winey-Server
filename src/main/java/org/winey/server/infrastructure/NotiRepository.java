@@ -11,11 +11,11 @@ import java.util.List;
 public interface NotiRepository extends Repository<Notification,Long>{
     void save(Notification notification);
 
-    List<Notification> findAllByNotiReciverOrderByCreatedAtDesc(User user);
+    List<Notification> findAllByNotiReceiverOrderByCreatedAtDesc(User user);
 
-    List<Notification> findByNotiReciverAndIsCheckedFalse(User notiReciver);
+    List<Notification> findByNotiReceiverAndIsCheckedFalse(User notiReceiver);
 
-    long countByNotiReciverAndIsCheckedFalse(User notiReciver);
+    long countByNotiReceiverAndIsCheckedFalse(User notiReceiver);
 
 
 

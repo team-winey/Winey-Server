@@ -48,9 +48,8 @@ public class FeedLikeService {
 
             Notification noti = Notification.builder()  // 좋아요 알림 생성
                     .notiType(NotiType.LIKENOTI)
-                    .notiMessage(NotiType.LIKENOTI.getType())
+                    .notiMessage(user.getNickname()+NotiType.LIKENOTI.getType())
                     .isChecked(false)
-                    .notiSender(user)
                     .notiReciver(feed.getUser())
                     .build();
             noti.updateLinkId(feedId);

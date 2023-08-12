@@ -46,8 +46,7 @@ public class CommentService {
         Notification notification = Notification.builder() //누군가가 내 피드에 댓글을 달았어요~
                 .notiReciver(feed.getUser())
                 .notiType(NotiType.COMMENTNOTI)
-                .notiSender(user)
-                .notiMessage(NotiType.COMMENTNOTI.getType())
+                .notiMessage(comment.getUser().getNickname()+NotiType.COMMENTNOTI.getType())
                 .isChecked(false)
                 .build();
         notification.updateLinkId(feedId);
