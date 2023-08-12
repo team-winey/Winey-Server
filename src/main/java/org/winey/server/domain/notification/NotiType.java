@@ -9,7 +9,6 @@ import javax.validation.constraints.Null;
 
 @Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
 public enum NotiType {
     //등급 상승
     RANKUPTO2("기사가 되신 걸 축하해요!", 2),
@@ -32,7 +31,7 @@ public enum NotiType {
     COMMENTNOTI("님이 회원님의 게시글에 댓글을 남겼어요.", 0);
 
     private final String type;
-    @Setter
+
     private final int level;
 }
 

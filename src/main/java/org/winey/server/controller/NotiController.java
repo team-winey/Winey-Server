@@ -36,5 +36,13 @@ public class NotiController {
         return ApiResponse.success(Success.CHECK_ALL_NOTIFICATIONS);
     }
 
+    @PostMapping("/check/goal")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "목표 지남 체크", description = "목표 기한을 완수했는지를 체크합니다.")
+    public ApiResponse checkGoalDateNotification(){
+        notiService.checkGoalDateNotification();
+        return ApiResponse.success(Success.CHECK_ALL_NOTIFICATIONS);
+    }
+
 
 }

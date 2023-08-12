@@ -57,9 +57,13 @@ public class FeedService {
                 .orElseThrow(() -> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
         myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
 
-        if (myGoal.isAttained() || LocalDate.now().isAfter(myGoal.getTargetDate())) {
-            System.out.println("이미 목표달성 or 목표일자 넘김 or 목표금액 넘김");
+        if (myGoal.isAttained()) {
+            System.out.println("이미 목표달성");
             return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
+        }
+        if (LocalDate.now().isAfter(myGoal.getTargetDate())){
+            System.out.println("목표를 제한 시간 내에 이루지 못함.");
+            throw new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage()); //목표 설정 새로 하게 유도.
         }
         if (myGoal.getDuringGoalAmount() >= myGoal.getTargetMoney()) {
             myGoal.updateIsAttained(true); // 달성여부 체크

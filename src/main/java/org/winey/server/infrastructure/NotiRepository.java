@@ -11,7 +11,7 @@ import java.util.List;
 public interface NotiRepository extends Repository<Notification,Long>{
     void save(Notification notification);
 
-    List<Notification> findAllByUserOrderByCreatedAtDesc(User user);
+    List<Notification> findAllByNotiReciverOrderByCreatedAtDesc(User user);
 
     List<Notification> findByNotiReciverAndIsCheckedFalse(User notiReciver);
 

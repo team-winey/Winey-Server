@@ -1,6 +1,7 @@
 package org.winey.server.domain.notification;
 
 import lombok.*;
+import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.user.User;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification {
+public class Notification extends AuditingTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "noti_id")
