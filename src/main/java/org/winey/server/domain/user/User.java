@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.feed.FeedLike;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.recommend.Recommend;
 
@@ -49,6 +50,9 @@ public class User extends AuditingTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Comment> comments;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
+    private List<FeedLike> feedlikes;
 
     @Builder
     public User(String nickname, String socialId, SocialType socialType) {
