@@ -55,7 +55,7 @@ public class NotiService {
                 )).collect(Collectors.toList());
         return GetAllNotiResponseDto.of(response);
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public void checkAllNoti(Long userId) {     // 내가 체크 안했던 애들을 찾아서 다 체크 true 해버리기. 특정 조건 url을 타면 ㅇㅇ
         User currentUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         List<Notification> notifications = notiRepository.findByNotiReceiverAndIsCheckedFalse(currentUser);
@@ -63,6 +63,15 @@ public class NotiService {
                 (notification -> {
                     notification.updateIsChecked();
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean checkNewNoti(Long userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        List<Notification> notifications = notiRepository.findByNotiReceiverAndIsCheckedFalse(user);
+        return notifications.size() != 0;
     }
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
