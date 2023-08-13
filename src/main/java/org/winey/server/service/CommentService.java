@@ -67,6 +67,10 @@ public class CommentService {
         if (user.getUserId() != wantDeleteComment.getUser().getUserId() && user.getUserId() != commentFeed.getUser().getUserId() ){ //만약 현재 유저가 피드 주인도 아니고, 댓글 주인도 아니면?
                 throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); //지울 수 있는 권한이 없다.
         }
+
+        // 관련 알림 삭제
+        notiRepository.deleteByNotiTypeAndResponseId(NotiType.COMMENTNOTI, wantDeleteComment.getCommentId());
+
         Long res = commentRepository.deleteByCommentId(commentId);
         if (res != 1){
             throw new UnprocessableEntityException(Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION,Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION.getMessage());
