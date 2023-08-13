@@ -225,6 +225,7 @@ public class FeedService {
         List<GetCommentResponseDto> comments = commentRepository.findAllByFeedOrderByCreatedAtDesc(detailFeed)
                 .stream().map(comment -> GetCommentResponseDto.of(
                         comment.getCommentId(),
+                        comment.getUser().getUserId(),
                         comment.getUser().getNickname(),
                         comment.getContent(),
                         comment.getUser().getUserLevel().getLevelNumber(),
