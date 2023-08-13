@@ -22,4 +22,6 @@ public interface NotiRepository extends Repository<Notification,Long>{
 
     // DELETE
     long deleteByNotiTypeAndResponseId(NotiType notiType, Long responseId);
+
+    void deleteByRequestUserId(Long requestUserId);
 }
