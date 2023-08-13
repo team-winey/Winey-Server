@@ -25,7 +25,11 @@ public class NotiController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "위니 알림 전체 조회 API", description = "위니 알림 전체를 조회합니다.")
     public ApiResponse<GetAllNotiResponseDto> getAllNoti(@UserId Long userId) {
-        return ApiResponse.success(Success.GET_NOTIFICATIONS_SUCCESS, notiService.getAllNoti(userId));
+        GetAllNotiResponseDto res = notiService.getAllNoti(userId);
+        if (res ==null){
+            return ApiResponse.success(Success.NOTIFICATION_EMPTY_SUCCESS);
+        }
+        return ApiResponse.success(Success.GET_NOTIFICATIONS_SUCCESS, res);
     }
 
     @PostMapping("")
@@ -33,14 +37,6 @@ public class NotiController {
     @Operation(summary = "위니 안읽은 알림 읽음처리 API", description = "위니 알림 전체를 읽음처리 합니다.")
     public ApiResponse checkAllNoti(@UserId Long userId){
         notiService.checkAllNoti(userId);
-        return ApiResponse.success(Success.CHECK_ALL_NOTIFICATIONS);
-    }
-
-    @PostMapping("/check/goal")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "목표 지남 체크", description = "목표 기한을 완수했는지를 체크합니다.")
-    public ApiResponse checkGoalDateNotification(){
-        notiService.checkGoalDateNotification();
         return ApiResponse.success(Success.CHECK_ALL_NOTIFICATIONS);
     }
 
