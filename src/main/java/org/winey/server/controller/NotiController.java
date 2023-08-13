@@ -14,6 +14,9 @@ import org.winey.server.exception.Success;
 import org.winey.server.service.FeedService;
 import org.winey.server.service.NotiService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/noti")
@@ -40,5 +43,16 @@ public class NotiController {
         return ApiResponse.success(Success.CHECK_ALL_NOTIFICATIONS);
     }
 
+    @GetMapping("/check")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "새로운 알림 여부 체크 API", description = "미확인 알림이 있는지 확인합니다.")
+    public ApiResponse checkNewNoti(@UserId Long userId) {
+        Map<String, Boolean> result = new HashMap<String, Boolean>() {
+            {
+                put("hasNewNotification", notiService.checkNewNoti(userId));
+            }
+        };
+        return ApiResponse.success(Success.CHECK_NEW_NOTIFICATION_SUCCESS, result);
+    }
 
 }
