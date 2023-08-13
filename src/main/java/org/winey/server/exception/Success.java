@@ -16,6 +16,8 @@ public enum Success {
     GET_FEED_LIST_SUCCESS(HttpStatus.OK, "피드 전체 조회 성공"),
     GET_USER_SUCCESS(HttpStatus.OK, "유저 조회 성공"),
     GET_MYFEED_SUCCESS(HttpStatus.OK, "마이 피드 조회 성공"),
+    GET_NOTIFICATIONS_SUCCESS(HttpStatus.OK, "알림 리스트 조회 성공"),
+    CHECK_ALL_NOTIFICATIONS(HttpStatus.OK, "알림 리스트 체크 성공"),
 
     GET_DETAIL_SUCCESS(HttpStatus.OK, "피드 디테일 페이지 조회 성공"),
 
@@ -39,6 +41,7 @@ public enum Success {
      */
     DELETE_FEED_SUCCESS(HttpStatus.NO_CONTENT, "피드가 정상적으로 삭제되었습니다."),
     DELETE_COMMENT_SUCCESS(HttpStatus.NO_CONTENT, "댓글이 정상적으로 삭제되었습니다."),
+    NOTIFICATION_EMPTY_SUCCESS(HttpStatus.NOT_FOUND, "알림이 한통도 없어요. 힝~구"),
 
     DELETE_USER_SUCCESS(HttpStatus.NO_CONTENT, "회원 탈퇴가 정상적으로 이루어졌습니다.")
     ;
