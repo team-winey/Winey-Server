@@ -78,6 +78,7 @@ public class FeedService {
                                 .build();
                         noti2.updateLinkId(null);
                         notiRepository.save(noti2);
+                        break;
                     case 3:
                         Notification noti3 = Notification.builder()
                                 .notiType(NotiType.RANKUPTO3)
@@ -87,6 +88,7 @@ public class FeedService {
                                 .build();
                         noti3.updateLinkId(null);
                         notiRepository.save(noti3);
+                        break;
                     case 4:
                         Notification noti4 = Notification.builder()
                                 .notiType(NotiType.RANKUPTO4)
@@ -96,6 +98,7 @@ public class FeedService {
                                 .build();
                         noti4.updateLinkId(null);
                         notiRepository.save(noti4);
+                        break;
 
                 }
             }
@@ -151,6 +154,7 @@ public class FeedService {
                                 .build();
                         noti3.updateLinkId(null);
                         notiRepository.save(noti3);
+                        break;
                     case 2:
                         Notification noti2 = Notification.builder()
                                 .notiType(NotiType.DELETERANKDOWNTO2)
@@ -160,6 +164,7 @@ public class FeedService {
                                 .build();
                         noti2.updateLinkId(null);
                         notiRepository.save(noti2);
+                        break;
                 }
             }
         }
