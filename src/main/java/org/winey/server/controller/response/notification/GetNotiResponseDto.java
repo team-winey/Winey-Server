@@ -22,7 +22,7 @@ public class GetNotiResponseDto {
     private String notiReceiver; //알림 받은 유저 닉네임.
     private String notiMessage;
     private NotiType notiType;
-    private boolean isChecked; //유저가 이 알림을 체크했는지
+    private Boolean isChecked; //유저가 이 알림을 체크했는지
     private Long LinkId; //좋아요, 댓글일 경우에는 feedid를 넘기고 아니면 안넘어감.
     private LocalDateTime createdAt;
 
