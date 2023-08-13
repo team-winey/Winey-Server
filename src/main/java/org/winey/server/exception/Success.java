@@ -41,6 +41,7 @@ public enum Success {
      */
     DELETE_FEED_SUCCESS(HttpStatus.NO_CONTENT, "피드가 정상적으로 삭제되었습니다."),
     DELETE_COMMENT_SUCCESS(HttpStatus.NO_CONTENT, "댓글이 정상적으로 삭제되었습니다."),
+    NOTIFICATION_EMPTY_SUCCESS(HttpStatus.NOT_FOUND, "알림이 한통도 없어요. 힝~구"),
 
     DELETE_USER_SUCCESS(HttpStatus.NO_CONTENT, "회원 탈퇴가 정상적으로 이루어졌습니다.")
     ;
