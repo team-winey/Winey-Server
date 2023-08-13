@@ -260,6 +260,9 @@ public class FeedService {
         if (ChronoUnit.MONTHS.between(now, createdAt) != 0) {
             return Math.abs(ChronoUnit.MONTHS.between(now, createdAt)) + "달전";
         }
+        if (ChronoUnit.WEEKS.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.WEEKS.between(now, createdAt)) + "주전";
+        }
         if (ChronoUnit.DAYS.between(now, createdAt) != 0) {
             return Math.abs(ChronoUnit.DAYS.between(now, createdAt)) + "일전";
         }
@@ -269,6 +272,6 @@ public class FeedService {
         if (ChronoUnit.SECONDS.between(now, createdAt) != 0) {
             return Math.abs(ChronoUnit.SECONDS.between(now, createdAt)) + "초전";
         }
-        return "0초전";
+        return "지금";
     }
 }
