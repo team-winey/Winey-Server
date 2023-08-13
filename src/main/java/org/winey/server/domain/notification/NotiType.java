@@ -28,10 +28,10 @@ public enum NotiType {
     LIKENOTI("님이 회원님의 게시글을 좋아해요."),
 
     //피드에 댓글 알림 -> 내가 댓글 쓴건 알림 안주기
-    COMMENTNOTI("님이 회원님의 게시글에 댓글을 남겼어요.");
+    COMMENTNOTI("님이 회원님의 게시글에 댓글을 남겼어요."),
 
     //처음 로그인했을 때 생성하는 알림
-
+    HOWTOLEVELUP("위니의 캐릭터 레벨업 방법을 알아볼까요?");
 
     private final String type;
 
