@@ -50,7 +50,8 @@ public class NotiService {
                         noti.getNotiMessage(),
                         noti.getNotiType(),
                         noti.isChecked(),
-                        noti.getLinkId()
+                        noti.getLinkId(),
+                        noti.getCreatedAt()
                 )).collect(Collectors.toList());
         return GetAllNotiResponseDto.of(response);
     }

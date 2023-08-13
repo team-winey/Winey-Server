@@ -14,12 +14,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GetCommentResponseDto {
     private Long commentId;
+    private Long authorId;
     private String author;
     private String content;
     private int authorLevel;
     private LocalDateTime createdAt;
 
-    public static GetCommentResponseDto of(Long commentId,String author, String content, int authorLevel, LocalDateTime createdAt) {
-        return new GetCommentResponseDto(commentId, author, content, authorLevel, createdAt);
+    public static GetCommentResponseDto of(Long commentId,Long authorId, String author, String content, int authorLevel, LocalDateTime createdAt) {
+        return new GetCommentResponseDto(commentId, authorId, author, content, authorLevel, createdAt);
     }
 }
