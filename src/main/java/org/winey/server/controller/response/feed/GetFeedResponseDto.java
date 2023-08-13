@@ -24,11 +24,12 @@ public class GetFeedResponseDto {
     private Boolean isLiked;
     private Long likes;
     private Long comments;
+    private String timeAgo;
     private LocalDateTime createdAt;
 
 
     public static GetFeedResponseDto of(Long feedId, Long userId, String nickName, int writerLevel, String feedTitle, String feedImage,
-                                        Long feedMoney, Boolean isLiked, Long likes, Long comments, LocalDateTime createdAt) {
-        return new GetFeedResponseDto(feedId, userId, nickName, writerLevel, feedTitle, feedImage, feedMoney, isLiked, likes, comments, createdAt);
+                                        Long feedMoney, Boolean isLiked, Long likes, Long comments, String timeAgo, LocalDateTime createdAt) {
+        return new GetFeedResponseDto(feedId, userId, nickName, writerLevel, feedTitle, feedImage, feedMoney, isLiked, likes, comments, timeAgo, createdAt);
     }
 }
