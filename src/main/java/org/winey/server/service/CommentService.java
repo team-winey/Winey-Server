@@ -50,6 +50,7 @@ public class CommentService {
                 .isChecked(false)
                 .build();
         notification.updateLinkId(feedId);
+        notiRepository.save(notification);
         return CreateCommentResponseDto.of(comment.getCommentId(), commentRepository.countByFeed(feed),user.getNickname(), comment.getContent());
     }
 
