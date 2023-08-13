@@ -31,6 +31,8 @@ public class Notification extends AuditingTimeEntity {
 
     private Long responseId; // 해당 알림을 만드는 반응의 아이디? (commentId or likeId)
 
+    private Long requestUserId; // 알림을 생성한 유저의 아이디
+
     @Builder
     public Notification(User notiReciver, NotiType notiType, String notiMessage, boolean isChecked) {
         this.notiReceiver = notiReciver;
@@ -51,5 +53,8 @@ public class Notification extends AuditingTimeEntity {
         this.isChecked = true;
     }
 
+    public void updateRequestUserId(Long requestUserId) {
+        this.requestUserId = requestUserId;
+    }
 
 }

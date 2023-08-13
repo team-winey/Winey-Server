@@ -54,6 +54,7 @@ public class FeedLikeService {
                     .build();
             noti.updateLinkId(feedId);
             noti.updateResponseId(like.getId());
+            noti.updateRequestUserId(userId);
             notiRepository.save(noti);
         } else { // 좋아요 취소
             FeedLike deletedFeedLike = feedLikeRepository.deleteByFeedAndUser(feed, user).get(0);
