@@ -73,7 +73,7 @@ public class NotiService {
         LocalDateTime now = LocalDateTime.now();
 
         for (Goal currentGoal : allGoals) {
-            if (currentGoal.getTargetDate().isBefore(today)) {
+            if (currentGoal.getTargetDate().isEqual(today.minusDays(1))) {
                 Notification notification = Notification.builder()
                         .notiType(NotiType.GOALFAILED)
                         .notiReciver(currentGoal.getUser())
