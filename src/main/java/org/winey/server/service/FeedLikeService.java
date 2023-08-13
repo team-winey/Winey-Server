@@ -53,6 +53,7 @@ public class FeedLikeService {
                     .notiReciver(feed.getUser())
                     .build();
             noti.updateLinkId(feedId);
+            noti.updateResponseId(like.getId());
             notiRepository.save(noti);
         } else { // 좋아요 취소
             feedLikeRepository.deleteByFeedAndUser(feed, user);
