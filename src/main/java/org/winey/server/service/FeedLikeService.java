@@ -56,8 +56,11 @@ public class FeedLikeService {
             noti.updateResponseId(like.getId());
             notiRepository.save(noti);
         } else { // 좋아요 취소
-            feedLikeRepository.deleteByFeedAndUser(feed, user);
+            FeedLike deletedFeedLike = feedLikeRepository.deleteByFeedAndUser(feed, user).get(0);
             //여기에 알림 삭제를 박아야할 것 같은데 DDD agregate root를 적용하면 어쩌구.. 할수있다는데 잘 모르겠음.
+
+            // 관련 알림 삭제
+            notiRepository.deleteByNotiTypeAndResponseId(NotiType.LIKENOTI, deletedFeedLike.getId());
         }
 
         return CreateFeedLikeResponseDto.of(feedId, feedLike, (long) feedLikeRepository.countByFeed(feed));
