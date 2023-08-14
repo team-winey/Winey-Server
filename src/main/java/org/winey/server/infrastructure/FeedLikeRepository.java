@@ -5,6 +5,7 @@ import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.feed.FeedLike;
 import org.winey.server.domain.user.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FeedLikeRepository extends Repository<FeedLike,Long> {
@@ -18,5 +19,5 @@ public interface FeedLikeRepository extends Repository<FeedLike,Long> {
     // UPDATE
 
     // DELETE
-    void deleteByFeedAndUser(Feed feed, User user);
+    List<FeedLike> deleteByFeedAndUser(Feed feed, User user);
 }

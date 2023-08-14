@@ -52,7 +52,7 @@ public class User extends AuditingTimeEntity {
     private List<Comment> comments;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
-    private List<FeedLike> feedlikes;
+    private List<FeedLike> feedLikes;
 
     @Builder
     public User(String nickname, String socialId, SocialType socialType) {

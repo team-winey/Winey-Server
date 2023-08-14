@@ -10,6 +10,8 @@ import org.winey.server.controller.request.auth.SignInRequestDto;
 import org.winey.server.controller.response.auth.SignInResponseDto;
 import org.winey.server.controller.response.auth.TokenResponseDto;
 import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.notification.NotiType;
+import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.SocialType;
 
 import org.winey.server.domain.user.User;
@@ -18,6 +20,7 @@ import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnprocessableEntityException;
 import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.GoalRepository;
+import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
 import org.winey.server.service.auth.apple.AppleSignInService;
 import org.winey.server.service.auth.kakao.KakaoSignInService;
@@ -41,6 +44,8 @@ public class AuthService {
 
     private final FeedRepository feedRepository;
 
+    private final NotiRepository notiRepository;
+
     @Transactional
     public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) {
         SocialType socialType = SocialType.valueOf(requestDto.getSocialType());
@@ -55,6 +60,15 @@ public class AuthService {
                     .socialId(socialId)
                     .socialType(socialType).build();
             userRepository.save(newUser);
+
+            Notification newNoti = Notification.builder()
+                    .notiReciver(newUser)
+                    .notiMessage(NotiType.HOWTOLEVELUP.getType())
+                    .isChecked(false)
+                    .notiType(NotiType.HOWTOLEVELUP)
+                    .build();
+            newNoti.updateLinkId(null);
+            notiRepository.save(newNoti);
         }
 
         User user = userRepository.findBySocialIdAndSocialType(socialId, socialType)
@@ -109,6 +123,7 @@ public class AuthService {
     @Transactional
     public void withdraw(Long userId){
         User user = userRepository.findByUserId(userId).orElse(null);
+        System.out.println(userId);
         if (user == null) {
             throw new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage());
         }
@@ -116,7 +131,12 @@ public class AuthService {
         System.out.println("Goals: " + user.getGoals());
         System.out.println("Recommends: " + user.getRecommends());
         System.out.println("Feeds: " + user.getFeeds());
+        System.out.println("FeedLikes: " + user.getFeedLikes());
         System.out.println("Comments: "+ user.getComments());
+
+        // 유저가 생성한 반응과 관련된 알림 삭제
+        notiRepository.deleteByRequestUserId(userId);
+
         Long res = userRepository.deleteByUserId(userId); //res가 삭제된 컬럼의 개수 즉, 1이 아니면 뭔가 알 수 없는 에러.
         System.out.println(res + "개의 컬럼이 삭제되었습니다.");
         if (res!=1){

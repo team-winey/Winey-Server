@@ -39,7 +39,7 @@ public class Feed extends AuditingTimeEntity {
     private List<FeedLike> feedLikes;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "feed", orphanRemoval = true)
-    private List<Comment> comment;
+    private List<Comment> comments;
 
     @Builder
     public Feed(User user, String feedTitle, String feedImage, Long feedMoney){
