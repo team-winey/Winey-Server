@@ -101,6 +101,9 @@ public class NotiService {
         if (ChronoUnit.DAYS.between(now, createdAt) != 0) {
             return Math.abs(ChronoUnit.DAYS.between(now, createdAt)) + "일전";
         }
+        if (ChronoUnit.HOURS.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.HOURS.between(now, createdAt)) + "시간전";
+        }
         if (ChronoUnit.MINUTES.between(now, createdAt) != 0) {
             return Math.abs(ChronoUnit.MINUTES.between(now, createdAt)) + "분전";
         }
