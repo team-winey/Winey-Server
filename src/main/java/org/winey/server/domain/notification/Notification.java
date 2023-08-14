@@ -16,30 +16,45 @@ public class Notification extends AuditingTimeEntity {
     private Long notiId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="receive_user")
+    @JoinColumn(name = "receive_user")
     private User notiReceiver;
 
     private String notiMessage;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private NotiType notiType;
 
-    private boolean isChecked; //유저가 이 알림을 체크했는지
-    private Long linkId; //링크 타고 갈 피드 아이디
+    private boolean isChecked; // 유저가 이 알림을 체크했는지
+
+    private Long linkId; // 링크 타고 갈 피드 아이디
+
+    private Long responseId; // 해당 알림을 만드는 반응의 아이디? (commentId or likeId)
+
+    private Long requestUserId; // 알림을 생성한 유저의 아이디
 
     @Builder
-    public Notification(User notiReciver, NotiType notiType, String notiMessage, boolean isChecked){
+    public Notification(User notiReciver, NotiType notiType, String notiMessage, boolean isChecked) {
         this.notiReceiver = notiReciver;
         this.notiType = notiType;
         this.notiMessage = notiMessage;
         this.isChecked = isChecked;
     }
+
     public void updateLinkId(Long linkId) {
         this.linkId = linkId;
     }
+
+    public void updateResponseId(Long responseId) {
+        this.responseId = responseId;
+    }
+
     public void updateIsChecked() {
         this.isChecked = true;
     }
 
+    public void updateRequestUserId(Long requestUserId) {
+        this.requestUserId = requestUserId;
+    }
 
 }

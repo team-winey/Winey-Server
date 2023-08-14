@@ -4,8 +4,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.winey.server.domain.feed.Feed;
-import org.winey.server.domain.user.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,11 +23,13 @@ public class GetFeedResponseDto {
     private Long feedMoney;
     private Boolean isLiked;
     private Long likes;
+    private Long comments;
+    private String timeAgo;
     private LocalDateTime createdAt;
 
 
-    public static GetFeedResponseDto of(Long feedId,Long userId, String nickName, int writerLevel,String feedTitle, String feedImage,
-                                 Long feedMoney, Boolean isLiked, Long likes, LocalDateTime createdAt){
-        return new GetFeedResponseDto(feedId,userId,nickName,writerLevel, feedTitle, feedImage, feedMoney, isLiked, likes, createdAt);
+    public static GetFeedResponseDto of(Long feedId, Long userId, String nickName, int writerLevel, String feedTitle, String feedImage,
+                                        Long feedMoney, Boolean isLiked, Long likes, Long comments, String timeAgo, LocalDateTime createdAt) {
+        return new GetFeedResponseDto(feedId, userId, nickName, writerLevel, feedTitle, feedImage, feedMoney, isLiked, likes, comments, timeAgo, createdAt);
     }
 }

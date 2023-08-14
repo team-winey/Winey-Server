@@ -5,14 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
-import org.winey.server.controller.response.comment.CreateCommentResponseDto;
 import org.winey.server.controller.response.comment.GetCommentResponseDto;
 import org.winey.server.controller.response.feed.*;
-import org.winey.server.controller.response.recommend.RecommendResponseDto;
-import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.notification.NotiType;
@@ -20,13 +16,14 @@ import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
-import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
 import org.winey.server.infrastructure.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -188,7 +185,9 @@ public class FeedService {
                         feed.getFeedImage(),
                         feed.getFeedMoney(),
                         feedLikeRepository.existsByFeedAndUser(feed, user), //현재 접속한 유저가 좋아요 눌렀는지
-                        (long) feedLikeRepository.countByFeed(feed),              //해당 피드의 좋아요 개수 세기.
+                        (long) feedLikeRepository.countByFeed(feed), //해당 피드의 좋아요 개수 세기.
+                        commentRepository.countByFeed(feed),
+                        getTimeAgo(feed.getCreatedAt()),
                         feed.getCreatedAt()                 //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
         return GetAllFeedResponseDto.of(pageInfo, feeds);
@@ -211,6 +210,8 @@ public class FeedService {
                         myFeed.getFeedMoney(),
                         feedLikeRepository.existsByFeedAndUser(myFeed, myUser), //현재 접속한 유저가 좋아요 눌렀는지
                         (long) feedLikeRepository.countByFeed(myFeed),              //해당 피드의 좋아요 개수 세기.
+                        commentRepository.countByFeed(myFeed),
+                        getTimeAgo(myFeed.getCreatedAt()),
                         myFeed.getCreatedAt()                 //해당 피드 만든 날짜 localdate로 바꿔서 주기.
                 )).collect(Collectors.toList());
         return GetAllFeedResponseDto.of(pageInfo, feeds);
@@ -242,10 +243,35 @@ public class FeedService {
                 detailFeed.getFeedMoney(),
                 feedLikeRepository.existsByFeedAndUser(detailFeed, connectedUser), //현재 접속한 유저가 detail feed에 좋아요 눌렀는지
                 (long) feedLikeRepository.countByFeed(detailFeed),              //해당 피드의 좋아요 개수 세기.
+                commentRepository.countByFeed(detailFeed),
+                getTimeAgo(detailFeed.getCreatedAt()),
                 detailFeed.getCreatedAt()                  //해당 피드 만든 날짜 localdate로 바꿔서 주기.
         );
 
         return GetFeedDetailResponseDto.of(detailResponse, comments);
 
+    }
+
+    private String getTimeAgo(LocalDateTime createdAt) {
+        LocalDateTime now = LocalDateTime.now();
+        if (ChronoUnit.YEARS.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.YEARS.between(now, createdAt)) + "년전";
+        }
+        if (ChronoUnit.MONTHS.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.MONTHS.between(now, createdAt)) + "달전";
+        }
+        if (ChronoUnit.WEEKS.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.WEEKS.between(now, createdAt)) + "주전";
+        }
+        if (ChronoUnit.DAYS.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.DAYS.between(now, createdAt)) + "일전";
+        }
+        if (ChronoUnit.MINUTES.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.MINUTES.between(now, createdAt)) + "분전";
+        }
+        if (ChronoUnit.SECONDS.between(now, createdAt) != 0) {
+            return Math.abs(ChronoUnit.SECONDS.between(now, createdAt)) + "초전";
+        }
+        return "지금";
     }
 }
