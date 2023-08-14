@@ -133,6 +133,10 @@ public class AuthService {
         System.out.println("Feeds: " + user.getFeeds());
         System.out.println("FeedLikes: " + user.getFeedLikes());
         System.out.println("Comments: "+ user.getComments());
+
+        // 유저가 생성한 반응과 관련된 알림 삭제
+        notiRepository.deleteByRequestUserId(userId);
+
         Long res = userRepository.deleteByUserId(userId); //res가 삭제된 컬럼의 개수 즉, 1이 아니면 뭔가 알 수 없는 에러.
         System.out.println(res + "개의 컬럼이 삭제되었습니다.");
         if (res!=1){
