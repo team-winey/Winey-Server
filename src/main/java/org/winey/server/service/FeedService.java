@@ -223,7 +223,7 @@ public class FeedService {
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
         User connectedUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        List<GetCommentResponseDto> comments = commentRepository.findAllByFeedOrderByCreatedAtDesc(detailFeed)
+        List<GetCommentResponseDto> comments = commentRepository.findAllByFeedOrderByCreatedAtAsc(detailFeed)
                 .stream().map(comment -> GetCommentResponseDto.of(
                         comment.getCommentId(),
                         comment.getUser().getUserId(),
