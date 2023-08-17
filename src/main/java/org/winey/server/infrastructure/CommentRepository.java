@@ -16,7 +16,7 @@ public interface CommentRepository extends Repository<Comment,Long> {
 
     Optional<Comment> findByCommentId(Long feedId);
 
-    List<Comment> findAllByFeedOrderByCreatedAtDesc(Feed feed);
+    List<Comment> findAllByFeedOrderByCreatedAtAsc(Feed feed);
 
     // DELETE
     Long deleteByCommentId(Long commentId);
