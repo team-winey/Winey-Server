@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
-import org.winey.server.controller.response.comment.GetCommentResponseDto;
+import org.winey.server.controller.response.comment.CommentResponseDto;
 import org.winey.server.controller.response.feed.*;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
@@ -223,8 +223,8 @@ public class FeedService {
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
         User connectedUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        List<GetCommentResponseDto> comments = commentRepository.findAllByFeedOrderByCreatedAtAsc(detailFeed)
-                .stream().map(comment -> GetCommentResponseDto.of(
+        List<CommentResponseDto> comments = commentRepository.findAllByFeedOrderByCreatedAtAsc(detailFeed)
+                .stream().map(comment -> CommentResponseDto.of(
                         comment.getCommentId(),
                         comment.getUser().getUserId(),
                         comment.getUser().getNickname(),
