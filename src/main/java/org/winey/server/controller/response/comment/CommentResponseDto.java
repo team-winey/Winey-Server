@@ -4,15 +4,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.winey.server.domain.user.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class GetCommentResponseDto {
+public class CommentResponseDto {
     private Long commentId;
     private Long authorId;
     private String author;
@@ -20,7 +18,7 @@ public class GetCommentResponseDto {
     private int authorLevel;
     private LocalDateTime createdAt;
 
-    public static GetCommentResponseDto of(Long commentId,Long authorId, String author, String content, int authorLevel, LocalDateTime createdAt) {
-        return new GetCommentResponseDto(commentId, authorId, author, content, authorLevel, createdAt);
+    public static CommentResponseDto of(Long commentId, Long authorId, String author, String content, int authorLevel, LocalDateTime createdAt) {
+        return new CommentResponseDto(commentId, authorId, author, content, authorLevel, createdAt);
     }
 }
