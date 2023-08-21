@@ -8,6 +8,7 @@ import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.feed.FeedLike;
 import org.winey.server.domain.goal.Goal;
+import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.recommend.Recommend;
 
 import javax.persistence.*;
@@ -53,6 +54,9 @@ public class User extends AuditingTimeEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<FeedLike> feedLikes;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "notiReceiver", orphanRemoval = true)
+    private List<Notification> notifications;
 
     @Builder
     public User(String nickname, String socialId, SocialType socialType) {

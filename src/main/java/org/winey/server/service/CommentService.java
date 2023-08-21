@@ -3,8 +3,7 @@ package org.winey.server.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.winey.server.controller.response.comment.CreateCommentResponseDto;
-import org.winey.server.controller.response.feedLike.CreateFeedLikeResponseDto;
+import org.winey.server.controller.response.comment.CommentResponseDto;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
@@ -29,7 +28,7 @@ public class CommentService {
     private final NotiRepository notiRepository;
 
     @Transactional
-    public CreateCommentResponseDto createComment(Long userId, Long feedId, String content) {
+    public CommentResponseDto createComment(Long userId, Long feedId, String content) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         Feed feed = feedRepository.findByFeedId(feedId)
@@ -53,7 +52,7 @@ public class CommentService {
         notification.updateResponseId(comment.getCommentId());
         notification.updateRequestUserId(userId);
         notiRepository.save(notification);
-        return CreateCommentResponseDto.of(comment.getCommentId(), commentRepository.countByFeed(feed),user.getNickname(), comment.getContent());
+        return CommentResponseDto.of(comment.getCommentId(), userId, user.getNickname(), comment.getContent(),user.getUserLevel().getLevelNumber(),comment.getCreatedAt());
     }
 
     @Transactional
