@@ -8,12 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.comment.CreateCommentRequestDto;
-import org.winey.server.controller.request.feedLike.CreateFeedLikeRequestDto;
-import org.winey.server.controller.response.comment.CreateCommentResponseDto;
-import org.winey.server.controller.response.feedLike.CreateFeedLikeResponseDto;
+import org.winey.server.controller.response.comment.CommentResponseDto;
 import org.winey.server.exception.Success;
 import org.winey.server.service.CommentService;
-import org.winey.server.service.FeedLikeService;
 
 import javax.validation.Valid;
 
@@ -27,7 +24,7 @@ public class CommentController {
     @PostMapping(value = "/{feedId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "댓글을 만드는 API", description = "피드의 댓글을 생성합니다.")
-    public ApiResponse<CreateCommentResponseDto> createComment(
+    public ApiResponse<CommentResponseDto> createComment(
             @UserId Long userId,
             @PathVariable Long feedId,
             @RequestBody @Valid CreateCommentRequestDto requestDto

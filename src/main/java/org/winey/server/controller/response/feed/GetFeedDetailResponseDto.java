@@ -4,9 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.winey.server.controller.response.PageResponseDto;
-import org.winey.server.controller.response.comment.CreateCommentResponseDto;
-import org.winey.server.controller.response.comment.GetCommentResponseDto;
+import org.winey.server.controller.response.comment.CommentResponseDto;
 
 import java.util.List;
 
@@ -16,9 +14,9 @@ import java.util.List;
 public class GetFeedDetailResponseDto {
 
     private GetFeedResponseDto getFeedResponseDto;
-    private List<GetCommentResponseDto> getCommentResponseList;
+    private List<CommentResponseDto> getCommentResponseList;
 
-    public static GetFeedDetailResponseDto of(GetFeedResponseDto getFeedResponseDto, List<GetCommentResponseDto> getCommentResponseList) {
+    public static GetFeedDetailResponseDto of(GetFeedResponseDto getFeedResponseDto, List<CommentResponseDto> getCommentResponseList) {
         return new GetFeedDetailResponseDto(getFeedResponseDto,getCommentResponseList);
     }
 }

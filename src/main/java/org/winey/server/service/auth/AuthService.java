@@ -27,6 +27,7 @@ import org.winey.server.service.auth.kakao.KakaoSignInService;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,11 +56,17 @@ public class AuthService {
         Boolean isRegistered = userRepository.existsBySocialIdAndSocialType(socialId, socialType);
 
         if (!isRegistered) {
+            String randomString= new Random().ints(6, 0, 36).mapToObj(i -> Character.toString("abcdefghijklmnopqrstuvwxyz0123456789".charAt(i))).collect(Collectors.joining());
+            while (userRepository.existsByNickname("위니"+randomString)) {
+                randomString = new Random().ints(6, 0, 36).mapToObj(i -> Character.toString("abcdefghijklmnopqrstuvwxyz0123456789".charAt(i))).collect(Collectors.joining());
+            }
+
             User newUser = User.builder()
-                    .nickname(socialType + socialId)
+                    .nickname("위니"+randomString)
                     .socialId(socialId)
                     .socialType(socialType).build();
             userRepository.save(newUser);
+
 
             Notification newNoti = Notification.builder()
                     .notiReciver(newUser)
