@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.controller.response.comment.CommentResponseDto;
+import org.winey.server.controller.response.comment.DeleteCommentResponseDto;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
@@ -56,7 +57,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long userId, Long commentId){
+    public DeleteCommentResponseDto deleteComment(Long userId, Long commentId){
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         Comment wantDeleteComment = commentRepository.findByCommentId(commentId)
@@ -75,6 +76,7 @@ public class CommentService {
         if (res != 1){
             throw new UnprocessableEntityException(Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION,Error.UNPROCESSABLE_ENTITY_DELETE_EXCEPTION.getMessage());
         }
+        return DeleteCommentResponseDto.of(commentId);
     }
 
 
