@@ -39,8 +39,7 @@ public class CommentController {
             @UserId Long userId,
             @PathVariable Long commentId
     ) {
-        commentService.deleteComment(userId, commentId);
-        return ApiResponse.success(Success.DELETE_COMMENT_SUCCESS);
+        return ApiResponse.success(Success.DELETE_COMMENT_SUCCESS,commentService.deleteComment(userId, commentId));
     }
 
 }
