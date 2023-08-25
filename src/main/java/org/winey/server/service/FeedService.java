@@ -165,6 +165,7 @@ public class FeedService {
                 }
             }
         }
+        notiRepository.deleteByLinkId(feedId);
         feedRepository.delete(wantDeleteFeed);
         return wantDeleteFeed.getFeedImage();
     }
