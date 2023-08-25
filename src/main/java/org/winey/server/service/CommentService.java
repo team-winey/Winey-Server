@@ -43,16 +43,18 @@ public class CommentService {
                 .build();
         commentRepository.save(comment);
 
-        Notification notification = Notification.builder() //누군가가 내 피드에 댓글을 달았어요~
-                .notiReciver(feed.getUser())
-                .notiType(NotiType.COMMENTNOTI)
-                .notiMessage(comment.getUser().getNickname()+NotiType.COMMENTNOTI.getType())
-                .isChecked(false)
-                .build();
-        notification.updateLinkId(feedId);
-        notification.updateResponseId(comment.getCommentId());
-        notification.updateRequestUserId(userId);
-        notiRepository.save(notification);
+        if (userId != feed.getUser().getUserId()) {
+            Notification notification = Notification.builder() //누군가가 내 피드에 댓글을 달았어요~
+                    .notiReciver(feed.getUser())
+                    .notiType(NotiType.COMMENTNOTI)
+                    .notiMessage(comment.getUser().getNickname() + NotiType.COMMENTNOTI.getType())
+                    .isChecked(false)
+                    .build();
+            notification.updateLinkId(feedId);
+            notification.updateResponseId(comment.getCommentId());
+            notification.updateRequestUserId(userId);
+            notiRepository.save(notification);
+        }
         return CommentResponseDto.of(comment.getCommentId(), userId, user.getNickname(), comment.getContent(),user.getUserLevel().getLevelNumber(),comment.getCreatedAt());
     }
 
