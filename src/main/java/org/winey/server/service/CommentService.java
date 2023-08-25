@@ -43,7 +43,7 @@ public class CommentService {
                 .build();
         commentRepository.save(comment);
 
-        if (userId != feed.getUser().getUserId()) {
+        if (user.getUserId() != feed.getUser().getUserId()) {
             Notification notification = Notification.builder() //누군가가 내 피드에 댓글을 달았어요~
                     .notiReciver(feed.getUser())
                     .notiType(NotiType.COMMENTNOTI)
