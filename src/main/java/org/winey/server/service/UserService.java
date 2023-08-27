@@ -9,10 +9,13 @@ import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.controller.response.user.UserResponseGoalDto;
 import org.winey.server.controller.response.user.UserResponseUserDto;
 import org.winey.server.domain.goal.Goal;
+import org.winey.server.domain.notification.NotiType;
+import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.GoalRepository;
+import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
 
 import java.time.Duration;
@@ -26,6 +29,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
+    private final NotiRepository notiRepository;
 
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId) {
@@ -52,7 +56,16 @@ public class UserService {
     public void updateNickname(Long userId, UpdateUserNicknameDto requestDto) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-
+        List<Notification> notifications = notiRepository.findByRequestUserId(userId);
+        if (!notifications.isEmpty()) {
+            notifications.forEach(notification -> {
+                if (notification.getNotiType() == NotiType.COMMENTNOTI) {
+                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.COMMENTNOTI.getType());
+                } else {
+                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.LIKENOTI.getType());
+                }
+            });
+        }
         user.updateNickname(requestDto.getNickname());
     }
 
