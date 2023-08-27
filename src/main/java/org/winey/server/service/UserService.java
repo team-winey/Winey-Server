@@ -44,7 +44,8 @@ public class UserService {
 
         int targetDay = (int) Period.between(presentGoal.getCreatedAt().toLocalDate(), presentGoal.getTargetDate()).getDays();
         int dDay = (int) ChronoUnit.DAYS.between(LocalDate.now(), presentGoal.getTargetDate());
-        UserResponseGoalDto goalDto = UserResponseGoalDto.of(presentGoal.getDuringGoalAmount(), presentGoal.getDuringGoalCount(), presentGoal.getTargetMoney(), targetDay, dDay, LocalDate.now().isAfter(presentGoal.getTargetDate()), presentGoal.isAttained());
+        Boolean isOver = presentGoal.isAttained() || LocalDate.now().isAfter(presentGoal.getTargetDate());
+        UserResponseGoalDto goalDto = UserResponseGoalDto.of(presentGoal.getDuringGoalAmount(), presentGoal.getDuringGoalCount(), presentGoal.getTargetMoney(), targetDay, dDay, isOver, presentGoal.isAttained());
         return UserResponseDto.of(userDto, goalDto);
     }
 
