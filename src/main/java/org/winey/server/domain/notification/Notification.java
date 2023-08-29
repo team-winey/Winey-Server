@@ -57,4 +57,6 @@ public class Notification extends AuditingTimeEntity {
         this.requestUserId = requestUserId;
     }
 
+    public void updateNotiMessage(String notiMessage){this.notiMessage = notiMessage;}
+
 }
