@@ -27,7 +27,7 @@ public class Comment extends AuditingTimeEntity {
     @JoinColumn(name = "feed_id")
     private Feed feed;
 
-    @Column(nullable = false)
+    @Column(length = 500, nullable = false)
     private String content;
 
     @Builder
