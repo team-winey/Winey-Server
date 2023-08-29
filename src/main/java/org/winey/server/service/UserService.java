@@ -56,16 +56,16 @@ public class UserService {
     public void updateNickname(Long userId, UpdateUserNicknameDto requestDto) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        List<Notification> notifications = notiRepository.findByRequestUserId(userId);
-        if (!notifications.isEmpty()) {
-            notifications.forEach(notification -> {
-                if (notification.getNotiType() == NotiType.COMMENTNOTI) {
-                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.COMMENTNOTI.getType());
-                } else {
-                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.LIKENOTI.getType());
-                }
-            });
-        }
+//        List<Notification> notifications = notiRepository.findByRequestUserId(userId);
+//        if (!notifications.isEmpty()) {
+//            notifications.forEach(notification -> {
+//                if (notification.getNotiType() == NotiType.COMMENTNOTI) {
+//                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.COMMENTNOTI.getType());
+//                } else {
+//                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.LIKENOTI.getType());
+//                }
+//            });
+//        }
         user.updateNickname(requestDto.getNickname());
     }
 
