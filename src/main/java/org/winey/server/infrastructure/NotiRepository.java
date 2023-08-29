@@ -18,6 +18,8 @@ public interface NotiRepository extends Repository<Notification,Long>{
 
     List<Notification> findByNotiReceiverAndIsCheckedFalse(User notiReceiver);
 
+    List<Notification> findByRequestUserId(Long requestUserId);
+
     long countByNotiReceiverAndIsCheckedFalse(User notiReceiver);
 
     // DELETE
