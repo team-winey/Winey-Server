@@ -99,7 +99,7 @@ public class FeedService {
 
                 }
             }
-            myGoal.resetGoalAmount();   //목표 금액 0으로 초기화.
+            myGoal.resetGoalCountAndAmount();   //목표 금액 0으로 초기화.
         }
         return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
     }
