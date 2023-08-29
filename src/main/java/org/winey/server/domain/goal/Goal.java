@@ -63,4 +63,8 @@ public class Goal extends AuditingTimeEntity {
             this.duringGoalAmount -= feedMoney;
         }
     }
+
+    public void resetGoalAmount(){
+            this.duringGoalAmount = 0L;
+    }
 }
