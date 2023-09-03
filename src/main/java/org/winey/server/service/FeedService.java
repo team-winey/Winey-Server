@@ -142,6 +142,7 @@ public class FeedService {
         // 현재 삭제하고자 하는 피드의 goal 아이디 != 현재 진행 중인 goal 아이디 --> 넘어가!
         if (wantDeleteFeed.getGoal().getGoalId() != presentGoal.getGoalId()) {
             feedRepository.delete(wantDeleteFeed);
+            return wantDeleteFeed.getFeedImage();
         }
 
 //        if ((!presentGoal.getCreatedAt().isBefore(wantDeleteFeed.getCreatedAt())) || (!presentGoal.getTargetDate().isAfter(wantDeleteFeed.getCreatedAt().toLocalDate()))) {
