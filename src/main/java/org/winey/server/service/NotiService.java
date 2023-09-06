@@ -69,7 +69,7 @@ public class NotiService {
         return notifications.size() != 0;
     }
 
-    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     @Transactional
     public void checkGoalDateNotification() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
