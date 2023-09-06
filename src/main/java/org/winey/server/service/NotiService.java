@@ -69,13 +69,13 @@ public class NotiService {
         return notifications.size() != 0;
     }
 
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
+    @Transactional
     public void checkGoalDateNotification() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         List<Goal> allGoals = goalRepository.findLatestGoalsForEachUser();
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
-
         for (Goal currentGoal : allGoals) {
             if (currentGoal.getTargetDate().isEqual(today.minusDays(1))) {
                 Notification notification = Notification.builder()
