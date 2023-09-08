@@ -41,6 +41,9 @@ public class User extends AuditingTimeEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Column(nullable = true)
+    private String fcmToken;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Goal> goals;
 
@@ -77,4 +80,6 @@ public class User extends AuditingTimeEntity {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public void updateFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
 }
