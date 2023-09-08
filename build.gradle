@@ -58,6 +58,10 @@ dependencies {
 
 	//FCM
 	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.1'
+
+	//rabbitmq
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
 }
 
 tasks.named('test') {

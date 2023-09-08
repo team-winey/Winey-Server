@@ -83,5 +83,9 @@ public class FcmService{
             log.error("cannot send to memberList push message. error info : {}", e.getMessage());
         }
     }
+    // 좋아요나 댓글 관련 알림 로직 작성
+//    public void sendByToken(String token){
+//
+//    }
 }
 
