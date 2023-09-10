@@ -84,8 +84,24 @@ public class FcmService{
         }
     }
     // 좋아요나 댓글 관련 알림 로직 작성
-//    public void sendByToken(String token){
-//
-//    }
+    public void sendByToken(org.winey.server.domain.notification.Notification wineyNotification) {
+        // 메시지 만들기
+        Message message = Message.builder()
+                .putData("time", LocalDateTime.now().toString())
+                .setNotification(new Notification("위니 제국의 편지가 도착했어요.", wineyNotification.getNotiMessage()))
+                .setToken(wineyNotification.getNotiReceiver().getFcmToken())
+                .build();
+
+        // 요청에 대한 응답을 받을 response
+        String response;
+        try {
+            // 알림 발송
+            response = FirebaseMessaging.getInstance().send(message);
+            System.out.println(response);
+        } catch (FirebaseMessagingException e) {
+            log.error("푸시 알림을 보내다가 오류가 발생했습니다. error info : {}", e.getMessage());
+        }
+    }
+
 }
 
