@@ -1,5 +1,6 @@
 package org.winey.server.config.message;
 
+import lombok.AllArgsConstructor;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -10,16 +11,19 @@ import org.winey.server.domain.notification.Notification;
 import org.winey.server.service.FcmService;
 
 @Component
-public class Receiver {
+@AllArgsConstructor
+public class MessageQueueReceiver {
 
-    @RabbitListener(bindings = @QueueBinding(
-            exchange = @Exchange(name = "time", type = ExchangeTypes.TOPIC),
-            value = @Queue(name = "time-second"),
-            key = "time-first")
-    )
-    public void receiver(String msg){
-        System.out.println("안녕"+msg);
-    }
+    private final FcmService fcmService;
+
+//    @RabbitListener(bindings = @QueueBinding(
+//            exchange = @Exchange(name = "time", type = ExchangeTypes.TOPIC),
+//            value = @Queue(name = "time-second"),
+//            key = "time-first")
+//    )
+//    public void receiver(String msg){
+//        System.out.println("안녕"+msg);
+//    }
 
     @RabbitListener(bindings = @QueueBinding(
             exchange = @Exchange(name = "like", type = ExchangeTypes.TOPIC),
@@ -28,7 +32,7 @@ public class Receiver {
     )
     public void likeReceiver(Notification likeNoti){
         System.out.println("좋아요 noti receiver");
-
+        fcmService.sendByToken(likeNoti);
     }
 
     @RabbitListener(bindings = @QueueBinding(
@@ -36,8 +40,9 @@ public class Receiver {
             value = @Queue(name = "comment-notification"),
             key = "comment-noti")
     )
-    public void commentReceiver(Notification newNoti){
+    public void commentReceiver(Notification commentNoti){
         System.out.println("댓글 noti receiver");
+        fcmService.sendByToken(commentNoti);
 
     }
 }

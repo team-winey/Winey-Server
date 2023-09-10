@@ -3,6 +3,7 @@ package org.winey.server.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.config.message.MessageQueueSender;
 import org.winey.server.controller.response.comment.CommentResponseDto;
 import org.winey.server.controller.response.comment.DeleteCommentResponseDto;
 import org.winey.server.domain.comment.Comment;
@@ -27,6 +28,8 @@ public class CommentService {
     private final FeedRepository feedRepository;
     private final CommentRepository commentRepository;
     private final NotiRepository notiRepository;
+
+    private final MessageQueueSender messageQueueSender;
 
     @Transactional
     public CommentResponseDto createComment(Long userId, Long feedId, String content) {
@@ -54,6 +57,7 @@ public class CommentService {
             notification.updateResponseId(comment.getCommentId());
             notification.updateRequestUserId(userId);
             notiRepository.save(notification);
+            messageQueueSender.pushSender(notification);
         }
         return CommentResponseDto.of(comment.getCommentId(), userId, user.getNickname(), comment.getContent(),user.getUserLevel().getLevelNumber(),comment.getCreatedAt());
     }
