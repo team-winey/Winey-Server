@@ -3,6 +3,8 @@ package org.winey.server.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.config.message.MessageQueueSender;
+import org.winey.server.service.message.FcmRequestDto;
 import org.winey.server.controller.response.feedLike.CreateFeedLikeResponseDto;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.feed.FeedLike;
@@ -25,6 +27,8 @@ public class FeedLikeService {
     private final FeedRepository feedRepository;
 
     private final NotiRepository notiRepository;
+
+    private final MessageQueueSender messageQueueSender;
 
     @Transactional
     public CreateFeedLikeResponseDto createFeedLike(Long userId, Long feedId, boolean feedLike) {
@@ -57,6 +61,7 @@ public class FeedLikeService {
                 noti.updateResponseId(like.getId());
                 noti.updateRequestUserId(userId);
                 notiRepository.save(noti);
+                messageQueueSender.pushSender(FcmRequestDto.of(noti.getNotiMessage(), noti.getNotiReceiver().getFcmToken(), noti.getNotiType()));
             }
         } else { // 좋아요 취소
             FeedLike deletedFeedLike = feedLikeRepository.deleteByFeedAndUser(feed, user).get(0);

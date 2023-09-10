@@ -3,11 +3,16 @@ package org.winey.server.service;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.service.message.FcmRequestDto;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -84,17 +89,19 @@ public class FcmService{
         }
     }
     // 좋아요나 댓글 관련 알림 로직 작성
-    public void sendByToken(org.winey.server.domain.notification.Notification wineyNotification) {
+    @Async
+    public void sendByToken(FcmRequestDto wineyNotification) {
         // 메시지 만들기
         Message message = Message.builder()
                 .putData("time", LocalDateTime.now().toString())
-                .setNotification(new Notification("위니 제국의 편지가 도착했어요.", wineyNotification.getNotiMessage()))
-                .setToken(wineyNotification.getNotiReceiver().getFcmToken())
+                .setNotification(new Notification("위니 제국의 편지가 도착했어요.", wineyNotification.getMessage()))
+                .setToken(wineyNotification.getFcmToken())
                 .build();
 
         // 요청에 대한 응답을 받을 response
         String response;
         try {
+            System.out.println("여까지는 왔다.");
             // 알림 발송
             response = FirebaseMessaging.getInstance().send(message);
             System.out.println(response);

@@ -19,6 +19,7 @@ import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
+import org.winey.server.service.message.FcmRequestDto;
 
 
 @Service
@@ -57,7 +58,7 @@ public class CommentService {
             notification.updateResponseId(comment.getCommentId());
             notification.updateRequestUserId(userId);
             notiRepository.save(notification);
-            messageQueueSender.pushSender(notification);
+            messageQueueSender.pushSender(FcmRequestDto.of(notification.getNotiMessage(), notification.getNotiReceiver().getFcmToken(), notification.getNotiType()));
         }
         return CommentResponseDto.of(comment.getCommentId(), userId, user.getNickname(), comment.getContent(),user.getUserLevel().getLevelNumber(),comment.getCreatedAt());
     }
