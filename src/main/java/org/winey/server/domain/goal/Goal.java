@@ -1,9 +1,13 @@
 package org.winey.server.domain.goal;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
+import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 
 import javax.persistence.*;
@@ -38,6 +42,9 @@ public class Goal extends AuditingTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "goal", orphanRemoval = true)
+    private List<Feed> feeds = new ArrayList<>();
 
     @Builder
     public Goal(Long targetMoney, LocalDate targetDate, User user) {

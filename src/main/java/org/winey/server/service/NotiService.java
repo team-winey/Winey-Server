@@ -19,7 +19,9 @@ import org.winey.server.infrastructure.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -34,7 +36,7 @@ public class NotiService {
     public GetAllNotiResponseDto getAllNoti(Long userId) {
         User currentUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         List<Notification> notifications = notiRepository.findAllByNotiReceiverOrderByCreatedAtDesc(currentUser);
-        if (notifications.isEmpty()){
+        if (notifications.isEmpty()) {
             return null;
         }
         List<GetNotiResponseDto> response = notifications.stream()
@@ -50,6 +52,7 @@ public class NotiService {
                 )).collect(Collectors.toList());
         return GetAllNotiResponseDto.of(response);
     }
+
     @Transactional
     public void checkAllNoti(Long userId) {     // 내가 체크 안했던 애들을 찾아서 다 체크 true 해버리기. 특정 조건 url을 타면 ㅇㅇ
         User currentUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
@@ -67,12 +70,12 @@ public class NotiService {
     }
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @Transactional
     public void checkGoalDateNotification() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         List<Goal> allGoals = goalRepository.findLatestGoalsForEachUser();
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
-
         for (Goal currentGoal : allGoals) {
             if (currentGoal.getTargetDate().isEqual(today.minusDays(1))) {
                 Notification notification = Notification.builder()
@@ -84,6 +87,31 @@ public class NotiService {
                 notification.updateLinkId(null);
                 notiRepository.save(notification);
             }
+        }
+    }
+
+    @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul") //혹시 모를 racing에 대비해 새벽 2시에 시작되도록 함.
+    @Transactional
+    public void deleteReadNotification() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        List<Notification> notifications = notiRepository.findByIsCheckedTrueOrderByUpdatedAtAsc();
+        LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
+        List<Long> deleteLists = new ArrayList<>();
+        System.out.println(now.minusDays(7)+"일 전을 기준으로 체크된 모든 알림을 지웁니다.");
+
+        for (Notification notification : notifications) {
+            if (notification.getUpdatedAt().isBefore(now.minusDays(7))) {
+                if(notification.getNotiType() != NotiType.HOWTOLEVELUP) {   //단, 레벨업 방법 알림은 제외.
+                    deleteLists.add(notification.getNotiId());
+                }
+            } else {
+                break;
+            }
+        }
+        if (!deleteLists.isEmpty()) {
+            Long res = notiRepository.deleteAllByNotiIdIn(deleteLists);
+            System.out.println(res+"개의 알림을 삭제했습니다.");
         }
     }
 

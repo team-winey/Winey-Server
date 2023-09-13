@@ -35,6 +35,10 @@ public class Feed extends AuditingTimeEntity {
     @Column(nullable = false)
     private Long feedMoney;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goal_id")
+    private Goal goal;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "feed", orphanRemoval = true)
     private List<FeedLike> feedLikes;
 
@@ -42,10 +46,11 @@ public class Feed extends AuditingTimeEntity {
     private List<Comment> comments;
 
     @Builder
-    public Feed(User user, String feedTitle, String feedImage, Long feedMoney){
+    public Feed(User user, String feedTitle, String feedImage, Long feedMoney, Goal goal){
         this.user = user;
         this.feedTitle = feedTitle;
         this.feedImage = feedImage;
         this.feedMoney = feedMoney;
+        this.goal = goal;
     }
 }
