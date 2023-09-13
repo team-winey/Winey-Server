@@ -12,6 +12,7 @@ import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.feed.CreateFeedResponseDto;
+import org.winey.server.controller.response.feed.DeleteFeedResponseDto;
 import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
 import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
 import org.winey.server.exception.Error;
@@ -49,13 +50,13 @@ public class FeedController {
     @DeleteMapping(value = "/{feedId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "위니 피드 삭제 API", description = "위니 피드를 서버에서 삭제합니다.")
-    public ApiResponse deleteFeed(
+    public ApiResponse<DeleteFeedResponseDto> deleteFeed(
             @UserId Long userId,
             @PathVariable Long feedId
     ) {
         String imageUrl = feedService.deleteFeed(userId, feedId);
         s3Service.deleteFile(imageUrl);
-        return ApiResponse.success(Success.DELETE_FEED_SUCCESS);
+        return ApiResponse.success(Success.DELETE_FEED_SUCCESS,DeleteFeedResponseDto.of(feedId));
     }
 
     @GetMapping("")

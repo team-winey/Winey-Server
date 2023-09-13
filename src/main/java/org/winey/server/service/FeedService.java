@@ -43,25 +43,31 @@ public class FeedService {
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
+            .orElseThrow(() -> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
+
         Feed feed = Feed.builder()
                 .feedImage(imageUrl)
                 .feedMoney(request.getFeedMoney())
                 .feedTitle(request.getFeedTitle())
                 .user(presentUser)
+                .goal(myGoal)
                 .build();
         feedRepository.save(feed);
-        Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
-                .orElseThrow(() -> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
+
         myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
 
         if (myGoal.isAttained()) {
             System.out.println("이미 목표달성");
             return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
         }
+
         if (LocalDate.now().isAfter(myGoal.getTargetDate())){
             System.out.println("목표를 제한 시간 내에 이루지 못함.");
             throw new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage()); //목표 설정 새로 하게 유도.
         }
+
         if (myGoal.getDuringGoalAmount() >= myGoal.getTargetMoney()) {
             myGoal.updateIsAttained(true); // 달성여부 체크
             if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
@@ -133,11 +139,19 @@ public class FeedService {
             throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
         }
 
-        if ((!presentGoal.getCreatedAt().isBefore(wantDeleteFeed.getCreatedAt())) || (!presentGoal.getTargetDate().isAfter(wantDeleteFeed.getCreatedAt().toLocalDate()))) {
+        // 현재 삭제하고자 하는 피드의 goal 아이디 != 현재 진행 중인 goal 아이디 --> 넘어가!
+        if (wantDeleteFeed.getGoal().getGoalId() != presentGoal.getGoalId()) {
             feedRepository.delete(wantDeleteFeed);
             return wantDeleteFeed.getFeedImage();
         }
+
+//        if ((!presentGoal.getCreatedAt().isBefore(wantDeleteFeed.getCreatedAt())) || (!presentGoal.getTargetDate().isAfter(wantDeleteFeed.getCreatedAt().toLocalDate()))) {
+//            feedRepository.delete(wantDeleteFeed);
+//            return wantDeleteFeed.getFeedImage();
+//        }
+
         presentGoal.updateGoalCountAndAmount(wantDeleteFeed.getFeedMoney(), false);
+
         if (presentUser.getUserLevel().getLevelNumber() >= 3 && (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount())) { //귀족 이상이면 강등로직.
             presentGoal.updateIsAttained(false); // 달성여부 체크
             if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
