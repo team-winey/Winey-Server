@@ -36,8 +36,6 @@ public class MessageQueueSender {
                 rabbitTemplate.convertAndSend("comment", "comment-noti", data);
             } else if (notification.getNotiType() == NotiType.LIKENOTI) {
                 rabbitTemplate.convertAndSend("like", "like-noti", data);
-                System.out.println("하이용3");
-
             }
         }catch (AmqpException e){
             System.out.println("메시지 전송 중 오류가 발생했습니다." + e.getMessage());
