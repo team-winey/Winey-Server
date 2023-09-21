@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.CreateFeedRequestDto;
-import org.winey.server.controller.response.feed.CreateFeedResponseDto;
-import org.winey.server.controller.response.feed.DeleteFeedResponseDto;
-import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
-import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
+import org.winey.server.controller.response.feed.*;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.Success;
 import org.winey.server.external.client.aws.S3Service;
@@ -22,6 +19,7 @@ import org.winey.server.service.FeedService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -82,5 +80,12 @@ public class FeedController {
     @Operation(summary = "피드 detail 조회 API", description = "피드 detail을 조회합니다.")
     public ApiResponse<GetFeedDetailResponseDto> getFeedDetail(@UserId Long userId, @PathVariable Long feedId) {
         return ApiResponse.success(Success.GET_DETAIL_SUCCESS, feedService.getFeedDetail(feedId, userId));
+    }
+
+    @PostMapping(value = "/report/{feedId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "피드 신고 API", description = "피드를 신고합니다.")
+    public ApiResponse<ReportFeedResponseDto> reportFeed(@UserId Long userId, @PathVariable Long feedId) throws IOException {
+        return ApiResponse.success(Success.REPORT_FEED_SUCCESS, feedService.reportFeed(feedId, userId));
     }
 }

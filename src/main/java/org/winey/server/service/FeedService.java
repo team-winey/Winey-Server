@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
 import org.winey.server.controller.response.comment.CommentResponseDto;
@@ -20,7 +21,9 @@ import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
 import org.winey.server.infrastructure.*;
+import org.winey.server.slack.SlackApi;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -36,8 +39,8 @@ public class FeedService {
     private final GoalRepository goalRepository;
     private final FeedLikeRepository feedLikeRepository;
     private final CommentRepository commentRepository;
-
     private final NotiRepository notiRepository;
+    private final SlackApi slackApi;
 
     @Transactional
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
@@ -291,5 +294,13 @@ public class FeedService {
             return Math.abs(ChronoUnit.SECONDS.between(now, createdAt)) + "초전";
         }
         return "지금";
+    }
+    @Transactional
+    public ReportFeedResponseDto reportFeed(Long userId, Long feedId) throws IOException {
+        Feed reportFeed = feedRepository.findByFeedId(feedId)
+                .orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
+        User reporter = userRepository.findByUserId(userId)
+                .orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        return ReportFeedResponseDto.of(userId,feedId,slackApi.sendReport(reporter, reportFeed));
     }
 }

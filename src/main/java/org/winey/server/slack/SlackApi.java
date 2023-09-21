@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.user.User;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -69,6 +71,15 @@ public class SlackApi {
 
         return sb.toString();
     }
+    private String generateReportMessage(Feed feed){
+        sb.setLength(0);
+        sb.append("*[🔥 feed id]*" + NEW_LINE + feed.getFeedId() + DOUBLE_NEW_LINE);
+        sb.append("*[📩 feed content]*" + NEW_LINE + feed.getFeedTitle() + DOUBLE_NEW_LINE);
+        sb.append("*[🚨 feed image]*" + NEW_LINE + feed.getFeedImage() + DOUBLE_NEW_LINE);
+        return sb.toString();
+    }
+
+
 
     private String readRootStackTrace(Exception error) {
         return error.getStackTrace()[0].toString();
@@ -83,5 +94,24 @@ public class SlackApi {
     private LayoutBlock getSection(String message) {
         return Blocks.section(s ->
                 s.text(BlockCompositions.markdownText(message)));
+    }
+    public String sendReport(User user, Feed feed) throws IOException{
+        List<LayoutBlock> layoutBlocks = generateReportBlock(feed);
+        Slack.getInstance().send(webhookUrl, WebhookPayloads
+                .payload(p ->
+                        p.username("신고가 접수되었습니다. 🚨")
+                                .iconUrl("https://yt3.googleusercontent.com/ytc/AGIKgqMVUzRrhoo1gDQcqvPo0PxaJz7e0gqDXT0D78R5VQ=s900-c-k-c0x00ffffff-no-rj")
+                                .blocks(layoutBlocks)));
+        return "신고가 정상적으로 접수되었습니다.";
+    }
+
+    private List<LayoutBlock> generateReportBlock(Feed feed) {
+        return Blocks.asBlocks(
+                getHeader("신고가 들어온 게시물이 있습니다.🚨"+NEW_LINE+"정신적으로 해로운 사진일 수 있으니 주의하세요."),
+                Blocks.divider(),
+                getSection(generateReportMessage(feed)),
+                Blocks.divider(),
+                getSection("<https://github.com/team-winey/Winey-Server/issues|이슈 생성하러 가기>")
+        );
     }
 }

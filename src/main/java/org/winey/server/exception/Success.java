@@ -25,6 +25,7 @@ public enum Success {
     UPDATE_NICKNAME_SUCCESS(HttpStatus.OK, "닉네임 변경 성공"),
     CHECK_NICKNAME_DUPLICATE_SUCCESS(HttpStatus.OK, "닉네임 중복 확인 성공"),
     CHECK_NEW_NOTIFICATION_SUCCESS(HttpStatus.OK, "새 알림 여부 조회 성공"),
+    REPORT_FEED_SUCCESS(HttpStatus.OK, "피드 신고 완료"),
 
     /**
      * 201 CREATED
