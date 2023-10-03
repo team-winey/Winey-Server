@@ -204,7 +204,7 @@ public class FeedService {
         } else {
             feedPage = feedRepository.findByUserNotInOrderByCreatedAtDesc(blockUsers, pageRequest);
         }
-        
+
         PageResponseDto pageInfo = PageResponseDto.of(feedPage.getTotalPages(), feedPage.getNumber() + 1, (feedPage.getTotalPages() == feedPage.getNumber() + 1));
         List<GetFeedResponseDto> feeds = feedPage.stream()
                 .map(feed -> GetFeedResponseDto.of(
