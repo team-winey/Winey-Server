@@ -12,4 +12,8 @@ public interface BlockUserRepository extends Repository<BlockUser, Long> {
 
     @Query("select bu from BlockUser bu join fetch bu.responseUser where bu.requestUser = :requestUser")
     List<BlockUser> findByRequestUser(User requestUser);
+
+    void deleteByRequestUser(User requestUser);
+
+    void deleteByResponseUser(User responseUser);
 }
