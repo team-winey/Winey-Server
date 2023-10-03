@@ -5,4 +5,5 @@ import org.winey.server.domain.block.BlockUser;
 
 public interface BlockUserRepository extends Repository<BlockUser, Long> {
 
+    BlockUser save(BlockUser blockUser);
 }
