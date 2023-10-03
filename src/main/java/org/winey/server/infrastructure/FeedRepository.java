@@ -1,8 +1,10 @@
 package org.winey.server.infrastructure;
 
+import java.util.Collection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.user.User;
@@ -16,4 +18,6 @@ public interface FeedRepository extends Repository<Feed,Long> {
     void delete(Feed feed);
     Page<Feed> findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page<Feed> findAllByUserOrderByCreatedAtDesc(User user, Pageable pageable);
+    Page<Feed> findByUserNotInOrderByCreatedAtDesc(Collection<User> users, Pageable pageable);
+
 }
