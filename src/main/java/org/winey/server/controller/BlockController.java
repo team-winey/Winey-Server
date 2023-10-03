@@ -22,7 +22,7 @@ public class BlockController {
 
     private final BlockService blockService;
 
-    @PostMapping(value = "/{feedId}")
+    @PostMapping(value = "/user/{feedId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "유저 차단 API", description = "해당 피드를 작성한 유저를 차단합니다.")
     public ApiResponse createBlockUser(
