@@ -197,7 +197,14 @@ public class FeedService {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        Page<Feed> feedPage = feedRepository.findByUserNotInOrderByCreatedAtDesc(blockUsers, pageRequest);
+        Page<Feed> feedPage;
+
+        if (blockUsers.size() == 0) {
+            feedPage = feedRepository.findAllByOrderByCreatedAtDesc(pageRequest);
+        } else {
+            feedPage = feedRepository.findByUserNotInOrderByCreatedAtDesc(blockUsers, pageRequest);
+        }
+        
         PageResponseDto pageInfo = PageResponseDto.of(feedPage.getTotalPages(), feedPage.getNumber() + 1, (feedPage.getTotalPages() == feedPage.getNumber() + 1));
         List<GetFeedResponseDto> feeds = feedPage.stream()
                 .map(feed -> GetFeedResponseDto.of(
