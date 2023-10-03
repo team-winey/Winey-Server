@@ -30,12 +30,12 @@ public class BlockUser extends AuditingTimeEntity {
     private User requestUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "block_user_id")
-    private User blockUser;
+    @JoinColumn(name = "response_user_id")
+    private User responseUser;
 
     @Builder
-    public BlockUser(User requestUser, User blockUser) {
+    public BlockUser(User requestUser, User responseUser) {
         this.requestUser = requestUser;
-        this.blockUser = blockUser;
+        this.responseUser = responseUser;
     }
 }
