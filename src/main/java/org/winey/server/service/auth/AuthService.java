@@ -18,6 +18,7 @@ import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnprocessableEntityException;
+import org.winey.server.infrastructure.BlockUserRepository;
 import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
@@ -38,14 +39,11 @@ public class AuthService {
     private final JwtService jwtService;
 
     private final UserRepository userRepository;
+    private final BlockUserRepository blockUserRepository;
 
 
     private final Long TOKEN_EXPIRATION_TIME_ACCESS = 100 * 24 * 60 * 60 * 1000L;
     private final Long TOKEN_EXPIRATION_TIME_REFRESH = 200 * 24 * 60 * 60 * 1000L;
-
-    private final GoalRepository goalRepository;
-
-    private final FeedRepository feedRepository;
 
     private final NotiRepository notiRepository;
 
@@ -145,6 +143,9 @@ public class AuthService {
 
         // 유저가 생성한 반응과 관련된 알림 삭제
         notiRepository.deleteByRequestUserId(userId);
+        
+        blockUserRepository.deleteByRequestUser(user);
+        blockUserRepository.deleteByResponseUser(user);
 
         Long res = userRepository.deleteByUserId(userId); //res가 삭제된 컬럼의 개수 즉, 1이 아니면 뭔가 알 수 없는 에러.
         System.out.println(res + "개의 컬럼이 삭제되었습니다.");
