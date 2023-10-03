@@ -1,5 +1,6 @@
 package org.winey.server.service;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +10,7 @@ import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
 import org.winey.server.controller.response.comment.CommentResponseDto;
 import org.winey.server.controller.response.feed.*;
+import org.winey.server.domain.block.BlockUser;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.notification.NotiType;
@@ -30,14 +32,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FeedService {
+
     private final FeedRepository feedRepository;
     private final UserRepository userRepository;
-
     private final GoalRepository goalRepository;
     private final FeedLikeRepository feedLikeRepository;
     private final CommentRepository commentRepository;
-
     private final NotiRepository notiRepository;
+    private final BlockUserRepository blockUserRepository;
 
     @Transactional
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
@@ -186,10 +188,17 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public GetAllFeedResponseDto getAllFeed(int page, Long userId) {
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         PageRequest pageRequest = PageRequest.of(page - 1, 20);
-        Page<Feed> feedPage = feedRepository.findAllByOrderByCreatedAtDesc(pageRequest);
+
+        List<User> blockUsers = blockUserRepository.findByRequestUser(user).stream()
+            .map(BlockUser::getResponseUser)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        Page<Feed> feedPage = feedRepository.findByUserNotInOrderByCreatedAtDesc(blockUsers, pageRequest);
         PageResponseDto pageInfo = PageResponseDto.of(feedPage.getTotalPages(), feedPage.getNumber() + 1, (feedPage.getTotalPages() == feedPage.getNumber() + 1));
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         List<GetFeedResponseDto> feeds = feedPage.stream()
                 .map(feed -> GetFeedResponseDto.of(
                         feed.getFeedId(),
