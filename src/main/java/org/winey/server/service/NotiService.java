@@ -78,7 +78,7 @@ public class NotiService {
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
-    @SchedulerLock(name = "SchedulerLock", lockAtMostForString = "PT2M", lockAtLeastForString = "PT2M")
+    @SchedulerLock(name = "SchedulerLock", lockAtMostForString = "PT1M", lockAtLeastForString = "PT1M")
     public void checkGoalDateNotification() {
         logger.info("목표 달성 체크 스케줄러 작동");
 
