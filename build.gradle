@@ -55,6 +55,10 @@ dependencies {
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.7'
+
+	// ShedLock
+	implementation 'net.javacrumbs.shedlock:shedlock-spring:4.14.0'
+	implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.14.0'
 }
 
 tasks.named('test') {

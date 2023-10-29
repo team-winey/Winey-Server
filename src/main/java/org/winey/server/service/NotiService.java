@@ -1,6 +1,18 @@
 package org.winey.server.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.SchedulerLock;
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,21 +28,16 @@ import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.TimeZone;
-import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@EnableSchedulerLock(defaultLockAtMostFor = "PT2M")
 public class NotiService {
+
     private final NotiRepository notiRepository;
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
+    private static final Logger logger = LoggerFactory.getLogger(NotiService.class);
 
     @Transactional(readOnly = true)
     public GetAllNotiResponseDto getAllNoti(Long userId) {
@@ -69,15 +76,22 @@ public class NotiService {
         return notifications.size() != 0;
     }
 
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     @Transactional
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @SchedulerLock(name = "SchedulerLock", lockAtMostForString = "PT2M", lockAtLeastForString = "PT2M")
     public void checkGoalDateNotification() {
+        logger.info("목표 달성 체크 스케줄러 작동");
+
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         List<Goal> allGoals = goalRepository.findLatestGoalsForEachUser();
         LocalDate today = LocalDate.now();
-        LocalDateTime now = LocalDateTime.now();
+
+        logger.info("오늘 날짜: {}", today);
+
         for (Goal currentGoal : allGoals) {
             if (currentGoal.getTargetDate().isEqual(today.minusDays(1))) {
+                logger.info("알림 생성 goalID: {}", currentGoal.getGoalId());
+
                 Notification notification = Notification.builder()
                         .notiType(NotiType.GOALFAILED)
                         .notiReciver(currentGoal.getUser())
@@ -95,7 +109,6 @@ public class NotiService {
     public void deleteReadNotification() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         List<Notification> notifications = notiRepository.findByIsCheckedTrueOrderByUpdatedAtAsc();
-        LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
         List<Long> deleteLists = new ArrayList<>();
         System.out.println(now.minusDays(7)+"일 전을 기준으로 체크된 모든 알림을 지웁니다.");
