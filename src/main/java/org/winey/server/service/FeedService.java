@@ -75,58 +75,21 @@ public class FeedService {
             if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
                 switch (checkUserLevelUp(presentUser)){
                     case 2:
-                        Notification noti2 = Notification.builder()
-                                .notiType(NotiType.RANKUPTO2)
-                                .notiMessage(NotiType.RANKUPTO2.getType())
-                                .isChecked(false)
-                                .notiReciver(presentUser)
-                                .build();
-                        noti2.updateLinkId(null);
-                        notiRepository.save(noti2);
+                        notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
                         break;
                     case 3:
-                        Notification noti3 = Notification.builder()
-                                .notiType(NotiType.RANKUPTO3)
-                                .notiMessage(NotiType.RANKUPTO3.getType())
-                                .isChecked(false)
-                                .notiReciver(presentUser)
-                                .build();
-                        noti3.updateLinkId(null);
-                        notiRepository.save(noti3);
+                        notificationBuilderInFeed(NotiType.RANKUPTO3, presentUser);
                         break;
                     case 4:
-                        Notification noti4 = Notification.builder()
-                                .notiType(NotiType.RANKUPTO4)
-                                .notiMessage(NotiType.RANKUPTO4.getType())
-                                .isChecked(false)
-                                .notiReciver(presentUser)
-                                .build();
-                        noti4.updateLinkId(null);
-                        notiRepository.save(noti4);
+                        notificationBuilderInFeed(NotiType.RANKUPTO4, presentUser);
                         break;
-
                 }
             }
         }
         return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
     }
 
-    private int checkUserLevelUp(User presentUser) {
-        int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser, true); //Goal 중 userid가 맞고 isAttained true 개수 세기
-        if (userAchievedGoals < 1) {
-            presentUser.updateUserLevel(UserLevel.COMMONER);
-            return 1;
-        } else if (userAchievedGoals < 3) {
-            presentUser.updateUserLevel(UserLevel.KNIGHT);
-            return 2;
-        } else if (userAchievedGoals < 9) {
-            presentUser.updateUserLevel(UserLevel.ARISTOCRAT);
-            return 3;
-        } else {
-            presentUser.updateUserLevel(UserLevel.EMPEROR);
-            return 4;
-        }
-    }
+
 
     @Transactional
     public String deleteFeed(Long userId, Long feedId) {
@@ -159,24 +122,10 @@ public class FeedService {
             if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
                 switch (checkUserLevelUp(presentUser)){
                     case 3:
-                        Notification noti3 = Notification.builder()
-                                .notiType(NotiType.DELETERANKDOWNTO3)
-                                .notiMessage(NotiType.DELETERANKDOWNTO3.getType())
-                                .isChecked(false)
-                                .notiReciver(presentUser)
-                                .build();
-                        noti3.updateLinkId(null);
-                        notiRepository.save(noti3);
+                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO3, presentUser);
                         break;
                     case 2:
-                        Notification noti2 = Notification.builder()
-                                .notiType(NotiType.DELETERANKDOWNTO2)
-                                .notiMessage(NotiType.DELETERANKDOWNTO2.getType())
-                                .isChecked(false)
-                                .notiReciver(presentUser)
-                                .build();
-                        noti2.updateLinkId(null);
-                        notiRepository.save(noti2);
+                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO2, presentUser);
                         break;
                 }
             }
@@ -307,5 +256,33 @@ public class FeedService {
             return Math.abs(ChronoUnit.SECONDS.between(now, createdAt)) + "초전";
         }
         return "지금";
+    }
+
+    private void notificationBuilderInFeed(NotiType type, User user){
+        Notification notification = Notification.builder()
+            .notiType(type)
+            .notiMessage(type.getType())
+            .isChecked(false)
+            .notiReciver(user)
+            .build();
+        notification.updateLinkId(null);
+        notiRepository.save(notification);
+    }
+
+    private int checkUserLevelUp(User presentUser) {
+        int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser, true); //Goal 중 userid가 맞고 isAttained true 개수 세기
+        if (userAchievedGoals < 1) {
+            presentUser.updateUserLevel(UserLevel.COMMONER);
+            return 1;
+        } else if (userAchievedGoals < 3) {
+            presentUser.updateUserLevel(UserLevel.KNIGHT);
+            return 2;
+        } else if (userAchievedGoals < 9) {
+            presentUser.updateUserLevel(UserLevel.ARISTOCRAT);
+            return 3;
+        } else {
+            presentUser.updateUserLevel(UserLevel.EMPEROR);
+            return 4;
+        }
     }
 }
