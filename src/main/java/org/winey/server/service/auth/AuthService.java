@@ -53,7 +53,6 @@ public class AuthService {
     public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) {
         SocialType socialType = SocialType.valueOf(requestDto.getSocialType());
         String socialId = login(socialType, socialAccessToken);
-        System.out.println("여기2");
 
         Boolean isRegistered = userRepository.existsBySocialIdAndSocialType(socialId, socialType);
 
@@ -86,10 +85,12 @@ public class AuthService {
         // jwt 발급 (액세스 토큰, 리프레쉬 토큰)
         String accessToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_ACCESS);
         String refreshToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_REFRESH);
+        String fcmToken = requestDto.getFcmToken();
 
         user.updateRefreshToken(refreshToken);
+        user.updateFcmToken(fcmToken);
 
-        return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, isRegistered);
+        return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, fcmToken, isRegistered);
     }
 
     @Transactional
