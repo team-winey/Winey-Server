@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.controller.request.UpdateFcmTokenDto;
 import org.winey.server.controller.request.UpdateUserNicknameDto;
 import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.controller.response.user.UserResponseGoalDto;
@@ -29,7 +30,6 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
-    private final NotiRepository notiRepository;
 
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId) {
@@ -57,17 +57,13 @@ public class UserService {
     public void updateNickname(Long userId, UpdateUserNicknameDto requestDto) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-//        List<Notification> notifications = notiRepository.findByRequestUserId(userId);
-//        if (!notifications.isEmpty()) {
-//            notifications.forEach(notification -> {
-//                if (notification.getNotiType() == NotiType.COMMENTNOTI) {
-//                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.COMMENTNOTI.getType());
-//                } else {
-//                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.LIKENOTI.getType());
-//                }
-//            });
-//        }
         user.updateNickname(requestDto.getNickname());
+    }
+    @Transactional
+    public void updateFcmToken(Long userId, UpdateFcmTokenDto updateFcmTokenDto){
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        user.updateFcmToken(user.getFcmToken());
     }
 
     public Boolean checkNicknameDuplicate(String nickname) {

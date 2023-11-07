@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.config.resolver.UserId;
+import org.winey.server.controller.request.UpdateFcmTokenDto;
 import org.winey.server.controller.request.UpdateUserNicknameDto;
 import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.exception.Error;
@@ -54,5 +55,13 @@ public class UserController {
             }
         };
         return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATE_SUCCESS, result);
+    }
+
+    @PatchMapping("/fcmtoken")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "닉네임 변경 API", description = "유저의 닉네임을 변경합니다.")
+    public ApiResponse updateFcmToken (@UserId Long userId, @RequestBody @Valid final UpdateFcmTokenDto requestDto) {
+        userService.updateFcmToken(userId, requestDto);
+        return ApiResponse.success(Success.UPDATE_NICKNAME_SUCCESS);
     }
 }
