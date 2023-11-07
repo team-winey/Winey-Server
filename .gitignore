@@ -43,13 +43,11 @@ application.yaml
 ### DS_Store
 .DS_Store
 
-<<<<<<< HEAD
 ### fcm
 winey-firebase.json
 
 ### banner.txt
 banner.txt
-=======
+
 ### log file ###
 logs/
->>>>>>> 89f3c532c31161eabf968b41ad07798e92b6e471
