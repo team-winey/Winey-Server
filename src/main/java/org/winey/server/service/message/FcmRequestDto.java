@@ -9,16 +9,18 @@ import org.winey.server.domain.notification.Notification;
 
 import java.io.Serializable;
 
+import javax.annotation.Nullable;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FcmRequestDto implements Serializable {
     private String message;
-    private String fcmToken;
+    private String token; //fcm
+    private NotiType type;
+    private Long feedId;
 
-    private NotiType notiType;
-
-    public static FcmRequestDto of(String message, String fcmToken, NotiType notiType){
-        return new FcmRequestDto(message,fcmToken,notiType);
+    public static FcmRequestDto of(String message, String token, NotiType type, Long feedId){
+        return new FcmRequestDto(message,token,type,feedId);
     }
 }

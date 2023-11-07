@@ -61,7 +61,8 @@ public class FeedLikeService {
                 noti.updateResponseId(like.getId());
                 noti.updateRequestUserId(userId);
                 notiRepository.save(noti);
-                messageQueueSender.pushSender(FcmRequestDto.of(noti.getNotiMessage(), noti.getNotiReceiver().getFcmToken(), noti.getNotiType()));
+                System.out.println("이제 전송한다?");
+                messageQueueSender.pushSender(FcmRequestDto.of(noti.getNotiMessage(), noti.getNotiReceiver().getFcmToken(), noti.getNotiType(), feedId));
             }
         } else { // 좋아요 취소
             FeedLike deletedFeedLike = feedLikeRepository.deleteByFeedAndUser(feed, user).get(0);
