@@ -63,7 +63,11 @@ public class UserService {
     public void updateFcmToken(Long userId, UpdateFcmTokenDto updateFcmTokenDto){
         User user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+<<<<<<< Updated upstream
         user.updateFcmToken(updateFcmTokenDto.getToken());
+=======
+        user.updateFcmToken(user.getFcmToken());
+>>>>>>> Stashed changes
     }
 
     public Boolean checkNicknameDuplicate(String nickname) {
