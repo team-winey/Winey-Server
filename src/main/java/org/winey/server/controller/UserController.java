@@ -58,10 +58,10 @@ public class UserController {
     }
 
     @PatchMapping("/fcmtoken")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "닉네임 변경 API", description = "유저의 닉네임을 변경합니다.")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "fcm토큰 변경 API", description = "유저의 fcm token을 변경합니다.")
     public ApiResponse updateFcmToken (@UserId Long userId, @RequestBody @Valid final UpdateFcmTokenDto requestDto) {
         userService.updateFcmToken(userId, requestDto);
-        return ApiResponse.success(Success.UPDATE_NICKNAME_SUCCESS);
+        return ApiResponse.success(Success.FCM_TOKEN_UPDATE_SUCCESS);
     }
 }
