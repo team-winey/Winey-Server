@@ -25,6 +25,7 @@ public class MessageQueueSender {
 
     @Transactional
     public void pushSender(FcmRequestDto notification){
+        System.out.println("여기는 오는건가?");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out;
         try {
@@ -32,9 +33,9 @@ public class MessageQueueSender {
             out.writeObject(notification);
             out.flush();
             byte[] data = bos.toByteArray();
-            if (notification.getNotiType() == NotiType.COMMENTNOTI) {
+            if (notification.getType() == NotiType.COMMENTNOTI) {
                 rabbitTemplate.convertAndSend("comment", "comment-noti", data);
-            } else if (notification.getNotiType() == NotiType.LIKENOTI) {
+            } else if (notification.getType() == NotiType.LIKENOTI) {
                 rabbitTemplate.convertAndSend("like", "like-noti", data);
             }
         }catch (AmqpException e){

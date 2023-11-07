@@ -58,7 +58,7 @@ public class CommentService {
             notification.updateResponseId(comment.getCommentId());
             notification.updateRequestUserId(userId);
             notiRepository.save(notification);
-            messageQueueSender.pushSender(FcmRequestDto.of(notification.getNotiMessage(), notification.getNotiReceiver().getFcmToken(), notification.getNotiType()));
+            messageQueueSender.pushSender(FcmRequestDto.of(notification.getNotiMessage(), notification.getNotiReceiver().getFcmToken(), notification.getNotiType(),feedId));
         }
         return CommentResponseDto.of(comment.getCommentId(), userId, user.getNickname(), comment.getContent(),user.getUserLevel().getLevelNumber(),comment.getCreatedAt());
     }

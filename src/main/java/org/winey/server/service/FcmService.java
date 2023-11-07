@@ -94,8 +94,9 @@ public class FcmService{
         // 메시지 만들기
         Message message = Message.builder()
                 .putData("time", LocalDateTime.now().toString())
+                .putData("feedId", String.valueOf(wineyNotification.getFeedId()))
                 .setNotification(new Notification("위니 제국의 편지가 도착했어요.", wineyNotification.getMessage()))
-                .setToken(wineyNotification.getFcmToken())
+                .setToken(wineyNotification.getToken())
                 .build();
 
         // 요청에 대한 응답을 받을 response
