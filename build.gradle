@@ -62,6 +62,7 @@ dependencies {
 	//rabbitmq
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
+
 	// ShedLock
 	implementation 'net.javacrumbs.shedlock:shedlock-spring:4.14.0'
 	implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.14.0'
