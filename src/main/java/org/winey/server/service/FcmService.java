@@ -93,8 +93,9 @@ public class FcmService{
     public void sendByToken(FcmRequestDto wineyNotification) {
         // 메시지 만들기
         Message message = Message.builder()
-                .putData("time", LocalDateTime.now().toString())
                 .putData("feedId", String.valueOf(wineyNotification.getFeedId()))
+                .putData("notiType", String.valueOf(wineyNotification.getType()))
+                .putData("token", wineyNotification.getToken())
                 .setNotification(new Notification("위니 제국의 편지가 도착했어요.", wineyNotification.getMessage()))
                 .setToken(wineyNotification.getToken())
                 .build();

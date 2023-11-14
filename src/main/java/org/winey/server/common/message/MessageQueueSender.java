@@ -1,4 +1,4 @@
-package org.winey.server.config.message;
+package org.winey.server.common.message;
 
 import com.google.cloud.ByteArray;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,6 @@ public class MessageQueueSender {
     final RabbitTemplate rabbitTemplate;
 
 
-    @Transactional
     public void pushSender(FcmRequestDto notification){
         System.out.println("여기는 오는건가?");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

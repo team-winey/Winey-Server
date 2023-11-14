@@ -23,6 +23,7 @@ public enum Success {
 
     RE_ISSUE_TOKEN_SUCCESS(HttpStatus.OK, "토큰 재발급 성공"),
     UPDATE_NICKNAME_SUCCESS(HttpStatus.OK, "닉네임 변경 성공"),
+    UPDATE_PUSH_ALLOWED_SUCCESS(HttpStatus.OK, "푸시 알림 동의 여부 변경 성공"),
     CHECK_NICKNAME_DUPLICATE_SUCCESS(HttpStatus.OK, "닉네임 중복 확인 성공"),
     CHECK_NEW_NOTIFICATION_SUCCESS(HttpStatus.OK, "새 알림 여부 조회 성공"),
     BLOCK_USER_SUCCESS(HttpStatus.OK, "유저 차단 성공"),

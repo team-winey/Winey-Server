@@ -1,4 +1,4 @@
-package org.winey.server.config.message;
+package org.winey.server.common.message;
 
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.core.ExchangeTypes;
