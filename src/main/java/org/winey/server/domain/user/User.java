@@ -44,6 +44,9 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = true)
     private String fcmToken;
 
+    @Column(nullable = true)
+    private Boolean pushNotificationAllowed = true;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Goal> goals;
 
@@ -82,4 +85,6 @@ public class User extends AuditingTimeEntity {
     }
 
     public void updateFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
+
+    public void updatePushNotification(Boolean isAllowed){this.pushNotificationAllowed = isAllowed;}
 }

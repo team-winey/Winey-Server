@@ -14,6 +14,7 @@ import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
@@ -64,6 +65,19 @@ public class UserService {
         User user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
         user.updateFcmToken(updateFcmTokenDto.getToken());
+    }
+
+    //푸시알림 동의 여부 수정 api
+    @Transactional
+    public Boolean allowedPushNotification(Long userId, Boolean isAllowed){
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        if (isAllowed == user.getPushNotificationAllowed()) {   //같은 경우면 에러가 날 수 있으니 에러 띄움.
+            throw new BadRequestException(Error.REQUEST_VALIDATION_EXCEPTION,
+                Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
+        }
+        user.updatePushNotification(isAllowed);
+        return isAllowed;
     }
 
     public Boolean checkNicknameDuplicate(String nickname) {
