@@ -94,7 +94,7 @@ public class CommentService {
 			.isChecked(false)
 			.build();
 		notification.updateLinkId(feed.getFeedId());
-		notification.updateResponseId(feed.getUser().getUserId());
+		notification.updateResponseId(comment.getCommentId());
 		notification.updateRequestUserId(user.getUserId());
 		notiRepository.save(notification);
 		if (comment.getUser().getPushNotificationAllowed()) { //푸시알림에 동의했을 경우.

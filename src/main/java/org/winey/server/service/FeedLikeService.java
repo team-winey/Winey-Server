@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.common.message.MessageQueueSender;
-import org.winey.server.domain.comment.Comment;
 import org.winey.server.service.message.FcmRequestDto;
 import org.winey.server.controller.response.feedLike.CreateFeedLikeResponseDto;
 import org.winey.server.domain.feed.Feed;
