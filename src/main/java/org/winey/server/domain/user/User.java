@@ -3,6 +3,7 @@ package org.winey.server.domain.user;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Getter
 @DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AuditingTimeEntity {
 

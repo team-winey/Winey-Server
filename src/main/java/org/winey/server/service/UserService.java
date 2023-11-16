@@ -36,8 +36,9 @@ public class UserService {
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-
-        UserResponseUserDto userDto = UserResponseUserDto.of(user.getUserId(), user.getNickname(), user.getUserLevel().getName());
+        if (user.getPushNotificationAllowed()==null) //동의 여부가 null이면
+			allowedPushNotification(userId, true); //아래 업데이트 함수 재사용해서 수정 한번 해줌.
+        UserResponseUserDto userDto = UserResponseUserDto.of(user.getUserId(), user.getNickname(), user.getUserLevel().getName(),user.getPushNotificationAllowed());
 
         List<Goal> goalList = goalRepository.findByUserOrderByCreatedAtDesc(user);
 
