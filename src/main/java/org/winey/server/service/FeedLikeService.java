@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.common.message.MessageQueueSender;
+import org.winey.server.domain.comment.Comment;
 import org.winey.server.service.message.FcmRequestDto;
 import org.winey.server.controller.response.feedLike.CreateFeedLikeResponseDto;
 import org.winey.server.domain.feed.Feed;
@@ -51,18 +52,7 @@ public class FeedLikeService {
             feedLikeRepository.save(like);
 
             if (user.getUserId() != feed.getUser().getUserId()){    //만약 좋아요를 누르는 사람이랑 피드 주인이랑 다르면 알림 생성
-                Notification noti = Notification.builder()  // 좋아요 알림 생성
-                        .notiType(NotiType.LIKENOTI)
-                        .notiMessage(user.getNickname()+NotiType.LIKENOTI.getType())
-                        .isChecked(false)
-                        .notiReciver(feed.getUser())
-                        .build();
-                noti.updateLinkId(feedId);
-                noti.updateResponseId(like.getId());
-                noti.updateRequestUserId(userId);
-                notiRepository.save(noti);
-                System.out.println("이제 전송한다?");
-                messageQueueSender.pushSender(FcmRequestDto.of(noti.getNotiMessage(), noti.getNotiReceiver().getFcmToken(), noti.getNotiType(), feedId));
+                createNotificationInLike(feed, like, user);
             }
         } else { // 좋아요 취소
             FeedLike deletedFeedLike = feedLikeRepository.deleteByFeedAndUser(feed, user).get(0);
@@ -73,5 +63,28 @@ public class FeedLikeService {
             }
         }
         return CreateFeedLikeResponseDto.of(feedId, feedLike, (long) feedLikeRepository.countByFeed(feed));
+    }
+
+    private void createNotificationInLike(Feed feed, FeedLike like, User user) {
+        Notification notification = Notification.builder()  // 좋아요 알림 생성
+            .notiType(NotiType.LIKENOTI)
+            .notiMessage(user.getNickname()+NotiType.LIKENOTI.getType())
+            .isChecked(false)
+            .notiReciver(feed.getUser())
+            .build();
+        notification.updateLinkId(feed.getFeedId());
+        notification.updateResponseId(like.getId());
+        notification.updateRequestUserId(user.getUserId());
+        notiRepository.save(notification);
+        if (feed.getUser().getPushNotificationAllowed()) { //푸시알림에 동의했을 경우. 피드 주인에게 알림
+            if (notification.getNotiReceiver().getFcmToken().isEmpty())
+                throw new BadRequestException(Error.INVALID_FCMTOKEN_EXCEPTION, Error.INVALID_FCMTOKEN_EXCEPTION.getMessage());
+            messageQueueSender.pushSender(
+                FcmRequestDto.of(
+                    notification.getNotiMessage(),
+                    notification.getNotiReceiver().getFcmToken(),
+                    notification.getNotiType(),
+                    feed.getFeedId()));
+        }
     }
 }

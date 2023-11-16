@@ -10,6 +10,8 @@ import org.winey.server.controller.response.comment.DeleteCommentResponseDto;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
+import org.winey.server.exception.model.BadRequestException;
+import org.winey.server.exception.model.CustomException;
 import org.winey.server.exception.model.UnauthorizedException;
 import org.winey.server.exception.model.UnprocessableEntityException;
 import org.winey.server.infrastructure.CommentRepository;
@@ -92,10 +94,12 @@ public class CommentService {
 			.isChecked(false)
 			.build();
 		notification.updateLinkId(feed.getFeedId());
-		notification.updateResponseId(comment.getCommentId());
+		notification.updateResponseId(feed.getUser().getUserId());
 		notification.updateRequestUserId(user.getUserId());
 		notiRepository.save(notification);
 		if (comment.getUser().getPushNotificationAllowed()) { //푸시알림에 동의했을 경우.
+			if (notification.getNotiReceiver().getFcmToken().isEmpty())
+				throw new BadRequestException(Error.INVALID_FCMTOKEN_EXCEPTION, Error.INVALID_FCMTOKEN_EXCEPTION.getMessage());
 			messageQueueSender.pushSender(
 				FcmRequestDto.of(
                     notification.getNotiMessage(),
