@@ -43,7 +43,7 @@ jobs:
         
         # application.yml 파일 확인
         cat ./application.yml
-
+        
         # winey-firebase.json 파일 생성
         touch ./winey-firebase.json
 
