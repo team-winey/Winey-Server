@@ -14,9 +14,9 @@ public class SignInResponseDto {
     private String refreshToken;
     private String fcmToken;
     private Boolean isRegistered;
-    private Boolean isAllowed;
+    private Boolean fcmIsAllowed;
 
-    public static SignInResponseDto of(Long userId, String accessToken, String refreshToken, String fcmToken, Boolean isRegistered, Boolean isAllowed) {
-        return new SignInResponseDto(userId, accessToken, refreshToken, fcmToken, isRegistered, isAllowed);
+    public static SignInResponseDto of(Long userId, String accessToken, String refreshToken, String fcmToken, Boolean isRegistered, Boolean fcmIsAllowed) {
+        return new SignInResponseDto(userId, accessToken, refreshToken, fcmToken, isRegistered, fcmIsAllowed);
     }
 }

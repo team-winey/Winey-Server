@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 @Getter
 @DynamicInsert
-@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AuditingTimeEntity {
 
@@ -47,7 +46,7 @@ public class User extends AuditingTimeEntity {
     private String fcmToken;
 
     @Column(nullable = true)
-    private Boolean pushNotificationAllowed = true;
+    private Boolean fcmIsAllowed = true;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Goal> goals;
@@ -88,5 +87,5 @@ public class User extends AuditingTimeEntity {
 
     public void updateFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
 
-    public void updatePushNotification(Boolean isAllowed){this.pushNotificationAllowed = isAllowed;}
+    public void updateFcmIsAllowed(Boolean isAllowed){this.fcmIsAllowed = isAllowed;}
 }

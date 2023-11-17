@@ -75,9 +75,7 @@ public class FeedLikeService {
         notification.updateResponseId(like.getId());
         notification.updateRequestUserId(user.getUserId());
         notiRepository.save(notification);
-        if (feed.getUser().getPushNotificationAllowed()) { //푸시알림에 동의했을 경우. 피드 주인에게 알림
-            if (notification.getNotiReceiver().getFcmToken().isEmpty())
-                throw new BadRequestException(Error.INVALID_FCMTOKEN_EXCEPTION, Error.INVALID_FCMTOKEN_EXCEPTION.getMessage());
+        if (feed.getUser().getFcmIsAllowed() && !notification.getNotiReceiver().getFcmToken().isEmpty()) { //푸시알림에 동의했을 경우. 피드 주인에게 알림
             messageQueueSender.pushSender(
                 FcmRequestDto.of(
                     notification.getNotiMessage(),
