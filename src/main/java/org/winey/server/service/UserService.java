@@ -36,9 +36,8 @@ public class UserService {
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        if (user.getPushNotificationAllowed()==null) //동의 여부가 null이면
-			allowedPushNotification(userId, true); //아래 업데이트 함수 재사용해서 수정 한번 해줌.
-        UserResponseUserDto userDto = UserResponseUserDto.of(user.getUserId(), user.getNickname(), user.getUserLevel().getName(),user.getPushNotificationAllowed());
+
+        UserResponseUserDto userDto = UserResponseUserDto.of(user.getUserId(), user.getNickname(), user.getUserLevel().getName(),user.getFcmIsAllowed());
 
         List<Goal> goalList = goalRepository.findByUserOrderByCreatedAtDesc(user);
 
@@ -70,15 +69,15 @@ public class UserService {
 
     //푸시알림 동의 여부 수정 api
     @Transactional
-    public Boolean allowedPushNotification(Long userId, Boolean isAllowed){
+    public Boolean allowedPushNotification(Long userId, Boolean fcmIsAllowed){
         User user = userRepository.findByUserId(userId)
             .orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        if (isAllowed == user.getPushNotificationAllowed()) {   //같은 경우면 에러가 날 수 있으니 에러 띄움.
+        if (fcmIsAllowed == user.getFcmIsAllowed()) {   //같은 경우면 에러가 날 수 있으니 에러 띄움.
             throw new BadRequestException(Error.REQUEST_VALIDATION_EXCEPTION,
                 Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
         }
-        user.updatePushNotification(isAllowed);
-        return isAllowed;
+        user.updateFcmIsAllowed(fcmIsAllowed);
+        return fcmIsAllowed;
     }
 
     public Boolean checkNicknameDuplicate(String nickname) {

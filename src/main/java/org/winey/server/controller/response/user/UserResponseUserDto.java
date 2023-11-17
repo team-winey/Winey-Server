@@ -12,9 +12,9 @@ public class UserResponseUserDto {
     private Long userId;
     private String nickname;
     private String userLevel;
-    private Boolean allowed;
+    private Boolean fcmIsAllowed;
 
-    public static UserResponseUserDto of(Long userId, String nickname, String userLevel, Boolean allowed) {
-        return new UserResponseUserDto(userId, nickname, userLevel, allowed);
+    public static UserResponseUserDto of(Long userId, String nickname, String userLevel, Boolean fcmIsAllowed) {
+        return new UserResponseUserDto(userId, nickname, userLevel, fcmIsAllowed);
     }
 }

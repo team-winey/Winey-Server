@@ -64,7 +64,7 @@ public class AuthService {
                     .nickname("위니"+randomString)
                     .socialId(socialId)
                     .socialType(socialType).build();
-            newUser.updatePushNotification(true); //신규 유저면 true박고
+            newUser.updateFcmIsAllowed(true); //신규 유저면 true박고
             userRepository.save(newUser);
 
 
@@ -88,10 +88,8 @@ public class AuthService {
 
         user.updateRefreshToken(refreshToken);
         user.updateFcmToken(fcmToken);
-        if (user.getPushNotificationAllowed()==null) //기존 유저인데 null이면 업데이트 true false면 안해버리기
-            user.updatePushNotification(true);
 
-        return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, fcmToken, isRegistered,user.getPushNotificationAllowed());
+        return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, fcmToken, isRegistered,user.getFcmIsAllowed());
     }
 
     @Transactional
@@ -123,7 +121,6 @@ public class AuthService {
             return appleSignInService.getAppleId(socialAccessToken);
         }
         else if (socialType.toString() == "KAKAO") {
-            System.out.println("여기1");
             return kakaoSignInService.getKaKaoId(socialAccessToken);
         }
         else{
