@@ -1,24 +1,22 @@
 package org.winey.server.service;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.common.message.MessageQueueSender;
 import org.winey.server.controller.response.comment.CommentResponseDto;
 import org.winey.server.controller.response.comment.DeleteCommentResponseDto;
 import org.winey.server.domain.comment.Comment;
+import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
-import org.winey.server.exception.model.BadRequestException;
-import org.winey.server.exception.model.CustomException;
-import org.winey.server.exception.model.UnauthorizedException;
-import org.winey.server.exception.model.UnprocessableEntityException;
-import org.winey.server.infrastructure.CommentRepository;
-import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
+import org.winey.server.exception.model.UnauthorizedException;
+import org.winey.server.exception.model.UnprocessableEntityException;
+import org.winey.server.infrastructure.CommentRepository;
 import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
@@ -97,7 +95,7 @@ public class CommentService {
 		notification.updateResponseId(comment.getCommentId());
 		notification.updateRequestUserId(user.getUserId());
 		notiRepository.save(notification);
-		if (feed.getUser().getFcmIsAllowed() && !notification.getNotiReceiver().getFcmToken().isEmpty()) { //푸시알림에 동의했을 경우.
+		if (feed.getUser().getFcmIsAllowed() && Objects.nonNull(notification.getNotiReceiver().getFcmToken())) { //푸시알림에 동의했을 경우.
 			messageQueueSender.pushSender(
 				FcmRequestDto.of(
                     notification.getNotiMessage(),
