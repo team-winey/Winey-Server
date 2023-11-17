@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.controller.request.UpdateFcmTokenDto;
 import org.winey.server.controller.request.UpdateUserNicknameDto;
 import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.controller.response.user.UserResponseGoalDto;
@@ -13,6 +14,7 @@ import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
@@ -29,14 +31,13 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
-    private final NotiRepository notiRepository;
 
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
-        UserResponseUserDto userDto = UserResponseUserDto.of(user.getUserId(), user.getNickname(), user.getUserLevel().getName());
+        UserResponseUserDto userDto = UserResponseUserDto.of(user.getUserId(), user.getNickname(), user.getUserLevel().getName(),user.getFcmIsAllowed());
 
         List<Goal> goalList = goalRepository.findByUserOrderByCreatedAtDesc(user);
 
@@ -57,17 +58,26 @@ public class UserService {
     public void updateNickname(Long userId, UpdateUserNicknameDto requestDto) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-//        List<Notification> notifications = notiRepository.findByRequestUserId(userId);
-//        if (!notifications.isEmpty()) {
-//            notifications.forEach(notification -> {
-//                if (notification.getNotiType() == NotiType.COMMENTNOTI) {
-//                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.COMMENTNOTI.getType());
-//                } else {
-//                    notification.updateNotiMessage(requestDto.getNickname() + NotiType.LIKENOTI.getType());
-//                }
-//            });
-//        }
         user.updateNickname(requestDto.getNickname());
+    }
+    @Transactional
+    public void updateFcmToken(Long userId, UpdateFcmTokenDto updateFcmTokenDto){
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        user.updateFcmToken(updateFcmTokenDto.getToken());
+    }
+
+    //푸시알림 동의 여부 수정 api
+    @Transactional
+    public Boolean allowedPushNotification(Long userId, Boolean fcmIsAllowed){
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(()-> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        if (fcmIsAllowed == user.getFcmIsAllowed()) {   //같은 경우면 에러가 날 수 있으니 에러 띄움.
+            throw new BadRequestException(Error.REQUEST_VALIDATION_EXCEPTION,
+                Error.REQUEST_VALIDATION_EXCEPTION.getMessage());
+        }
+        user.updateFcmIsAllowed(fcmIsAllowed);
+        return fcmIsAllowed;
     }
 
     public Boolean checkNicknameDuplicate(String nickname) {
