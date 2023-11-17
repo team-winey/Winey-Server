@@ -1,5 +1,6 @@
 package org.winey.server.service;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +76,7 @@ public class FeedLikeService {
         notification.updateResponseId(like.getId());
         notification.updateRequestUserId(user.getUserId());
         notiRepository.save(notification);
-        if (feed.getUser().getFcmIsAllowed() && !notification.getNotiReceiver().getFcmToken().isEmpty()) { //푸시알림에 동의했을 경우. 피드 주인에게 알림
+        if (feed.getUser().getFcmIsAllowed() && Objects.nonNull(notification.getNotiReceiver().getFcmToken())) { //푸시알림에 동의했을 경우. 피드 주인에게 알림
             messageQueueSender.pushSender(
                 FcmRequestDto.of(
                     notification.getNotiMessage(),

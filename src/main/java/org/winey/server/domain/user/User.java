@@ -1,9 +1,22 @@
 package org.winey.server.domain.user;
 
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
@@ -11,9 +24,6 @@ import org.winey.server.domain.feed.FeedLike;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.recommend.Recommend;
-
-import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
@@ -88,4 +98,11 @@ public class User extends AuditingTimeEntity {
     public void updateFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
 
     public void updateFcmIsAllowed(Boolean isAllowed){this.fcmIsAllowed = isAllowed;}
+
+    public String getFcmToken() {
+        if (Objects.nonNull(this.fcmToken)) {
+            return this.fcmToken;
+        }
+        return null;
+    }
 }
