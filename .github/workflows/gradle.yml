@@ -54,6 +54,16 @@ jobs:
         
         # application.yml 파일 확인
         cat ./application.yml
+
+        # winey-firebase.json 파일 생성
+        touch ./winey-firebase.json
+
+        # GitHub-Actions 에서 설정한 값을 winey-firebase.json 파일에 쓰기
+        echo "${{ secrets.WINEY_FIREBASE }}" >> ./winey-firebase.json
+
+        # winey-firebase.json 파일 확인
+        cat ./winey-firebase.json
+        
       shell: bash
         
     # 이 워크플로우는 gradle build
