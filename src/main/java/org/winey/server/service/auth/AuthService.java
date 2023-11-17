@@ -51,6 +51,7 @@ public class AuthService {
     public SignInResponseDto signIn(String socialAccessToken, SignInRequestDto requestDto) {
         SocialType socialType = SocialType.valueOf(requestDto.getSocialType());
         String socialId = login(socialType, socialAccessToken);
+        System.out.println("여기2");
 
         Boolean isRegistered = userRepository.existsBySocialIdAndSocialType(socialId, socialType);
 
@@ -64,7 +65,6 @@ public class AuthService {
                     .nickname("위니"+randomString)
                     .socialId(socialId)
                     .socialType(socialType).build();
-            newUser.updateFcmIsAllowed(true); //신규 유저면 true박고
             userRepository.save(newUser);
 
 
@@ -84,12 +84,10 @@ public class AuthService {
         // jwt 발급 (액세스 토큰, 리프레쉬 토큰)
         String accessToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_ACCESS);
         String refreshToken = jwtService.issuedToken(String.valueOf(user.getUserId()), TOKEN_EXPIRATION_TIME_REFRESH);
-        String fcmToken = requestDto.getFcmToken();
 
         user.updateRefreshToken(refreshToken);
-        user.updateFcmToken(fcmToken);
 
-        return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, fcmToken, isRegistered,user.getFcmIsAllowed());
+        return SignInResponseDto.of(user.getUserId(), accessToken, refreshToken, isRegistered);
     }
 
     @Transactional
@@ -112,8 +110,8 @@ public class AuthService {
     public void signOut(Long userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
         user.updateRefreshToken(null);
-        user.updateFcmToken(null);
     }
 
     private String login(SocialType socialType, String socialAccessToken) {
@@ -121,6 +119,7 @@ public class AuthService {
             return appleSignInService.getAppleId(socialAccessToken);
         }
         else if (socialType.toString() == "KAKAO") {
+            System.out.println("여기1");
             return kakaoSignInService.getKaKaoId(socialAccessToken);
         }
         else{
