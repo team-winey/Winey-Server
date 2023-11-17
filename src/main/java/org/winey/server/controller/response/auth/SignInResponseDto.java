@@ -12,9 +12,11 @@ public class SignInResponseDto {
     private Long userId;
     private String accessToken;
     private String refreshToken;
+    private String fcmToken;
     private Boolean isRegistered;
+    private Boolean fcmIsAllowed;
 
-    public static SignInResponseDto of(Long userId, String accessToken, String refreshToken, Boolean isRegistered) {
-        return new SignInResponseDto(userId, accessToken, refreshToken, isRegistered);
+    public static SignInResponseDto of(Long userId, String accessToken, String refreshToken, String fcmToken, Boolean isRegistered, Boolean fcmIsAllowed) {
+        return new SignInResponseDto(userId, accessToken, refreshToken, fcmToken, isRegistered, fcmIsAllowed);
     }
 }

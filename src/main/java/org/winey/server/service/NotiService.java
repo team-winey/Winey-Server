@@ -23,6 +23,7 @@ import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
