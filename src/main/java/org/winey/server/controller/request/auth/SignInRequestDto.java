@@ -13,6 +13,4 @@ import javax.validation.constraints.NotNull;
 public class SignInRequestDto {
     @NotNull
     private String socialType;
-    
-    private String fcmToken;
 }

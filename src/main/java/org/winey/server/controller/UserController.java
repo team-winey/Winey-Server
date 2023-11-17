@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.winey.server.common.dto.ApiResponse;
 import org.winey.server.config.resolver.UserId;
-import org.winey.server.controller.request.UpdateAllowedPushDto;
-import org.winey.server.controller.request.UpdateFcmTokenDto;
 import org.winey.server.controller.request.UpdateUserNicknameDto;
 import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.exception.Error;
@@ -56,25 +54,5 @@ public class UserController {
             }
         };
         return ApiResponse.success(Success.CHECK_NICKNAME_DUPLICATE_SUCCESS, result);
-    }
-
-    @PatchMapping("/fcmtoken")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "fcm토큰 변경 API", description = "유저의 fcm token을 변경합니다.")
-    public ApiResponse updateFcmToken (@UserId Long userId, @RequestBody @Valid final UpdateFcmTokenDto requestDto) {
-        userService.updateFcmToken(userId, requestDto);
-        return ApiResponse.success(Success.FCM_TOKEN_UPDATE_SUCCESS);
-    }
-
-    @PatchMapping("/notification")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "푸시 알림 동의 변경 API", description = "유저의 알림 동의 여부를 변경합니다.")
-    public ApiResponse updateAllowedNotification (@UserId Long userId, @RequestBody @Valid final UpdateAllowedPushDto requestDto) {
-        Map<String, Boolean> result = new HashMap<String, Boolean>() {
-            {
-                put("isAllowed", userService.allowedPushNotification(userId, requestDto.getAllowedPush()));
-            }
-        };
-        return ApiResponse.success(Success.UPDATE_PUSH_ALLOWED_SUCCESS, result);
     }
 }

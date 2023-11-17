@@ -12,9 +12,8 @@ public class UserResponseUserDto {
     private Long userId;
     private String nickname;
     private String userLevel;
-    private Boolean fcmIsAllowed;
 
-    public static UserResponseUserDto of(Long userId, String nickname, String userLevel, Boolean fcmIsAllowed) {
-        return new UserResponseUserDto(userId, nickname, userLevel, fcmIsAllowed);
+    public static UserResponseUserDto of(Long userId, String nickname, String userLevel) {
+        return new UserResponseUserDto(userId, nickname, userLevel);
     }
 }

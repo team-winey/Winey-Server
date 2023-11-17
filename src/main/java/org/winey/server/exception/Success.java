@@ -23,7 +23,6 @@ public enum Success {
 
     RE_ISSUE_TOKEN_SUCCESS(HttpStatus.OK, "토큰 재발급 성공"),
     UPDATE_NICKNAME_SUCCESS(HttpStatus.OK, "닉네임 변경 성공"),
-    UPDATE_PUSH_ALLOWED_SUCCESS(HttpStatus.OK, "푸시 알림 동의 여부 변경 성공"),
     CHECK_NICKNAME_DUPLICATE_SUCCESS(HttpStatus.OK, "닉네임 중복 확인 성공"),
     CHECK_NEW_NOTIFICATION_SUCCESS(HttpStatus.OK, "새 알림 여부 조회 성공"),
     BLOCK_USER_SUCCESS(HttpStatus.OK, "유저 차단 성공"),
@@ -45,8 +44,7 @@ public enum Success {
      */
     DELETE_FEED_SUCCESS(HttpStatus.NO_CONTENT, "피드가 정상적으로 삭제되었습니다."),
     DELETE_COMMENT_SUCCESS(HttpStatus.NO_CONTENT, "댓글이 정상적으로 삭제되었습니다."),
-    NOTIFICATION_EMPTY_SUCCESS(HttpStatus.NO_CONTENT, "알림이 한통도 없어요. 힝~구"),
-    FCM_TOKEN_UPDATE_SUCCESS(HttpStatus.NO_CONTENT, "fcm 수정이 완료 됐습니다."),
+    NOTIFICATION_EMPTY_SUCCESS(HttpStatus.NOT_FOUND, "알림이 한통도 없어요. 힝~구"),
 
     DELETE_USER_SUCCESS(HttpStatus.NO_CONTENT, "회원 탈퇴가 정상적으로 이루어졌습니다.")
     ;

@@ -3,7 +3,6 @@ package org.winey.server.domain.user;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.comment.Comment;
 import org.winey.server.domain.feed.Feed;
@@ -42,12 +41,6 @@ public class User extends AuditingTimeEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    @Column(nullable = true)
-    private String fcmToken;
-
-    @Column(nullable = true)
-    private Boolean fcmIsAllowed = true;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Goal> goals;
 
@@ -84,8 +77,4 @@ public class User extends AuditingTimeEntity {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
-
-    public void updateFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
-
-    public void updateFcmIsAllowed(Boolean isAllowed){this.fcmIsAllowed = isAllowed;}
 }
