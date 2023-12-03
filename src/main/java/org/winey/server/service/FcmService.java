@@ -95,7 +95,6 @@ public class FcmService{
         Message message = Message.builder()
                 .putData("feedId", String.valueOf(wineyNotification.getFeedId()))
                 .putData("notiType", String.valueOf(wineyNotification.getType()))
-                .putData("token", wineyNotification.getToken())
                 .putData("title", "위니 제국의 편지가 도착했어요.")
                 .putData("message" ,wineyNotification.getMessage())
                 .setToken(wineyNotification.getToken())
