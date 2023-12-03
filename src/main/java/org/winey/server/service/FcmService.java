@@ -96,14 +96,14 @@ public class FcmService{
                 .putData("feedId", String.valueOf(wineyNotification.getFeedId()))
                 .putData("notiType", String.valueOf(wineyNotification.getType()))
                 .putData("token", wineyNotification.getToken())
-                .setNotification(new Notification("위니 제국의 편지가 도착했어요.", wineyNotification.getMessage()))
+                .putData("title", "위니 제국의 편지가 도착했어요.")
+                .putData("message" ,wineyNotification.getMessage())
                 .setToken(wineyNotification.getToken())
                 .build();
 
         // 요청에 대한 응답을 받을 response
         String response;
         try {
-            System.out.println("여까지는 왔다.");
             // 알림 발송
             response = FirebaseMessaging.getInstance().send(message);
             System.out.println(response);
