@@ -62,7 +62,7 @@ public class MessageQueueReceiver {
         try {
             in = new ObjectInputStream(bis);
             Object obj = in.readObject();
-            if (obj instanceof Notification){
+            if (obj instanceof FcmRequestDto){
                 FcmRequestDto notification = (FcmRequestDto) obj;
                 fcmService.sendByToken(notification);
             }
