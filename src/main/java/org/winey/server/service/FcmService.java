@@ -1,17 +1,24 @@
 package org.winey.server.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.common.net.HttpHeaders;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.winey.server.service.message.FcmMessage;
 import org.winey.server.service.message.FcmRequestDto;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,6 +40,9 @@ public class FcmService{
     // 메시징만 권한 설정
     @Value("${fcm.key.scope}")
     private String fireBaseScope;
+
+    @Value("${fcm.api.url}")
+    private String FCM_API_URL;
 
     // fcm 기본 설정 진행
     @PostConstruct
@@ -53,6 +64,7 @@ public class FcmService{
             throw new RuntimeException(e.getMessage());
         }
     }
+
 
 
     // 알림 보내기
@@ -90,24 +102,83 @@ public class FcmService{
     }
     // 좋아요나 댓글 관련 알림 로직 작성
     @Async
-    public void sendByToken(FcmRequestDto wineyNotification) {
+    public CompletableFuture<Response> sendByToken(FcmRequestDto wineyNotification) throws JsonProcessingException {
         // 메시지 만들기
-        Message message = Message.builder()
-                .putData("feedId", String.valueOf(wineyNotification.getFeedId()))
-                .putData("notiType", String.valueOf(wineyNotification.getType()))
-                .putData("title", "위니 제국의 편지가 도착했어요.")
-                .putData("message" ,wineyNotification.getMessage())
-                .setToken(wineyNotification.getToken())
+        // Message message = Message.builder()
+        //         .putData("feedId", String.valueOf(wineyNotification.getFeedId()))
+        //         .putData("notiType", String.valueOf(wineyNotification.getType()))
+        //         .putData("title", "위니 제국의 편지가 도착했어요.")
+        //         .putData("message" ,wineyNotification.getMessage())
+        //         .setToken(wineyNotification.getToken())  <- 만약 여기 destination 부분만 수정해도 될 수도 있음. 가능성 생각하기
+        //         .build();
+        String jsonMessage = makeSingleMessage(wineyNotification);
+        // 요청에 대한 응답을 받을 response
+        Response response;
+        // 알림 발송
+        response = sendPushMessage(jsonMessage);
+        return CompletableFuture.completedFuture(response);
+    }
+
+    // 실제 파이어베이스 서버로 푸시 메시지를 전송하는 메서드
+    private Response sendPushMessage(String message) {
+
+        try {
+            OkHttpClient client = new OkHttpClient();
+            RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
+            Request httpRequest = new Request.Builder()
+                .url(FCM_API_URL)  // 요청을 보낼 위치 (to 파이어베이스 서버)
+                .post(requestBody)
+                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
                 .build();
 
-        // 요청에 대한 응답을 받을 response
-        String response;
+            Response response = client.newCall(httpRequest).execute();
+
+            log.info("단일 기기 알림 전송 성공 ! successCount: 1 messages were sent successfully");
+            log.info("알림 전송: {}", response.body().string());
+            return response;
+        } catch (IOException e) {
+            throw new IllegalArgumentException("파일을 읽는 데 실패했습니다.");
+        }
+    }
+
+    // Firebase에서 Access Token 가져오기
+    private String getAccessToken() {
+
         try {
-            // 알림 발송
-            response = FirebaseMessaging.getInstance().send(message);
-            System.out.println(response);
-        } catch (FirebaseMessagingException e) {
-            log.error("푸시 알림을 보내다가 오류가 발생했습니다. error info : {}", e.getMessage());
+            GoogleCredentials googleCredentials = GoogleCredentials
+                .fromStream(new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream())
+                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+            googleCredentials.refreshIfExpired();
+            log.info("getAccessToken() - googleCredentials: {} ", googleCredentials.getAccessToken().getTokenValue());
+
+            return googleCredentials.getAccessToken().getTokenValue();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("파일을 읽는 데 실패했습니다.");
+        }
+    }
+    private String makeSingleMessage(FcmRequestDto wineyNotification) throws JsonProcessingException {
+
+        try {
+            FcmMessage fcmMessage = FcmMessage.builder()
+                .message(FcmMessage.Message.builder()
+                    .token(wineyNotification.getToken())   // 1:1 전송 시 반드시 필요한 대상 토큰 설정
+                    .data(FcmMessage.Data.builder()
+                        .title("위니 제국의 편지가 도착했어요.")
+                        .message(wineyNotification.getMessage())
+                        .feedId(String.valueOf(wineyNotification.getFeedId()))
+                        .notiType(String.valueOf(wineyNotification.getType()))
+                        .build())
+                    .notification(FcmMessage.Notification.builder()
+                        .title("위니 제국의 편지가 도착했어요.")
+                        .body(wineyNotification.getMessage())
+                        .build())
+                    .build()
+                ).validateOnly(false)
+                .build();
+            return new ObjectMapper().writeValueAsString(fcmMessage);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON 처리 도중에 예외가 발생했습니다.");
         }
     }
 

@@ -58,6 +58,7 @@ dependencies {
 
 	//FCM
 	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.1'
+	implementation 'com.squareup.okhttp3:okhttp:4.10.0'  // Firebase 서버로 푸시 메시지 전송 시 필요
 
 	//rabbitmq
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
