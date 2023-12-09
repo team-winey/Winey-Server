@@ -6,12 +6,17 @@ import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.service.FcmService;
 import org.winey.server.service.message.FcmRequestDto;
 
 import java.io.*;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
 
 @Component
 @AllArgsConstructor
@@ -24,7 +29,8 @@ public class MessageQueueReceiver {
             value = @Queue(name = "like-notification"),
             key = "like-noti")
     )
-    public void likeReceiver(byte[] likeNoti){
+    public void likeReceiver(byte[] likeNoti, Channel channel,@Header(AmqpHeaders.DELIVERY_TAG) long tag) throws
+        IOException {
         System.out.println("좋아요 noti receiver");
         ByteArrayInputStream bis = new ByteArrayInputStream(likeNoti);
         ObjectInput in = null;
@@ -34,10 +40,14 @@ public class MessageQueueReceiver {
             System.out.println("여기까진 오는가");
             if (obj instanceof FcmRequestDto){
                 FcmRequestDto notification = (FcmRequestDto) obj;
-                fcmService.sendByToken(notification);
+                String response = String.valueOf(fcmService.sendByToken(notification));
+                if (response.isEmpty()){
+                    throw new IOException();
+                }
             }
         }catch (IOException | ClassNotFoundException e){
             e.printStackTrace();
+            channel.basicNack(tag,false,true);
         }finally {
             try{
                 bis.close();
@@ -64,7 +74,10 @@ public class MessageQueueReceiver {
             Object obj = in.readObject();
             if (obj instanceof FcmRequestDto){
                 FcmRequestDto notification = (FcmRequestDto) obj;
-                fcmService.sendByToken(notification);
+                String response = String.valueOf(fcmService.sendByToken(notification));
+                if (response.isEmpty()){
+                    throw new IOException();
+                }
             }
         }catch (IOException | ClassNotFoundException e){
             e.printStackTrace();
