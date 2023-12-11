@@ -43,9 +43,6 @@ application.yaml
 ### DS_Store
 .DS_Store
 
-### fcm
-winey-firebase.json
-
 ### banner.txt
 banner.txt
 
