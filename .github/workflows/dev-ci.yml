@@ -39,9 +39,6 @@ jobs:
         # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
         echo "${{ secrets.WINEY_DEV_APPLICATION }}" >> ./application.yml
 
-        # winey-firebase.json 파일 생성
-        touch ./winey-firebase.json
-
         # Firebase secrets 파일 복사
         echo "${{ secrets.WINEY_FIREBASE }}" >> ./winey-firebase.json
         
