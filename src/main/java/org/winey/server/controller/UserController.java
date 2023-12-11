@@ -78,3 +78,4 @@ public class UserController {
         return ApiResponse.success(Success.UPDATE_PUSH_ALLOWED_SUCCESS, result);
     }
 }
+
