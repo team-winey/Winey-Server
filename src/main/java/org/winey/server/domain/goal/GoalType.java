@@ -12,7 +12,7 @@ public enum GoalType {
     COMMONER_GOAL(UserLevel.COMMONER, 5000, "아메리카노"),
     KNIGHT_GOAL(UserLevel.KNIGHT, 30000, "치킨"),
     ARISTOCRAT_GOAL(UserLevel.ARISTOCRAT, 150000, "운동화"),
-    EMPEROR_GOAL(UserLevel.ARISTOCRAT, 300000, "에어팟");
+    EMPEROR_GOAL(UserLevel.EMPEROR, 300000, "에어팟");
 
     private final UserLevel userLevel;
     private final int targetMoney;
