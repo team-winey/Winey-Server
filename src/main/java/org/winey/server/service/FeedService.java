@@ -87,32 +87,26 @@ public class FeedService {
             presentUser.upgradeUserLevel();
 
             // 6-3. 레벨업 알림을 생성한다.
-            GoalType newGoalType = null;
             switch (presentUser.getUserLevel()) {
                 case KNIGHT:
                     notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
-                    newGoalType = GoalType.KNIGHT_GOAL;
                     break;
                 case ARISTOCRAT:
                     notificationBuilderInFeed(NotiType.RANKUPTO3, presentUser);
-                    newGoalType = GoalType.ARISTOCRAT_GOAL;
                     break;
                 case EMPEROR:
                     notificationBuilderInFeed(NotiType.RANKUPTO4, presentUser);
-                    newGoalType = GoalType.EMPEROR_GOAL;
                     break;
                 default:
                     break;
             }
 
             // 6-4. 새로운 목표를 시작한다.
-            if (newGoalType != null) {
-                Goal newGoal = Goal.builder()
-                    .goalType(newGoalType)
-                    .user(presentUser)
-                    .build();
-                goalRepository.save(newGoal);
-            }
+            Goal newGoal = Goal.builder()
+                .goalType(GoalType.findGoalTypeByUserLevel(presentUser.getUserLevel()))
+                .user(presentUser)
+                .build();
+            goalRepository.save(newGoal);
         }
         return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
     }
