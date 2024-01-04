@@ -113,19 +113,25 @@ public class FeedService {
 
     @Transactional
     public String deleteFeed(Long userId, Long feedId) {
+        // 1. 유저를 가져온다.
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        // 2. 해당 유저의 가장 최신 목표를 가져온다.
         Goal presentGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
+
+        // 3. 지우고자 하는 피드를 가져온다.
         Feed wantDeleteFeed = feedRepository.findByFeedId(feedId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
 
+        // 4. 피드를 작성한 유저와 현재 접속한 유저가 다르면 삭제할 수 없다.
         if (presentUser != wantDeleteFeed.getUser()) {
             throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
         }
 
-        // 현재 삭제하고자 하는 피드의 goal 아이디 != 현재 진행 중인 goal 아이디 --> 넘어가!
-        if (wantDeleteFeed.getGoal().getGoalId() != presentGoal.getGoalId()) {
+        // 5. 현재 진행중인 목표에 의존한 피드가 아니라면, 삭제하고 넘어간다.
+        if (!Objects.equals(wantDeleteFeed.getGoal().getGoalId(), presentGoal.getGoalId())) {
             feedRepository.delete(wantDeleteFeed);
             return wantDeleteFeed.getFeedImage();
         }
@@ -135,21 +141,9 @@ public class FeedService {
 //            return wantDeleteFeed.getFeedImage();
 //        }
 
+        // 6. 피드와 관련된 목표의 duringAmount 를 삭감한다.
         presentGoal.updateGoalCountAndAmount(wantDeleteFeed.getFeedMoney(), false);
 
-        if (presentUser.getUserLevel().getLevelNumber() >= 3 && (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount())) { //귀족 이상이면 강등로직.
-            presentGoal.updateIsAttained(false); // 달성여부 체크
-            if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
-                switch (checkUserLevelUp(presentUser)){
-                    case 3:
-                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO3, presentUser);
-                        break;
-                    case 2:
-                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO2, presentUser);
-                        break;
-                }
-            }
-        }
         notiRepository.deleteByLinkId(feedId);
         feedRepository.delete(wantDeleteFeed);
         return wantDeleteFeed.getFeedImage();
