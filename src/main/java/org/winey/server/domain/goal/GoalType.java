@@ -15,4 +15,13 @@ public enum GoalType {
     private final UserLevel userLevel;
     private final int targetMoney;
     private final String targetProduct;
+
+    public static GoalType findGoalTypeByUserLevel(UserLevel userLevel) {
+        for (GoalType goalType : GoalType.values()) {
+            if (goalType.getUserLevel() == userLevel) {
+                return goalType;
+            }
+        }
+        return null;
+    }
 }
