@@ -1,7 +1,7 @@
 package org.winey.server.service.auth;
 
-import com.sun.net.httpserver.Authenticator;
-import feign.FeignException;
+import java.util.Random;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,27 +9,21 @@ import org.winey.server.config.jwt.JwtService;
 import org.winey.server.controller.request.auth.SignInRequestDto;
 import org.winey.server.controller.response.auth.SignInResponseDto;
 import org.winey.server.controller.response.auth.TokenResponseDto;
-import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.goal.Goal;
+import org.winey.server.domain.goal.GoalType;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.SocialType;
-
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnprocessableEntityException;
 import org.winey.server.infrastructure.BlockUserRepository;
-import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
 import org.winey.server.service.auth.apple.AppleSignInService;
 import org.winey.server.service.auth.kakao.KakaoSignInService;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +34,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final BlockUserRepository blockUserRepository;
+    private final GoalRepository goalRepository;
 
 
     private final Long TOKEN_EXPIRATION_TIME_ACCESS = 100 * 24 * 60 * 60 * 1000L;
@@ -76,6 +71,12 @@ public class AuthService {
                     .build();
             newNoti.updateLinkId(null);
             notiRepository.save(newNoti);
+
+            Goal newGoal = Goal.builder()
+                .goalType(GoalType.COMMONER_GOAL)
+                .user(newUser)
+                .build();
+            goalRepository.save(newGoal);
         }
 
         User user = userRepository.findBySocialIdAndSocialType(socialId, socialType)
