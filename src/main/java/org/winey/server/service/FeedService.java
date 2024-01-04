@@ -20,6 +20,7 @@ import org.winey.server.controller.response.feed.GetFeedResponseDto;
 import org.winey.server.domain.block.BlockUser;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.goal.Goal;
+import org.winey.server.domain.goal.GoalType;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
@@ -86,23 +87,36 @@ public class FeedService {
             presentUser.upgradeUserLevel();
 
             // 6-3. 레벨업 알림을 생성한다.
+            GoalType newGoalType = null;
             switch (presentUser.getUserLevel()) {
                 case KNIGHT:
                     notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
+                    newGoalType = GoalType.KNIGHT_GOAL;
                     break;
                 case ARISTOCRAT:
                     notificationBuilderInFeed(NotiType.RANKUPTO3, presentUser);
+                    newGoalType = GoalType.ARISTOCRAT_GOAL;
                     break;
                 case EMPEROR:
                     notificationBuilderInFeed(NotiType.RANKUPTO4, presentUser);
+                    newGoalType = GoalType.EMPEROR_GOAL;
                     break;
                 default:
                     break;
             }
+
+            // 6-4. 새로운 목표를 시작한다.
+            if (newGoalType != null) {
+                Goal newGoal = Goal.builder()
+                    .goalType(newGoalType)
+                    .user(presentUser)
+                    .build();
+                goalRepository.save(newGoal);
+            }
         }
         return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
     }
-    
+
     @Transactional
     public String deleteFeed(Long userId, Long feedId) {
         User presentUser = userRepository.findByUserId(userId)

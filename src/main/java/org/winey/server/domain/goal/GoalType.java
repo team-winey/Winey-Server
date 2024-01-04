@@ -3,8 +3,6 @@ package org.winey.server.domain.goal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.winey.server.domain.user.UserLevel;
-import org.winey.server.exception.Error;
-import org.winey.server.exception.model.BadRequestException;
 
 @Getter
 @AllArgsConstructor
@@ -17,14 +15,4 @@ public enum GoalType {
     private final UserLevel userLevel;
     private final int targetMoney;
     private final String targetProduct;
-
-    public GoalType getGoalTypeByUserLevel(UserLevel userLevel) {
-        for (GoalType goalType : GoalType.values()) {
-            if (goalType.getUserLevel() == userLevel) {
-                return goalType;
-            }
-        }
-        throw new BadRequestException(Error.INVALID_USER_LEVEL_EXCEPTION,
-            Error.INVALID_USER_LEVEL_EXCEPTION.getMessage());
-    }
 }
