@@ -79,7 +79,7 @@ public class FeedService {
         }
 
         // 6. 목표 달성 여부를 체크한다.
-        if (myGoal.getDuringGoalAmount() >= myGoal.getTargetMoney()) {
+        if (myGoal.getDuringGoalAmount() >= myGoal.getGoalType().getTargetMoney()) {
             // 6-1. 해당 목표의 달성 여부를 true 로 바꾼다.
             myGoal.updateIsAttained(true);
 

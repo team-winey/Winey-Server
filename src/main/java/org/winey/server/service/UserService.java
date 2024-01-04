@@ -25,7 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final GoalRepository goalRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public UserResponseDto getUser(Long userId) {
         // 1. 유저 정보를 조회한다.
         User user = userRepository.findByUserId(userId)
