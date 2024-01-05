@@ -19,6 +19,7 @@ import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
@@ -50,7 +51,10 @@ public class FeedService {
         Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
             .orElseThrow(() -> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
 
-        FeedType feedType = FeedType.valueOf(request.getFeedType());
+        String feedType = request.getFeedType();
+
+        if (!FeedType.isValidFeedType(feedType))
+            throw new BadRequestException(Error.INVALID_FEEDTYPE, Error.INVALID_FEEDTYPE.getMessage());
 
         Feed feed = Feed.builder()
                 .feedImage(imageUrl)
@@ -58,13 +62,13 @@ public class FeedService {
                 .feedTitle(request.getFeedTitle())
                 .user(presentUser)
                 .goal(myGoal)
-                .feedType(feedType)
+                .feedType(FeedType.valueOf(feedType))
                 .build();
 
         feedRepository.save(feed);
 
         // 절약 피드면 목표 금액 업데이트
-        if (feedType == FeedType.SAVE)
+        if (feedType == "SAVE")
             myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
 
         // 레벨업 더이상 할 수 없는 사람들
