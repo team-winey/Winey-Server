@@ -3,6 +3,8 @@ package org.winey.server.domain.feed;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 @AllArgsConstructor
 public enum FeedType {
@@ -13,7 +15,7 @@ public enum FeedType {
 
     public static boolean isValidFeedType(String type) {
         for (FeedType feed : FeedType.values()) {
-            if (feed.getStringVal() == type) return true;
+            if (Objects.equals(feed.getStringVal(), type)) return true;
         }
         return false;
     }
