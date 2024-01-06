@@ -32,6 +32,7 @@ public enum Error {
     INVALID_APPLE_CLAIMS(HttpStatus.BAD_REQUEST, "Apple OAuth Claims 값이 올바르지 않습니다."),
     INVALID_ENCRYPT_COMMUNICATION(HttpStatus.BAD_REQUEST, "Apple OAuth 통신 암호화 과정 중 문제가 발생했습니다."),
     CREATE_PUBLIC_KEY_EXCEPTION(HttpStatus.BAD_REQUEST, "Apple OAuth 로그인 중 public verify 생성에 문제가 발생했습니다."),
+    INVALID_USER_LEVEL_EXCEPTION(HttpStatus.BAD_REQUEST, "존재하지 않는 유저 레벨입니다."),
 
     /**
      * 401 UNAUTHORIZED
