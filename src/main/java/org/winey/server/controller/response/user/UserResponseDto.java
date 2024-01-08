@@ -10,11 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserResponseDto {
-    private UserResponseUserDto userResponseUserDto;
-    private UserResponseGoalDto userResponseGoalDto;
+    private Long userId;
+    private String nickname;
+    private String userLevel;
+    private Boolean fcmIsAllowed;
+    private Long savedAmount;
+    private Long savedCount;
 
-    public static UserResponseDto of(UserResponseUserDto userResponseUserDto, UserResponseGoalDto userResponseGoalDto) {
-        return new UserResponseDto(userResponseUserDto, userResponseGoalDto);
+    public static UserResponseDto of(Long userId, String nickname, String userLevel, Boolean fcmIsAllowed, Long savedAmount, Long savedCount) {
+        return new UserResponseDto(userId, nickname, userLevel, fcmIsAllowed, savedAmount, savedCount);
     }
 }
-

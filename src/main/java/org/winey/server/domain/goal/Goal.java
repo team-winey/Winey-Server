@@ -1,9 +1,6 @@
 package org.winey.server.domain.goal;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
@@ -16,7 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -25,7 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
-import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.user.User;
 
 @Entity
@@ -64,8 +59,8 @@ public class Goal extends AuditingTimeEntity {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "goal", orphanRemoval = true)
-    private List<Feed> feeds = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "goal", orphanRemoval = true)
+//    private List<Feed> feeds = new ArrayList<>();
 
     @Builder
     public Goal(GoalType goalType, User user) {

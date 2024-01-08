@@ -60,6 +60,12 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = true)
     private Boolean fcmIsAllowed = true;
 
+    @Column
+    private Long savedAmount;
+
+    @Column
+    private Long savedCount;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Goal> goals;
 
@@ -83,6 +89,8 @@ public class User extends AuditingTimeEntity {
         this.userLevel = COMMONER;
         this.socialId = socialId;
         this.socialType = socialType;
+        this.savedCount = 0L;
+        this.savedAmount = 0L;
     }
 
     public void updateUserLevel(UserLevel userLevel){
@@ -116,6 +124,16 @@ public class User extends AuditingTimeEntity {
     public void updateFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
 
     public void updateFcmIsAllowed(Boolean isAllowed){this.fcmIsAllowed = isAllowed;}
+
+    public void increaseSavedAmountAndCount(Long money) {
+        this.savedAmount += money;
+        this.savedCount += 1;
+    }
+
+    public void decreaseSavedAmountAndCount(Long money) {
+        this.savedCount -= money;
+        this.savedCount -= 1;
+    }
 
     public String getFcmToken() {
         if (Objects.nonNull(this.fcmToken)) {
