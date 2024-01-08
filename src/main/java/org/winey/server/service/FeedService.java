@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -63,8 +64,8 @@ public class FeedService {
 
         String feedType = request.getFeedType();
 
-        if (!FeedType.isValidFeedType(feedType))
-            throw new BadRequestException(Error.INVALID_FEEDTYPE, Error.INVALID_FEEDTYPE.getMessage());
+        // if (!FeedType.isValidFeedType(feedType))
+            // throw new BadRequestException(Error.INVALID_FEEDTYPE, Error.INVALID_FEEDTYPE.getMessage());
 
         // 3. 피드를 생성한다.
         Feed feed = Feed.builder()
@@ -73,13 +74,13 @@ public class FeedService {
                 .feedTitle(request.getFeedTitle())
                 .user(presentUser)
                 .goal(myGoal)
-                .feedType(FeedType.valueOf(feedType))
+                .feedType(feedType == null || feedType.isEmpty() ? null : FeedType.valueOf(feedType))
                 .build();
 
         feedRepository.save(feed);
 
         // 절약 피드면 목표 금액 업데이트
-        if (feedType == "SAVE")
+        if (Objects.equals(feedType, "SAVE"))
             myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
 
         // 5. 이미 모든 레벨을 마스터한 사용자는 넘어간다.
