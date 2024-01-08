@@ -18,6 +18,7 @@ public class GetFeedResponseDto {
     private String nickName;
     private int writerLevel;
     // 여기까쥐
+    private String feedType;
     private String feedTitle;
     private String feedImage;
     private Long feedMoney;
@@ -28,8 +29,8 @@ public class GetFeedResponseDto {
     private LocalDateTime createdAt;
 
 
-    public static GetFeedResponseDto of(Long feedId, Long userId, String nickName, int writerLevel, String feedTitle, String feedImage,
+    public static GetFeedResponseDto of(Long feedId, Long userId, String nickName, int writerLevel, String feedType, String feedTitle, String feedImage,
                                         Long feedMoney, Boolean isLiked, Long likes, Long comments, String timeAgo, LocalDateTime createdAt) {
-        return new GetFeedResponseDto(feedId, userId, nickName, writerLevel, feedTitle, feedImage, feedMoney, isLiked, likes, comments, timeAgo, createdAt);
+        return new GetFeedResponseDto(feedId, userId, nickName, writerLevel, feedType, feedTitle, feedImage, feedMoney, isLiked, likes, comments, timeAgo, createdAt);
     }
 }

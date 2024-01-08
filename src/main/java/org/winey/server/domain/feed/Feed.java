@@ -18,10 +18,12 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Feed extends AuditingTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id")
     private Long feedId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
@@ -31,6 +33,10 @@ public class Feed extends AuditingTimeEntity {
 
     @Column(nullable = false)
     private String feedImage;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private FeedType feedType;
 
     @Column(nullable = false)
     private Long feedMoney;
@@ -46,11 +52,12 @@ public class Feed extends AuditingTimeEntity {
     private List<Comment> comments;
 
     @Builder
-    public Feed(User user, String feedTitle, String feedImage, Long feedMoney, Goal goal){
+    public Feed(User user, String feedTitle, String feedImage, Long feedMoney, Goal goal, FeedType feedType){
         this.user = user;
         this.feedTitle = feedTitle;
         this.feedImage = feedImage;
         this.feedMoney = feedMoney;
+        this.feedType = feedType;
         this.goal = goal;
     }
 }

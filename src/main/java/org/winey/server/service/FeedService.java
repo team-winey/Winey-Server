@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
 import org.winey.server.controller.response.feed.GetFeedResponseDto;
 import org.winey.server.domain.block.BlockUser;
 import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.feed.FeedType;
 import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.goal.GoalType;
 import org.winey.server.domain.notification.NotiType;
@@ -26,6 +28,7 @@ import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
@@ -59,6 +62,11 @@ public class FeedService {
         Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
             .orElseThrow(() -> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
 
+        String feedType = request.getFeedType();
+
+        // if (!FeedType.isValidFeedType(feedType))
+            // throw new BadRequestException(Error.INVALID_FEEDTYPE, Error.INVALID_FEEDTYPE.getMessage());
+
         // 3. 피드를 생성한다.
         Feed feed = Feed.builder()
                 .feedImage(imageUrl)
@@ -66,11 +74,14 @@ public class FeedService {
                 .feedTitle(request.getFeedTitle())
                 .user(presentUser)
                 .goal(myGoal)
+                .feedType(feedType == null || feedType.isEmpty() ? null : FeedType.valueOf(feedType))
                 .build();
+
         feedRepository.save(feed);
 
-        // 4. 목표의 duringGoalAmount, duringGoalCount 를 업데이트한다.
-        myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트
+        // 절약 피드면 목표 금액 업데이트
+        if (Objects.equals(feedType, "SAVE"))
+            myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
 
         // 5. 이미 모든 레벨을 마스터한 사용자는 넘어간다.
         if (myGoal.isAttained() && presentUser.getUserLevel() == UserLevel.EMPEROR) {
@@ -175,6 +186,7 @@ public class FeedService {
                         feed.getUser().getUserId(),
                         feed.getUser().getNickname(),
                         feed.getUser().getUserLevel().getLevelNumber(),
+                        feed.getFeedType() == null ? null : feed.getFeedType().getStringVal(),
                         feed.getFeedTitle(),
                         feed.getFeedImage(),
                         feed.getFeedMoney(),
@@ -199,6 +211,7 @@ public class FeedService {
                         myFeed.getUser().getUserId(),
                         myFeed.getUser().getNickname(),
                         myFeed.getUser().getUserLevel().getLevelNumber(),
+                        myFeed.getFeedType() == null ? null : myFeed.getFeedType().getStringVal(),
                         myFeed.getFeedTitle(),
                         myFeed.getFeedImage(),
                         myFeed.getFeedMoney(),
@@ -232,6 +245,7 @@ public class FeedService {
                 detailFeed.getUser().getUserId(),
                 detailFeed.getUser().getNickname(),
                 detailFeed.getUser().getUserLevel().getLevelNumber(),
+                detailFeed.getFeedType() == null ? null : detailFeed.getFeedType().getStringVal(),
                 detailFeed.getFeedTitle(),
                 detailFeed.getFeedImage(),
                 detailFeed.getFeedMoney(),
