@@ -17,6 +17,6 @@ public class CreateFeedRequestDto {
     private MultipartFile feedImage;
     @NotNull @DecimalMax(value = "9999999")
     private Long feedMoney;
-    @NotBlank
+
     private String feedType;
 }

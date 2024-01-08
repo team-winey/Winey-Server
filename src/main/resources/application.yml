@@ -1,0 +1,229 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+# local
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://sopt32-seminar.cmh3iq3t6cqm.ap-northeast-2.rds.amazonaws.com:3306/winey-dev?useSSL=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: sopt_server
+    password: soptserver!!
+
+    jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          format_sql: true
+    rabbitmq:
+      host: ec2-43-200-246-118.ap-northeast-2.compute.amazonaws.com
+      port: 5672
+      username: soohyun
+      password: soo4920
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIARVQRFE3KVLIA5CYQ
+      secretKey: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: winey-s3
+    stack:
+      auto: false
+jwt:
+  secret: zxcvbnmasdfghjklqwertyuiop!@#$%^&*()_+
+  kakao_client_id: bec97b5de1941c55b6c3b04be9ef83cb
+  KAKAO_URL: https://kapi.kakao.com/v2/user/me
+
+springdoc:
+  packages-to-scan: org.winey.server
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    tags-sorter: alpah
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+    cache:
+      disabled: true
+slack:
+  webhook:
+    url: https://hooks.slack.com/services/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
+fcm:
+  key:
+    path: winey-firebase.json
+    scope: https://www.googleapis.com/auth/cloud-platform
+  api:
+    url: https://fcm.googleapis.com/v1/projects/winey-8dbb1/messages:send
+server:
+  tomcat:
+    max-http-form-post-size: 5MB
+  port: 8080
+
+
+# set1
+---
+spring:
+  config:
+    activate:
+      on-profile: set1
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://sopt32-seminar.cmh3iq3t6cqm.ap-northeast-2.rds.amazonaws.com:3306/winey-dev?useSSL=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: sopt_server
+    password: soptserver!!
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  rabbitmq:
+    host: ec2-43-200-246-118.ap-northeast-2.compute.amazonaws.com
+    port: 5672
+    username: soohyun
+    password: soo4920
+jwt:
+  secret: zxcvbnmasdfghjklqwertyuiop!@#$%^&*()_+
+  kakao_client_id: bec97b5de1941c55b6c3b04be9ef83cb
+  KAKAO_URL: https://kapi.kakao.com/v2/user/me
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIARVQRFE3KVLIA5CYQ
+      secretKey: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: winey-s3
+    stack:
+      auto: false
+
+springdoc:
+  packages-to-scan: org.winey.server
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    tags-sorter: alpah
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+    cache:
+      disabled: true
+slack:
+  webhook:
+    url: https://hooks.slack.com/services/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
+fcm:
+  key:
+    path: winey-firebase.json
+    scope: https://www.googleapis.com/auth/cloud-platform
+  api:
+    url: https://fcm.googleapis.com/v1/projects/winey-8dbb1/messages:send
+
+server:
+  tomcat:
+    max-http-form-post-size: 5MB
+  port: 8081
+
+# set2
+
+---
+spring:
+  config:
+    activate:
+      on-profile: set2
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://sopt32-seminar.cmh3iq3t6cqm.ap-northeast-2.rds.amazonaws.com:3306/winey-dev?useSSL=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: sopt_server
+    password: soptserver!!
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  rabbitmq:
+    host: ec2-43-200-246-118.ap-northeast-2.compute.amazonaws.com
+    port: 5672
+    username: soohyun
+    password: soo4920
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIARVQRFE3KVLIA5CYQ
+      secretKey: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: winey-s3
+    stack:
+      auto: false
+
+jwt:
+  secret: zxcvbnmasdfghjklqwertyuiop!@#$%^&*()_+
+  kakao_client_id: bec97b5de1941c55b6c3b04be9ef83cb
+  KAKAO_URL: https://kapi.kakao.com/v2/user/me
+springdoc:
+  packages-to-scan: org.winey.server
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    tags-sorter: alpah
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+    cache:
+      disabled: true
+slack:
+  webhook:
+    url: https://hooks.slack.com/services/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
+fcm:
+  key:
+    path: winey-firebase.json
+    scope: https://www.googleapis.com/auth/cloud-platform
+  api:
+    url: https://fcm.googleapis.com/v1/projects/winey-8dbb1/messages:send
+
+server:
+  tomcat:
+    max-http-form-post-size: 5MB
+  port: 8082

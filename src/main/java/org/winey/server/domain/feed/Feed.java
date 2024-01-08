@@ -34,7 +34,7 @@ public class Feed extends AuditingTimeEntity {
     @Column(nullable = false)
     private String feedImage;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private FeedType feedType;
 
