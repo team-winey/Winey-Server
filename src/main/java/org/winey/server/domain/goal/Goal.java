@@ -1,21 +1,39 @@
 package org.winey.server.domain.goal;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.winey.server.domain.AuditingTimeEntity;
 import org.winey.server.domain.feed.Feed;
-import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
-
-import javax.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Getter
 @DynamicInsert
+@Table(uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "goal_type"})
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Goal extends AuditingTimeEntity {
 
@@ -23,10 +41,14 @@ public class Goal extends AuditingTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long goalId;
 
-    @Column(nullable = false)
+    @Column(name = "goal_type")
+    @Enumerated(EnumType.STRING)
+    private GoalType goalType;
+
+    @Column
     private Long targetMoney;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate targetDate;
 
     @Column(nullable = false)
@@ -38,7 +60,6 @@ public class Goal extends AuditingTimeEntity {
     @Column(nullable = false)
     private Long duringGoalCount;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private User user;
@@ -47,14 +68,12 @@ public class Goal extends AuditingTimeEntity {
     private List<Feed> feeds = new ArrayList<>();
 
     @Builder
-    public Goal(Long targetMoney, LocalDate targetDate, User user) {
-        this.targetMoney = targetMoney;
-        this.targetDate = targetDate;
+    public Goal(GoalType goalType, User user) {
+        this.goalType = goalType;
         this.user = user;
         this.duringGoalCount = 0L;
         this.isAttained = false;
         this.duringGoalAmount = 0L;
-
     }
 
     public void updateIsAttained(boolean isAttained) {

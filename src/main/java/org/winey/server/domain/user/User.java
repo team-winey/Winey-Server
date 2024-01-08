@@ -1,5 +1,7 @@
 package org.winey.server.domain.user;
 
+import static org.winey.server.domain.user.UserLevel.COMMONER;
+
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -78,13 +80,29 @@ public class User extends AuditingTimeEntity {
     @Builder
     public User(String nickname, String socialId, SocialType socialType) {
         this.nickname = nickname;
-        this.userLevel = UserLevel.COMMONER;
+        this.userLevel = COMMONER;
         this.socialId = socialId;
         this.socialType = socialType;
     }
 
     public void updateUserLevel(UserLevel userLevel){
         this.userLevel = userLevel;
+    }
+
+    public void upgradeUserLevel() {
+        switch (this.userLevel) {
+            case COMMONER:
+                this.userLevel = UserLevel.KNIGHT;
+                break;
+            case KNIGHT:
+                this.userLevel = UserLevel.ARISTOCRAT;
+                break;
+            case ARISTOCRAT:
+                this.userLevel = UserLevel.EMPEROR;
+                break;
+            case EMPEROR:
+                break;
+        }
     }
 
     public void updateRefreshToken(String refreshToken) {

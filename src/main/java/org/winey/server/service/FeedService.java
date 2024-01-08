@@ -1,6 +1,10 @@
 package org.winey.server.service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,11 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
 import org.winey.server.controller.response.comment.CommentResponseDto;
-import org.winey.server.controller.response.feed.*;
+import org.winey.server.controller.response.feed.CreateFeedResponseDto;
+import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
+import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
+import org.winey.server.controller.response.feed.GetFeedResponseDto;
 import org.winey.server.domain.block.BlockUser;
 import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.feed.FeedType;
 import org.winey.server.domain.goal.Goal;
+import org.winey.server.domain.goal.GoalType;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
@@ -23,13 +31,13 @@ import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
-import org.winey.server.infrastructure.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.winey.server.infrastructure.BlockUserRepository;
+import org.winey.server.infrastructure.CommentRepository;
+import org.winey.server.infrastructure.FeedLikeRepository;
+import org.winey.server.infrastructure.FeedRepository;
+import org.winey.server.infrastructure.GoalRepository;
+import org.winey.server.infrastructure.NotiRepository;
+import org.winey.server.infrastructure.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +53,11 @@ public class FeedService {
 
     @Transactional
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
+        // 1. 유저를 가져온다.
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
+        // 2. 해당 유저의 가장 최신 목표를 가져온다.
         Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
             .orElseThrow(() -> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
 
@@ -56,6 +66,7 @@ public class FeedService {
         if (!FeedType.isValidFeedType(feedType))
             throw new BadRequestException(Error.INVALID_FEEDTYPE, Error.INVALID_FEEDTYPE.getMessage());
 
+        // 3. 피드를 생성한다.
         Feed feed = Feed.builder()
                 .feedImage(imageUrl)
                 .feedMoney(request.getFeedMoney())
@@ -71,51 +82,66 @@ public class FeedService {
         if (feedType == "SAVE")
             myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
 
-        // 레벨업 더이상 할 수 없는 사람들
+        // 5. 이미 모든 레벨을 마스터한 사용자는 넘어간다.
         if (myGoal.isAttained() && presentUser.getUserLevel() == UserLevel.EMPEROR) {
             System.out.println("이미 목표달성");
             return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
         }
 
-        // 레벨 업 가능 여부 확인
-        if (myGoal.getDuringGoalAmount() >= myGoal.getTargetMoney()) {
+        // 6. 목표 달성 여부를 체크한다.
+        if (myGoal.getDuringGoalAmount() >= myGoal.getGoalType().getTargetMoney()) {
+            // 6-1. 해당 목표의 달성 여부를 true 로 바꾼다.
             myGoal.updateIsAttained(true);
 
-            if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {
-                //userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
-                switch (checkUserLevelUp(presentUser)){
-                    case 2:
-                        notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
-                        break;
-                    case 3:
-                        notificationBuilderInFeed(NotiType.RANKUPTO3, presentUser);
-                        break;
-                    case 4:
-                        notificationBuilderInFeed(NotiType.RANKUPTO4, presentUser);
-                        break;
-                }
+            // 6-2. 레벨을 올린다.
+            presentUser.upgradeUserLevel();
+
+            // 6-3. 레벨업 알림을 생성한다.
+            switch (presentUser.getUserLevel()) {
+                case KNIGHT:
+                    notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
+                    break;
+                case ARISTOCRAT:
+                    notificationBuilderInFeed(NotiType.RANKUPTO3, presentUser);
+                    break;
+                case EMPEROR:
+                    notificationBuilderInFeed(NotiType.RANKUPTO4, presentUser);
+                    break;
+                default:
+                    break;
             }
+
+            // 6-4. 새로운 목표를 시작한다.
+            Goal newGoal = Goal.builder()
+                .goalType(GoalType.findGoalTypeByUserLevel(presentUser.getUserLevel()))
+                .user(presentUser)
+                .build();
+            goalRepository.save(newGoal);
         }
         return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
     }
 
-
-
     @Transactional
     public String deleteFeed(Long userId, Long feedId) {
+        // 1. 유저를 가져온다.
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        // 2. 해당 유저의 가장 최신 목표를 가져온다.
         Goal presentGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
+
+        // 3. 지우고자 하는 피드를 가져온다.
         Feed wantDeleteFeed = feedRepository.findByFeedId(feedId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
 
+        // 4. 피드를 작성한 유저와 현재 접속한 유저가 다르면 삭제할 수 없다.
         if (presentUser != wantDeleteFeed.getUser()) {
             throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
         }
 
-        // 현재 삭제하고자 하는 피드의 goal 아이디 != 현재 진행 중인 goal 아이디 --> 넘어가!
-        if (wantDeleteFeed.getGoal().getGoalId() != presentGoal.getGoalId()) {
+        // 5. 현재 진행중인 목표에 의존한 피드가 아니라면, 삭제하고 넘어간다.
+        if (!Objects.equals(wantDeleteFeed.getGoal().getGoalId(), presentGoal.getGoalId())) {
             feedRepository.delete(wantDeleteFeed);
             return wantDeleteFeed.getFeedImage();
         }
@@ -125,21 +151,9 @@ public class FeedService {
 //            return wantDeleteFeed.getFeedImage();
 //        }
 
+        // 6. 피드와 관련된 목표의 duringAmount 를 삭감한다.
         presentGoal.updateGoalCountAndAmount(wantDeleteFeed.getFeedMoney(), false);
 
-        if (presentUser.getUserLevel().getLevelNumber() >= 3 && (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount())) { //귀족 이상이면 강등로직.
-            presentGoal.updateIsAttained(false); // 달성여부 체크
-            if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
-                switch (checkUserLevelUp(presentUser)){
-                    case 3:
-                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO3, presentUser);
-                        break;
-                    case 2:
-                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO2, presentUser);
-                        break;
-                }
-            }
-        }
         notiRepository.deleteByLinkId(feedId);
         feedRepository.delete(wantDeleteFeed);
         return wantDeleteFeed.getFeedImage();
