@@ -60,7 +60,7 @@ public class FeedService {
         // 3. 피드를 생성한다.
         Feed feed = Feed.builder()
             .feedImage(imageUrl)
-            .feedType(FeedType.valueOf(feedType))
+            .feedType(feedType == null || feedType.isEmpty() ? null : FeedType.valueOf(feedType))
             .feedMoney(request.getFeedMoney())
             .feedTitle(request.getFeedTitle())
             .user(presentUser)
@@ -173,6 +173,7 @@ public class FeedService {
                         feed.getUser().getUserId(),
                         feed.getUser().getNickname(),
                         feed.getUser().getUserLevel().getLevelNumber(),
+                        feed.getFeedType() == null ? null : feed.getFeedType().getStringVal(),
                         feed.getFeedTitle(),
                         feed.getFeedImage(),
                         feed.getFeedMoney(),
@@ -197,6 +198,7 @@ public class FeedService {
                         myFeed.getUser().getUserId(),
                         myFeed.getUser().getNickname(),
                         myFeed.getUser().getUserLevel().getLevelNumber(),
+                        myFeed.getFeedType() == null ? null : myFeed.getFeedType().getStringVal(),
                         myFeed.getFeedTitle(),
                         myFeed.getFeedImage(),
                         myFeed.getFeedMoney(),
@@ -230,6 +232,7 @@ public class FeedService {
                 detailFeed.getUser().getUserId(),
                 detailFeed.getUser().getNickname(),
                 detailFeed.getUser().getUserLevel().getLevelNumber(),
+                detailFeed.getFeedType() == null ? null : detailFeed.getFeedType().getStringVal(),
                 detailFeed.getFeedTitle(),
                 detailFeed.getFeedImage(),
                 detailFeed.getFeedMoney(),
