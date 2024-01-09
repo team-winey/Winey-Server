@@ -133,9 +133,12 @@ public class User extends AuditingTimeEntity {
         this.savedAmount += money;
     }
 
-    public void decreaseSavedAmountAndCount(Long money) {
-        this.savedAmount -= money;
+    public void decreaseCount() {
         this.savedCount -= 1;
+    }
+
+    public void decreaseSavedAmount(Long money) {
+        this.savedAmount -= money;
     }
 
     public String getFcmToken() {
