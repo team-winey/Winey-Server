@@ -115,10 +115,15 @@ public class FeedService {
             throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
         }
 
-        // 4. 유저의 누적 절약 금액, 누적 절약 횟수를 업데이트한다.
-        presentUser.decreaseSavedAmountAndCount(wantDeleteFeed.getFeedMoney());
+        // 4. 누적 피드 개수 감소
+        presentUser.decreaseCount();
 
-        // 5. 레벨다운을 체크한다.
+        // 5. 절약 피드가 삭제되면 유저의 누적 절약 금액 업데이트
+        if (wantDeleteFeed.getFeedType() == FeedType.SAVE) {
+            presentUser.decreaseSavedAmount(wantDeleteFeed.getFeedMoney());
+        }
+
+        // 6. 레벨다운을 체크한다.
         UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
         if (presentUser.getUserLevel() != newUserLevel) {
