@@ -125,13 +125,16 @@ public class User extends AuditingTimeEntity {
 
     public void updateFcmIsAllowed(Boolean isAllowed){this.fcmIsAllowed = isAllowed;}
 
-    public void increaseSavedAmountAndCount(Long money) {
-        this.savedAmount += money;
+    public void increaseCount() {
         this.savedCount += 1;
     }
 
+    public void increaseSavedAmount(Long money) {
+        this.savedAmount += money;
+    }
+
     public void decreaseSavedAmountAndCount(Long money) {
-        this.savedCount -= money;
+        this.savedAmount -= money;
         this.savedCount -= 1;
     }
 
