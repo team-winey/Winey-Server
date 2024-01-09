@@ -19,11 +19,13 @@ import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
 import org.winey.server.controller.response.feed.GetFeedResponseDto;
 import org.winey.server.domain.block.BlockUser;
 import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.feed.FeedType;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
 import org.winey.server.infrastructure.BlockUserRepository;
@@ -50,19 +52,29 @@ public class FeedService {
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
-        // 2. 피드를 생성한다.
+        // 2. 피드 타입 값을 받아와 올바른 피드유형인가 판별
+        String feedType = request.getFeedType();
+//        if (!FeedType.isValidFeedType(feedType))
+//            throw new BadRequestException(Error.INVALID_FEEDTYPE, Error.INVALID_FEEDTYPE.getMessage());
+
+        // 3. 피드를 생성한다.
         Feed feed = Feed.builder()
             .feedImage(imageUrl)
+            .feedType(FeedType.valueOf(feedType))
             .feedMoney(request.getFeedMoney())
             .feedTitle(request.getFeedTitle())
             .user(presentUser)
             .build();
+
         feedRepository.save(feed);
 
-        // 3. 유저의 누적 절약 금액, 누적 절약 횟수를 업데이트한다.
-        presentUser.increaseSavedAmountAndCount(feed.getFeedMoney());
+        // 4. 유저의 누적 피드 개수를 업데이트한다.
+        presentUser.increaseCount();
+
+        // 5. 유저의 피드 유형이 절약인 경우에는 누적 절약 금액도 업데이트한다.
+        if (Objects.equals(feedType, "SAVE")) presentUser.increaseSavedAmount(feed.getFeedMoney());
         
-        // 4. 레벨업을 체크한다.
+        // 6. 레벨업을 체크한다.
         UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
         if (presentUser.getUserLevel() != newUserLevel) {
