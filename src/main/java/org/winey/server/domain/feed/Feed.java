@@ -1,16 +1,8 @@
 package org.winey.server.domain.feed;
 
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,6 +32,10 @@ public class Feed extends AuditingTimeEntity {
     @Column(nullable = false)
     private String feedImage;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private FeedType feedType;
+
     @Column(nullable = false)
     private Long feedMoney;
 
@@ -54,11 +50,12 @@ public class Feed extends AuditingTimeEntity {
     private List<Comment> comments;
 
     @Builder
-    public Feed(User user, String feedTitle, String feedImage, Long feedMoney) {
+    public Feed(User user, String feedTitle, String feedImage, Long feedMoney, FeedType feedType) {
         this.user = user;
         this.feedTitle = feedTitle;
         this.feedImage = feedImage;
         this.feedMoney = feedMoney;
+        this.feedType = feedType;
         this.goal = null;
     }
 }
