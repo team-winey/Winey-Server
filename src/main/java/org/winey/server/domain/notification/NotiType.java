@@ -2,10 +2,6 @@ package org.winey.server.domain.notification;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
-import javax.validation.constraints.Null;
 
 @Getter
 @AllArgsConstructor
@@ -18,8 +14,7 @@ public enum NotiType {
     //삭제로 등급 강등
     DELETERANKDOWNTO3("게시글이 삭제되어 등급이 귀족으로 내려갔어요."),
     DELETERANKDOWNTO2("게시글이 삭제되어 등급이 기사로 내려갔어요."),
-
-    DELETERANKDOWNTO1("게시글이 삭제되어 등급이 귀족으로 내려갔어요."),
+    DELETERANKDOWNTO1("게시글이 삭제되어 등급이 평민으로 내려갔어요."),
 
     //목표 달성 실패
     GOALFAILED("이번에는 아쉽지만 힘내서 다음 목표를 세워볼까요?"),

@@ -1,5 +1,7 @@
 package org.winey.server.domain.user;
 
+import static org.winey.server.domain.user.UserLevel.COMMONER;
+
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -58,6 +60,12 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = true)
     private Boolean fcmIsAllowed = true;
 
+    @Column
+    private Long savedAmount;
+
+    @Column
+    private Long savedCount;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     private List<Goal> goals;
 
@@ -78,13 +86,31 @@ public class User extends AuditingTimeEntity {
     @Builder
     public User(String nickname, String socialId, SocialType socialType) {
         this.nickname = nickname;
-        this.userLevel = UserLevel.COMMONER;
+        this.userLevel = COMMONER;
         this.socialId = socialId;
         this.socialType = socialType;
+        this.savedCount = 0L;
+        this.savedAmount = 0L;
     }
 
     public void updateUserLevel(UserLevel userLevel){
         this.userLevel = userLevel;
+    }
+
+    public void upgradeUserLevel() {
+        switch (this.userLevel) {
+            case COMMONER:
+                this.userLevel = UserLevel.KNIGHT;
+                break;
+            case KNIGHT:
+                this.userLevel = UserLevel.ARISTOCRAT;
+                break;
+            case ARISTOCRAT:
+                this.userLevel = UserLevel.EMPEROR;
+                break;
+            case EMPEROR:
+                break;
+        }
     }
 
     public void updateRefreshToken(String refreshToken) {
@@ -98,6 +124,16 @@ public class User extends AuditingTimeEntity {
     public void updateFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
 
     public void updateFcmIsAllowed(Boolean isAllowed){this.fcmIsAllowed = isAllowed;}
+
+    public void increaseSavedAmountAndCount(Long money) {
+        this.savedAmount += money;
+        this.savedCount += 1;
+    }
+
+    public void decreaseSavedAmountAndCount(Long money) {
+        this.savedCount -= money;
+        this.savedCount -= 1;
+    }
 
     public String getFcmToken() {
         if (Objects.nonNull(this.fcmToken)) {

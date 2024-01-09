@@ -1,6 +1,10 @@
 package org.winey.server.service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,25 +13,25 @@ import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.controller.request.CreateFeedRequestDto;
 import org.winey.server.controller.response.PageResponseDto;
 import org.winey.server.controller.response.comment.CommentResponseDto;
-import org.winey.server.controller.response.feed.*;
+import org.winey.server.controller.response.feed.CreateFeedResponseDto;
+import org.winey.server.controller.response.feed.GetAllFeedResponseDto;
+import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
+import org.winey.server.controller.response.feed.GetFeedResponseDto;
 import org.winey.server.domain.block.BlockUser;
 import org.winey.server.domain.feed.Feed;
-import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
-import org.winey.server.exception.model.ForbiddenException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
-import org.winey.server.infrastructure.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.winey.server.infrastructure.BlockUserRepository;
+import org.winey.server.infrastructure.CommentRepository;
+import org.winey.server.infrastructure.FeedLikeRepository;
+import org.winey.server.infrastructure.FeedRepository;
+import org.winey.server.infrastructure.NotiRepository;
+import org.winey.server.infrastructure.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +39,6 @@ public class FeedService {
 
     private final FeedRepository feedRepository;
     private final UserRepository userRepository;
-    private final GoalRepository goalRepository;
     private final FeedLikeRepository feedLikeRepository;
     private final CommentRepository commentRepository;
     private final NotiRepository notiRepository;
@@ -43,93 +46,90 @@ public class FeedService {
 
     @Transactional
     public CreateFeedResponseDto createFeed(CreateFeedRequestDto request, Long userId, String imageUrl) {
+        // 1. 유저를 가져온다.
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
-        Goal myGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
-            .orElseThrow(() -> new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage())); //목표 설정 안하면 피드 못만듬 -> 에러처리
-
+        // 2. 피드를 생성한다.
         Feed feed = Feed.builder()
-                .feedImage(imageUrl)
-                .feedMoney(request.getFeedMoney())
-                .feedTitle(request.getFeedTitle())
-                .user(presentUser)
-                .goal(myGoal)
-                .build();
+            .feedImage(imageUrl)
+            .feedMoney(request.getFeedMoney())
+            .feedTitle(request.getFeedTitle())
+            .user(presentUser)
+            .build();
         feedRepository.save(feed);
 
-        myGoal.updateGoalCountAndAmount(feed.getFeedMoney(), true); // 절약 금액, 피드 횟수 업데이트.
+        // 3. 유저의 누적 절약 금액, 누적 절약 횟수를 업데이트한다.
+        presentUser.increaseSavedAmountAndCount(feed.getFeedMoney());
+        
+        // 4. 레벨업을 체크한다.
+        UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
-        if (myGoal.isAttained()) {
-            System.out.println("이미 목표달성");
-            return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
-        }
+        if (presentUser.getUserLevel() != newUserLevel) {
+            // 4-1. 레벨업한다.
+            presentUser.updateUserLevel(newUserLevel);
 
-        if (LocalDate.now().isAfter(myGoal.getTargetDate())){
-            System.out.println("목표를 제한 시간 내에 이루지 못함.");
-            throw new ForbiddenException(Error.FEED_FORBIDDEN_EXCEPTION, Error.FEED_FORBIDDEN_EXCEPTION.getMessage()); //목표 설정 새로 하게 유도.
-        }
-
-        if (myGoal.getDuringGoalAmount() >= myGoal.getTargetMoney()) {
-            myGoal.updateIsAttained(true); // 달성여부 체크
-            if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
-                switch (checkUserLevelUp(presentUser)){
-                    case 2:
-                        notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
-                        break;
-                    case 3:
-                        notificationBuilderInFeed(NotiType.RANKUPTO3, presentUser);
-                        break;
-                    case 4:
-                        notificationBuilderInFeed(NotiType.RANKUPTO4, presentUser);
-                        break;
-                }
+            // 4-2. 레벨업 알림을 생성한다.
+            switch (newUserLevel) {
+                case KNIGHT:
+                    notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
+                    break;
+                case ARISTOCRAT:
+                    notificationBuilderInFeed(NotiType.RANKUPTO3, presentUser);
+                    break;
+                case EMPEROR:
+                    notificationBuilderInFeed(NotiType.RANKUPTO4, presentUser);
+                    break;
+                default:
+                    break;
             }
         }
+
         return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
     }
 
-
-
     @Transactional
     public String deleteFeed(Long userId, Long feedId) {
+        // 1. 유저를 가져온다.
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
-        Goal presentGoal = goalRepository.findByUserOrderByCreatedAtDesc(presentUser).stream().findFirst()
-                .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_GOAL_EXCEPTION, Error.NOT_FOUND_GOAL_EXCEPTION.getMessage()));
+
+        // 2. 지우고자 하는 피드를 가져온다.
         Feed wantDeleteFeed = feedRepository.findByFeedId(feedId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_FEED_EXCEPTION, Error.NOT_FOUND_FEED_EXCEPTION.getMessage()));
 
+        // 3. 피드를 작성한 유저와 현재 접속한 유저가 다르면 삭제할 수 없다.
         if (presentUser != wantDeleteFeed.getUser()) {
             throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
         }
 
-        // 현재 삭제하고자 하는 피드의 goal 아이디 != 현재 진행 중인 goal 아이디 --> 넘어가!
-        if (wantDeleteFeed.getGoal().getGoalId() != presentGoal.getGoalId()) {
-            feedRepository.delete(wantDeleteFeed);
-            return wantDeleteFeed.getFeedImage();
-        }
+        // 4. 유저의 누적 절약 금액, 누적 절약 횟수를 업데이트한다.
+        presentUser.decreaseSavedAmountAndCount(wantDeleteFeed.getFeedMoney());
 
-//        if ((!presentGoal.getCreatedAt().isBefore(wantDeleteFeed.getCreatedAt())) || (!presentGoal.getTargetDate().isAfter(wantDeleteFeed.getCreatedAt().toLocalDate()))) {
-//            feedRepository.delete(wantDeleteFeed);
-//            return wantDeleteFeed.getFeedImage();
-//        }
+        // 5. 레벨다운을 체크한다.
+        UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
-        presentGoal.updateGoalCountAndAmount(wantDeleteFeed.getFeedMoney(), false);
+        if (presentUser.getUserLevel() != newUserLevel) {
+            // 4-1. 레벨다운한다.
+            presentUser.updateUserLevel(newUserLevel);
 
-        if (presentUser.getUserLevel().getLevelNumber() >= 3 && (presentGoal.getTargetMoney() > presentGoal.getDuringGoalAmount())) { //귀족 이상이면 강등로직.
-            presentGoal.updateIsAttained(false); // 달성여부 체크
-            if (presentUser.getUserLevel().getLevelNumber() != checkUserLevelUp(presentUser)) {//userLevel 변동사항 체크, 만약에 레벨에 변동이 생겼다면? 레벨 강등 알림 생성.
-                switch (checkUserLevelUp(presentUser)){
-                    case 3:
-                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO3, presentUser);
-                        break;
-                    case 2:
-                        notificationBuilderInFeed(NotiType.DELETERANKDOWNTO2, presentUser);
-                        break;
-                }
+            // 4-2. 레벨다운 알림을 생성한다.
+            switch (newUserLevel) {
+                case COMMONER:
+                    notificationBuilderInFeed(NotiType.DELETERANKDOWNTO1, presentUser);
+                    break;
+                case KNIGHT:
+                    notificationBuilderInFeed(NotiType.DELETERANKDOWNTO2, presentUser);
+                    break;
+                case ARISTOCRAT:
+                    notificationBuilderInFeed(NotiType.DELETERANKDOWNTO3, presentUser);
+                    break;
+                default:
+                    break;
             }
         }
+
+        // 6. 피드를 삭제한다.
         notiRepository.deleteByLinkId(feedId);
         feedRepository.delete(wantDeleteFeed);
         return wantDeleteFeed.getFeedImage();
@@ -267,22 +267,5 @@ public class FeedService {
             .build();
         notification.updateLinkId(null);
         notiRepository.save(notification);
-    }
-
-    private int checkUserLevelUp(User presentUser) {
-        int userAchievedGoals = goalRepository.countByUserAndIsAttained(presentUser, true); //Goal 중 userid가 맞고 isAttained true 개수 세기
-        if (userAchievedGoals < 1) {
-            presentUser.updateUserLevel(UserLevel.COMMONER);
-            return 1;
-        } else if (userAchievedGoals < 3) {
-            presentUser.updateUserLevel(UserLevel.KNIGHT);
-            return 2;
-        } else if (userAchievedGoals < 9) {
-            presentUser.updateUserLevel(UserLevel.ARISTOCRAT);
-            return 3;
-        } else {
-            presentUser.updateUserLevel(UserLevel.EMPEROR);
-            return 4;
-        }
     }
 }
