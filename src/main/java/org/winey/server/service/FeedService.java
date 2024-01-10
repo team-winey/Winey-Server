@@ -68,13 +68,10 @@ public class FeedService {
 
         feedRepository.save(feed);
 
-        // 4. 유저의 누적 피드 개수를 업데이트한다.
-        presentUser.increaseCount();
-
-        // 5. 유저의 피드 유형이 절약인 경우에는 누적 절약 금액도 업데이트한다.
-        if (Objects.equals(feedType, "SAVE")) presentUser.increaseSavedAmount(feed.getFeedMoney());
+        // 4. 유저의 피드 유형이 절약인 경우 누적 절약 금액과 누적 절약 피드 개수 업데이트한다.
+        if (Objects.equals(feedType, "SAVE")) presentUser.increaseSavedAmountAndCount(feed.getFeedMoney());
         
-        // 6. 레벨업을 체크한다.
+        // 5. 레벨업을 체크한다.
         UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
         if (presentUser.getUserLevel() != newUserLevel) {
@@ -115,15 +112,12 @@ public class FeedService {
             throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
         }
 
-        // 4. 누적 피드 개수 감소
-        presentUser.decreaseCount();
-
-        // 5. 절약 피드가 삭제되면 유저의 누적 절약 금액 업데이트
+        // 4. 절약 피드가 삭제되면 유저의 누적 절약 금액과 누적 절약 피드 개수 감소
         if (wantDeleteFeed.getFeedType() == FeedType.SAVE) {
-            presentUser.decreaseSavedAmount(wantDeleteFeed.getFeedMoney());
+            presentUser.decreaseSavedAmountAndCount(wantDeleteFeed.getFeedMoney());
         }
 
-        // 6. 레벨다운을 체크한다.
+        // 5. 레벨다운을 체크한다.
         UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
         if (presentUser.getUserLevel() != newUserLevel) {
