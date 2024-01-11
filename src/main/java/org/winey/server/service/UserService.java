@@ -1,5 +1,6 @@
 package org.winey.server.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
+import org.winey.server.infrastructure.FeedRepository;
 import org.winey.server.infrastructure.UserRepository;
 
 @Service
@@ -17,6 +19,7 @@ import org.winey.server.infrastructure.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FeedRepository feedRepository;
 
     @Transactional
     public UserResponseDto getUser(Long userId) {
@@ -24,8 +27,14 @@ public class UserService {
             .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION,
                 Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
+        LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+        Long savedAmount = feedRepository.getSavedAmountForTwoWeeks(user, twoWeeksAgo);
+        Long spentAmount = feedRepository.getSpentAmountForTwoWeeks(user, twoWeeksAgo);
+
         return UserResponseDto.of(user.getUserId(), user.getNickname(),
-            user.getUserLevel().getName(), user.getFcmIsAllowed(), user.getSavedAmount(),
+            user.getUserLevel().getName(), user.getFcmIsAllowed(),
+            savedAmount == null ? 0L : savedAmount,
+            spentAmount == null ? 0L : spentAmount, user.getSavedAmount(),
             user.getSavedCount());
     }
 
