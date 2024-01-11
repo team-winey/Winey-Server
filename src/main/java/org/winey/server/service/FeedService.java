@@ -19,11 +19,13 @@ import org.winey.server.controller.response.feed.GetFeedDetailResponseDto;
 import org.winey.server.controller.response.feed.GetFeedResponseDto;
 import org.winey.server.domain.block.BlockUser;
 import org.winey.server.domain.feed.Feed;
+import org.winey.server.domain.feed.FeedType;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
+import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnauthorizedException;
 import org.winey.server.infrastructure.BlockUserRepository;
@@ -50,19 +52,26 @@ public class FeedService {
         User presentUser = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
-        // 2. 피드를 생성한다.
+        // 2. 피드 타입 값을 받아와 올바른 피드유형인가 판별
+        String feedType = request.getFeedType();
+//        if (!FeedType.isValidFeedType(feedType))
+//            throw new BadRequestException(Error.INVALID_FEEDTYPE, Error.INVALID_FEEDTYPE.getMessage());
+
+        // 3. 피드를 생성한다.
         Feed feed = Feed.builder()
             .feedImage(imageUrl)
+            .feedType(feedType == null || feedType.isEmpty() ? null : FeedType.valueOf(feedType))
             .feedMoney(request.getFeedMoney())
             .feedTitle(request.getFeedTitle())
             .user(presentUser)
             .build();
+
         feedRepository.save(feed);
 
-        // 3. 유저의 누적 절약 금액, 누적 절약 횟수를 업데이트한다.
-        presentUser.increaseSavedAmountAndCount(feed.getFeedMoney());
+        // 4. 유저의 피드 유형이 절약인 경우 누적 절약 금액과 누적 절약 피드 개수 업데이트한다.
+        if (Objects.equals(feedType, "SAVE")) presentUser.increaseSavedAmountAndCount(feed.getFeedMoney());
         
-        // 4. 레벨업을 체크한다.
+        // 5. 레벨업을 체크한다.
         UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
         if (presentUser.getUserLevel() != newUserLevel) {
@@ -103,8 +112,10 @@ public class FeedService {
             throw new UnauthorizedException(Error.DELETE_UNAUTHORIZED, Error.DELETE_UNAUTHORIZED.getMessage()); // 삭제하는 사람 아니면 삭제 못함 처리.
         }
 
-        // 4. 유저의 누적 절약 금액, 누적 절약 횟수를 업데이트한다.
-        presentUser.decreaseSavedAmountAndCount(wantDeleteFeed.getFeedMoney());
+        // 4. 절약 피드가 삭제되면 유저의 누적 절약 금액과 누적 절약 피드 개수 감소
+        if (wantDeleteFeed.getFeedType() == FeedType.SAVE) {
+            presentUser.decreaseSavedAmountAndCount(wantDeleteFeed.getFeedMoney());
+        }
 
         // 5. 레벨다운을 체크한다.
         UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
@@ -161,6 +172,7 @@ public class FeedService {
                         feed.getUser().getUserId(),
                         feed.getUser().getNickname(),
                         feed.getUser().getUserLevel().getLevelNumber(),
+                        feed.getFeedType() == null ? null : feed.getFeedType().getStringVal(),
                         feed.getFeedTitle(),
                         feed.getFeedImage(),
                         feed.getFeedMoney(),
@@ -185,6 +197,7 @@ public class FeedService {
                         myFeed.getUser().getUserId(),
                         myFeed.getUser().getNickname(),
                         myFeed.getUser().getUserLevel().getLevelNumber(),
+                        myFeed.getFeedType() == null ? null : myFeed.getFeedType().getStringVal(),
                         myFeed.getFeedTitle(),
                         myFeed.getFeedImage(),
                         myFeed.getFeedMoney(),
@@ -218,6 +231,7 @@ public class FeedService {
                 detailFeed.getUser().getUserId(),
                 detailFeed.getUser().getNickname(),
                 detailFeed.getUser().getUserLevel().getLevelNumber(),
+                detailFeed.getFeedType() == null ? null : detailFeed.getFeedType().getStringVal(),
                 detailFeed.getFeedTitle(),
                 detailFeed.getFeedImage(),
                 detailFeed.getFeedMoney(),
