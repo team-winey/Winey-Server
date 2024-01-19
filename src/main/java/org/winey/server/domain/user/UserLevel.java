@@ -26,4 +26,13 @@ public enum UserLevel {
         }
         return COMMONER;
     }
+
+    public static UserLevel getNextUserLevel(UserLevel currentLevel) {
+        for (UserLevel level : UserLevel.values()) {
+            if (level.getLevelNumber() == currentLevel.getLevelNumber() + 1) {
+                return level;
+            }
+        }
+        return null;
+    }
 }

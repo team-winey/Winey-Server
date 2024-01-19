@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.controller.request.UpdateFcmTokenDto;
 import org.winey.server.controller.request.UpdateUserNicknameDto;
+import org.winey.server.controller.response.user.GetAchievementStatusResponseDto;
 import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.domain.user.User;
+import org.winey.server.domain.user.UserLevel;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
@@ -66,6 +68,19 @@ public class UserService {
         }
         user.updateFcmIsAllowed(fcmIsAllowed);
         return fcmIsAllowed;
+    }
+
+    @Transactional(readOnly = true)
+    public GetAchievementStatusResponseDto getAchievementStatus(Long userId) {
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+
+        UserLevel nextUserLevel = UserLevel.getNextUserLevel(user.getUserLevel());
+        return GetAchievementStatusResponseDto.of(
+            user.getUserLevel(),
+            nextUserLevel == null ? null : nextUserLevel.getMinimumAmount() - user.getSavedAmount(),
+            nextUserLevel == null ? null : nextUserLevel.getMinimumCount() - user.getSavedCount()
+        );
     }
 
     public Boolean checkNicknameDuplicate(String nickname) {

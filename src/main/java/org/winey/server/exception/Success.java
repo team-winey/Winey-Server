@@ -27,6 +27,7 @@ public enum Success {
     CHECK_NICKNAME_DUPLICATE_SUCCESS(HttpStatus.OK, "닉네임 중복 확인 성공"),
     CHECK_NEW_NOTIFICATION_SUCCESS(HttpStatus.OK, "새 알림 여부 조회 성공"),
     BLOCK_USER_SUCCESS(HttpStatus.OK, "유저 차단 성공"),
+    GET_ACHIEVEMENT_STATUS_SUCCESS(HttpStatus.OK, "레벨 달성 현황 조회 성공"),
 
     /**
      * 201 CREATED
