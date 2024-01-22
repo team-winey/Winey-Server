@@ -76,10 +76,17 @@ public class UserService {
             .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         UserLevel nextUserLevel = UserLevel.getNextUserLevel(user.getUserLevel());
+
+        if (nextUserLevel == null) {
+            return GetAchievementStatusResponseDto.of(user.getUserLevel(), 0L, 0L);
+        }
+        
+        long remainingAmount = nextUserLevel.getMinimumAmount() - user.getSavedAmount();
+        long remainingCount = nextUserLevel.getMinimumCount() - user.getSavedCount();
         return GetAchievementStatusResponseDto.of(
             user.getUserLevel(),
-            nextUserLevel == null ? null : nextUserLevel.getMinimumAmount() - user.getSavedAmount(),
-            nextUserLevel == null ? null : nextUserLevel.getMinimumCount() - user.getSavedCount()
+            remainingAmount < 0 ? 0L : remainingAmount,
+            remainingCount < 0 ? 0L : remainingCount
         );
     }
 
