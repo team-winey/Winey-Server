@@ -15,15 +15,15 @@ public class UserResponseDto {
     private String nickname;
     private String userLevel;
     private Boolean fcmIsAllowed;
-    private Long savedAmount;
-    private Long spentAmount;
     private Long accumulatedAmount;
-    private Long accumulatedCount;
+    private Long amountSavedHundredDays;
+    private Long amountSavedTwoWeeks;
+    private Long amountSpentTwoWeeks;
 
     public static UserResponseDto of(Long userId, String nickname, String userLevel,
-        Boolean fcmIsAllowed, Long savedAmount, Long spentAmount, Long accumulatedAmount,
-        Long accumulatedCount) {
-        return new UserResponseDto(userId, nickname, userLevel, fcmIsAllowed, savedAmount,
-            spentAmount, accumulatedAmount, accumulatedCount);
+        Boolean fcmIsAllowed, Long accumulatedAmount, Long amountSavedHundredDays, Long amountSavedTwoWeeks,
+        Long amountSpentTwoWeeks) {
+        return new UserResponseDto(userId, nickname, userLevel, fcmIsAllowed, accumulatedAmount,
+            amountSavedHundredDays, amountSavedTwoWeeks, amountSpentTwoWeeks);
     }
 }

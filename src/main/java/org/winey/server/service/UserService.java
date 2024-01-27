@@ -30,14 +30,17 @@ public class UserService {
                 Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
-        Long savedAmount = feedRepository.getSavedAmountForTwoWeeks(user, twoWeeksAgo);
-        Long spentAmount = feedRepository.getSpentAmountForTwoWeeks(user, twoWeeksAgo);
+        LocalDateTime hundredDaysAgo = LocalDateTime.now().minusDays(100);
+        Long amountSavedHundredDays = feedRepository.getSavedAmountForPeriod(user, hundredDaysAgo);
+        Long amountSavedTwoWeeks = feedRepository.getSavedAmountForPeriod(user, twoWeeksAgo);
+        Long amountSpentTwoWeeks = feedRepository.getSpentAmountForPeriod(user, twoWeeksAgo);
 
         return UserResponseDto.of(user.getUserId(), user.getNickname(),
-            user.getUserLevel().getName(), user.getFcmIsAllowed(),
-            savedAmount == null ? 0L : savedAmount,
-            spentAmount == null ? 0L : spentAmount, user.getSavedAmount(),
-            user.getSavedCount());
+            user.getUserLevel().getName(), user.getFcmIsAllowed(), user.getSavedAmount(),
+            amountSavedHundredDays == null ? 0L : amountSavedHundredDays,
+            amountSavedTwoWeeks == null ? 0L : amountSavedTwoWeeks,
+            amountSpentTwoWeeks == null ? 0L : amountSpentTwoWeeks
+        );
     }
 
     @Transactional
@@ -73,14 +76,15 @@ public class UserService {
     @Transactional(readOnly = true)
     public GetAchievementStatusResponseDto getAchievementStatus(Long userId) {
         User user = userRepository.findByUserId(userId)
-            .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
+            .orElseThrow(() -> new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION,
+                Error.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         UserLevel nextUserLevel = UserLevel.getNextUserLevel(user.getUserLevel());
 
         if (nextUserLevel == null) {
             return GetAchievementStatusResponseDto.of(user.getUserLevel(), 0L, 0L);
         }
-        
+
         long remainingAmount = nextUserLevel.getMinimumAmount() - user.getSavedAmount();
         long remainingCount = nextUserLevel.getMinimumCount() - user.getSavedCount();
         return GetAchievementStatusResponseDto.of(
