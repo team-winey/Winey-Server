@@ -9,7 +9,7 @@ public enum UserLevel {
     COMMONER("평민", 1, 0L, 0L),
     KNIGHT("기사", 2, 30000L, 2L),
     ARISTOCRAT("귀족", 3, 150000L, 4L),
-    EMPEROR("황제", 4, 300000L, 6L);
+    EMPEROR("황제", 4, 300000L, 10L);
 
     private final String name;
     private final int levelNumber;
