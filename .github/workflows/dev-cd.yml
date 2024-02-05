@@ -34,6 +34,7 @@ jobs:
       run: |
         ## create application.yaml
         cd /src/main/resources
+        pwd
 
         # application.yaml 파일 생성
         touch src/main/resources/application.yaml
