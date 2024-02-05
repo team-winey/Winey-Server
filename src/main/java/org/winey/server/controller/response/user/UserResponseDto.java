@@ -27,6 +27,7 @@ public class UserResponseDto {
         private Long amountSpentTwoWeeks;
     }
 
+
     public static UserResponseDto of(Long userId, String nickname, String userLevel,
         Boolean fcmIsAllowed, Long accumulatedAmount, Long amountSavedHundredDays, Long amountSavedTwoWeeks,
         Long amountSpentTwoWeeks) {

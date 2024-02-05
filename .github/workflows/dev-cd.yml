@@ -1,3 +1,4 @@
+
 # 워크플로우의 이름 지정
 name: WINEY-DEV-CD
 
@@ -33,13 +34,13 @@ jobs:
     - name: make application.properties 파일 생성
       run: |
         ## create application.yml
-        cd ./src/main/resources
+        mkdir -p ./src/main/resources
 
         # application.yml 파일 생성
         touch ./application.yml
 
         # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
-        echo "${{ secrets.WINEY_DEV_APPLICATION }}" >> ./application.yml
+        echo "${{ secrets.WINEY_DEV_APPLICATION }}" >> ./application.yaml
 
         # winey-firebase.json 파일 생성
         touch ./winey-firebase.json
