@@ -32,24 +32,24 @@ jobs:
     # 3) 환경변수 파일 생성
     - name: make application.properties 파일 생성
       run: |
-        ## create application.yaml
-        ## cd /src/main/resources
-        pwd
+        ## create application.yml
+        mkdir -p ./src/main/resources
+        ## cd ./src/main/resources
 
-        # application.yaml 파일 생성
-        touch src/main/resources/application.yaml
+        # application.yml 파일 생성
+        touch ./application.yml
 
         # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
-        echo "${{ secrets.WINEY_DEV_APPLICATION }}" >> src/main/resources/application.yaml
+        echo "${{ secrets.WINEY_DEV_APPLICATION }}" >> ./application.yaml
 
         # winey-firebase.json 파일 생성
-        touch src/main/resources/winey-firebase.json
+        touch ./winey-firebase.json
 
         # Firebase secrets 파일 복사
-        echo "${{ secrets.WINEY_FIREBASE }}" >> src/main/resources/winey-firebase.json
+        echo "${{ secrets.WINEY_FIREBASE }}" >> ./winey-firebase.json
         
-        # application.yaml 파일 확인
-        cat src/main/resources/application.yaml
+        # application.yml 파일 확인
+        cat ./application.yml
       shell: bash
         
     # 이 워크플로우는 gradle build
