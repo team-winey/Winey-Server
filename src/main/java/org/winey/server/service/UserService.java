@@ -36,7 +36,8 @@ public class UserService {
         Long amountSpentTwoWeeks = feedRepository.getSpentAmountForPeriod(user, twoWeeksAgo);
 
         return UserResponseDto.of(user.getUserId(), user.getNickname(),
-            user.getUserLevel().getName(), user.getFcmIsAllowed(), user.getSavedAmount(),
+            user.getUserLevel().getName(), user.getFcmIsAllowed(),
+            user.getSavedAmount() == null ? 0L : user.getSavedAmount(),
             amountSavedHundredDays == null ? 0L : amountSavedHundredDays,
             amountSavedTwoWeeks == null ? 0L : amountSavedTwoWeeks,
             amountSpentTwoWeeks == null ? 0L : amountSpentTwoWeeks
