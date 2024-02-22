@@ -24,6 +24,7 @@ public class UserResponseDto {
         private String userLevel;
         private Boolean fcmIsAllowed;
         private Long accumulatedAmount;
+        private Long accumulatedCount;
         private Long amountSavedHundredDays;
         private Long amountSavedTwoWeeks;
         private Long amountSpentTwoWeeks;
@@ -33,9 +34,9 @@ public class UserResponseDto {
 
 
     public static UserResponseDto of(Long userId, String nickname, String userLevel,
-        Boolean fcmIsAllowed, Long accumulatedAmount, Long amountSavedHundredDays, Long amountSavedTwoWeeks,
+        Boolean fcmIsAllowed, Long accumulatedAmount,Long accumulatedCount , Long amountSavedHundredDays, Long amountSavedTwoWeeks,
         Long amountSpentTwoWeeks, Long remainingAmount, Long remainingCount) {
-        UserData userData = new UserData(userId, nickname, userLevel, fcmIsAllowed, accumulatedAmount,
+        UserData userData = new UserData(userId, nickname, userLevel, fcmIsAllowed, accumulatedAmount, accumulatedCount,
                 amountSavedHundredDays, amountSavedTwoWeeks, amountSpentTwoWeeks,remainingAmount,remainingCount);
         return new UserResponseDto(userData);
     }
