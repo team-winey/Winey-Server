@@ -35,12 +35,23 @@ public class UserService {
         Long amountSavedTwoWeeks = feedRepository.getSavedAmountForPeriod(user, twoWeeksAgo);
         Long amountSpentTwoWeeks = feedRepository.getSpentAmountForPeriod(user, twoWeeksAgo);
 
+        UserLevel nextUserLevel = UserLevel.getNextUserLevel(user.getUserLevel());
+
+        long savedAmountOfUser = user.getSavedAmount() == null ? 0L : user.getSavedAmount();  //기존의 getSavedAmount()했을 시 null -> 0L로 처리
+        long savedCountOfUser = user.getSavedCount() == null ? 0L : user.getSavedCount();     //위와 이유 같음.
+
+        long remainingAmount = nextUserLevel == null ? 0L : nextUserLevel.getMinimumAmount() - savedAmountOfUser;
+        long remainingCount = nextUserLevel == null ? 0L : nextUserLevel.getMinimumCount() - savedCountOfUser;
+
         return UserResponseDto.of(user.getUserId(), user.getNickname(),
-            user.getUserLevel().getName(), user.getFcmIsAllowed(),
+            user.getUserLevel().getName(),
+            user.getFcmIsAllowed(),
             user.getSavedAmount() == null ? 0L : user.getSavedAmount(),
             amountSavedHundredDays == null ? 0L : amountSavedHundredDays,
             amountSavedTwoWeeks == null ? 0L : amountSavedTwoWeeks,
-            amountSpentTwoWeeks == null ? 0L : amountSpentTwoWeeks
+            amountSpentTwoWeeks == null ? 0L : amountSpentTwoWeeks,
+            remainingAmount < 0 ? 0L : remainingAmount,
+            remainingCount < 0 ? 0L : remainingCount
         );
     }
 

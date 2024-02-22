@@ -1,5 +1,7 @@
 package org.winey.server.controller.response.user;
 
+import org.winey.server.domain.user.UserLevel;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,14 +27,16 @@ public class UserResponseDto {
         private Long amountSavedHundredDays;
         private Long amountSavedTwoWeeks;
         private Long amountSpentTwoWeeks;
+        private Long remainingAmount;
+        private Long remainingCount;
     }
 
 
     public static UserResponseDto of(Long userId, String nickname, String userLevel,
         Boolean fcmIsAllowed, Long accumulatedAmount, Long amountSavedHundredDays, Long amountSavedTwoWeeks,
-        Long amountSpentTwoWeeks) {
+        Long amountSpentTwoWeeks, Long remainingAmount, Long remainingCount) {
         UserData userData = new UserData(userId, nickname, userLevel, fcmIsAllowed, accumulatedAmount,
-                amountSavedHundredDays, amountSavedTwoWeeks, amountSpentTwoWeeks);
+                amountSavedHundredDays, amountSavedTwoWeeks, amountSpentTwoWeeks,remainingAmount,remainingCount);
         return new UserResponseDto(userData);
     }
 }
