@@ -74,11 +74,17 @@ public class FeedService {
         // 5. 레벨업을 체크한다.
         UserLevel newUserLevel = UserLevel.calculateUserLevel(presentUser.getSavedAmount(), presentUser.getSavedCount());
 
+        // 레벨업 달성 여부 담는 Bool 값
+        Boolean levelUpgraded = false;
+
         if (presentUser.getUserLevel() != newUserLevel) {
             // 4-1. 레벨업한다.
             presentUser.updateUserLevel(newUserLevel);
 
-            // 4-2. 레벨업 알림을 생성한다.
+            // 4-2. 레벨업 달성 여부를 true로 수정
+            levelUpgraded = true;
+
+            // 4-3. 레벨업 알림을 생성한다.
             switch (newUserLevel) {
                 case KNIGHT:
                     notificationBuilderInFeed(NotiType.RANKUPTO2, presentUser);
@@ -94,7 +100,7 @@ public class FeedService {
             }
         }
 
-        return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt());
+        return CreateFeedResponseDto.of(feed.getFeedId(), feed.getCreatedAt(), levelUpgraded);
     }
 
     @Transactional
