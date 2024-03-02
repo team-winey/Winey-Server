@@ -26,7 +26,7 @@ public enum NotiType {
     COMMENTNOTI("님이 회원님의 게시글에 댓글을 남겼어요."),
 
     //처음 로그인했을 때 생성하는 알림
-    HOWTOLEVELUP("위니의 캐릭터 레벨업 방법을 알아볼까요?");
+    HOWTOLEVELUP("절약 콘텐츠 업로드를 통해 레벨업을 해보세요!");
 
     private final String type;
 
