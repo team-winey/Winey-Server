@@ -66,6 +66,7 @@ public enum Error {
      * 422 UNPROCESSABLE ENTITY
      */
     UNPROCESSABLE_ENTITY_DELETE_EXCEPTION(HttpStatus.UNPROCESSABLE_ENTITY, "클라의 요청을 이해했지만 삭제하지 못했습니다."),
+    UNPROCESSABLE_FIND_USERS(HttpStatus.UNPROCESSABLE_ENTITY, "요청을 이해했지만 유저들을 찾을 수 없었습니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR
