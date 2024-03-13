@@ -28,7 +28,7 @@ public class BroadCastController {
 	@PostMapping("/send-all")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "전체 유저에게 메시지 발송 API", description = "전체 유저에게 메시지를 발송합니다.")
-	public ApiResponse sendMessageToEntireUser(@RequestBody BroadCastAllUserDto broadCastAllUserDto) throws JsonProcessingException, FirebaseMessagingException {
+	public ApiResponse sendMessageToEntireUser(@RequestBody BroadCastAllUserDto broadCastAllUserDto){
 		return ApiResponse.success(Success.SEND_ENTIRE_MESSAGE_SUCCESS, broadCastService.broadAllUser(broadCastAllUserDto));
 	}
 

@@ -29,17 +29,21 @@ public class BroadCastService {
 
 	private final UserRepository userRepository;
 
-	public ApiResponse broadAllUser(BroadCastAllUserDto broadCastAllUserDto) throws
-		JsonProcessingException,
-		FirebaseMessagingException {
+	public ApiResponse broadAllUser(BroadCastAllUserDto broadCastAllUserDto){
 		List<User> allUser = userRepository.findByFcmTokenNotNull();
 		List<String> tokenList;
 		if (!allUser.isEmpty()){
-			tokenList = allUser.stream().map(
-				User::getFcmToken).collect(Collectors.toList());
-			System.out.println(tokenList);
-			fcmService.sendAllByTokenList(SendAllFcmDto.of(tokenList,broadCastAllUserDto.getTitle(), broadCastAllUserDto.getMessage()));
-			return ApiResponse.success(Success.SEND_ENTIRE_MESSAGE_SUCCESS, Success.SEND_ENTIRE_MESSAGE_SUCCESS.getMessage());
+			try {
+				tokenList = allUser.stream().map(
+					User::getFcmToken).collect(Collectors.toList());
+				System.out.println(tokenList);
+				fcmService.sendAllByTokenList(
+					SendAllFcmDto.of(tokenList, broadCastAllUserDto.getTitle(), broadCastAllUserDto.getMessage()));
+				return ApiResponse.success(Success.SEND_ENTIRE_MESSAGE_SUCCESS,
+					Success.SEND_ENTIRE_MESSAGE_SUCCESS.getMessage());
+			}catch (FirebaseMessagingException | JsonProcessingException e){
+				return ApiResponse.error(Error.UNPROCESSABLE_SEND_TO_FIREBASE, Error.UNPROCESSABLE_SEND_TO_FIREBASE.getMessage());
+			}
 		}
 		return ApiResponse.error(Error.UNPROCESSABLE_FIND_USERS, Error.UNPROCESSABLE_FIND_USERS.getMessage());
 	}

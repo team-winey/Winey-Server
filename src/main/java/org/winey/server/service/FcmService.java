@@ -179,31 +179,31 @@ public class FcmService{
         }
     }
 
-    private List<FcmMessage> makeCustomMessages(SendAllFcmDto wineyNotification) throws JsonProcessingException {
-        try {
-            List<FcmMessage> messages = wineyNotification.getTokenList()
-                    .stream()
-                    .map(token -> FcmMessage.builder()
-                    .message(FcmMessage.Message.builder()
-                            .token(token)   // 1:1 전송 시 반드시 필요한 대상 토큰 설정
-                            .data(FcmMessage.Data.builder()
-                                    .title("위니 제국의 편지가 도착했어요.")
-                                    .message(wineyNotification.getMessage())
-                                    .feedId(null)
-                                    .notiType(null)
-                                    .build())
-                            .notification(FcmMessage.Notification.builder()
-                                    .title("위니 제국의 편지가 도착했어요.")
-                                    .body(wineyNotification.getMessage())
-                                    .build())
-                            .build()
-                    ).validateOnly(false)
-                    .build()).collect(Collectors.toList());
-            return messages;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("JSON 처리 도중에 예외가 발생했습니다.");
-        }
-    }
+    // private List<FcmMessage> makeCustomMessages(SendAllFcmDto wineyNotification) throws JsonProcessingException {
+    //     try {
+    //         List<FcmMessage> messages = wineyNotification.getTokenList()
+    //                 .stream()
+    //                 .map(token -> FcmMessage.builder()
+    //                 .message(FcmMessage.Message.builder()
+    //                         .token(token)   // 1:1 전송 시 반드시 필요한 대상 토큰 설정
+    //                         .data(FcmMessage.Data.builder()
+    //                                 .title("위니 제국의 편지가 도착했어요.")
+    //                                 .message(wineyNotification.getMessage())
+    //                                 .feedId(null)
+    //                                 .notiType(null)
+    //                                 .build())
+    //                         .notification(FcmMessage.Notification.builder()
+    //                                 .title("위니 제국의 편지가 도착했어요.")
+    //                                 .body(wineyNotification.getMessage())
+    //                                 .build())
+    //                         .build()
+    //                 ).validateOnly(false)
+    //                 .build()).collect(Collectors.toList());
+    //         return messages;
+    //     } catch (Exception e) {
+    //         throw new IllegalArgumentException("JSON 처리 도중에 예외가 발생했습니다.");
+    //     }
+    // }
 
     public CompletableFuture<BatchResponse> sendAllByTokenList(SendAllFcmDto wineyNotification) throws JsonProcessingException, FirebaseMessagingException {
         // These registration tokens come from the client FCM SDKs.
