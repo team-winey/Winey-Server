@@ -15,16 +15,20 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.winey.server.service.message.FcmMessage;
 import org.winey.server.service.message.FcmRequestDto;
+import org.winey.server.service.message.SendAllFcmDto;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -104,13 +108,6 @@ public class FcmService{
     @Async
     public CompletableFuture<Response> sendByToken(FcmRequestDto wineyNotification) throws JsonProcessingException {
         // 메시지 만들기
-        // Message message = Message.builder()
-        //         .putData("feedId", String.valueOf(wineyNotification.getFeedId()))
-        //         .putData("notiType", String.valueOf(wineyNotification.getType()))
-        //         .putData("title", "위니 제국의 편지가 도착했어요.")
-        //         .putData("message" ,wineyNotification.getMessage())
-        //         .setToken(wineyNotification.getToken())  <- 만약 여기 destination 부분만 수정해도 될 수도 있음. 가능성 생각하기
-        //         .build();
         String jsonMessage = makeSingleMessage(wineyNotification);
         // 요청에 대한 응답을 받을 response
         Response response;
@@ -180,6 +177,65 @@ public class FcmService{
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("JSON 처리 도중에 예외가 발생했습니다.");
         }
+    }
+
+    // private List<FcmMessage> makeCustomMessages(SendAllFcmDto wineyNotification) throws JsonProcessingException {
+    //     try {
+    //         List<FcmMessage> messages = wineyNotification.getTokenList()
+    //                 .stream()
+    //                 .map(token -> FcmMessage.builder()
+    //                 .message(FcmMessage.Message.builder()
+    //                         .token(token)   // 1:1 전송 시 반드시 필요한 대상 토큰 설정
+    //                         .data(FcmMessage.Data.builder()
+    //                                 .title("위니 제국의 편지가 도착했어요.")
+    //                                 .message(wineyNotification.getMessage())
+    //                                 .feedId(null)
+    //                                 .notiType(null)
+    //                                 .build())
+    //                         .notification(FcmMessage.Notification.builder()
+    //                                 .title("위니 제국의 편지가 도착했어요.")
+    //                                 .body(wineyNotification.getMessage())
+    //                                 .build())
+    //                         .build()
+    //                 ).validateOnly(false)
+    //                 .build()).collect(Collectors.toList());
+    //         return messages;
+    //     } catch (Exception e) {
+    //         throw new IllegalArgumentException("JSON 처리 도중에 예외가 발생했습니다.");
+    //     }
+    // }
+
+    public CompletableFuture<BatchResponse> sendAllByTokenList(SendAllFcmDto wineyNotification) throws JsonProcessingException, FirebaseMessagingException {
+        // These registration tokens come from the client FCM SDKs.
+        List<String> registrationTokens = wineyNotification.getTokenList();
+        try {
+            MulticastMessage message = MulticastMessage.builder()
+                .putData("title", wineyNotification.getTitle())
+                .putData("message", wineyNotification.getMessage())
+                .setNotification(new Notification(wineyNotification.getTitle(), wineyNotification.getMessage()))
+                .addAllTokens(registrationTokens)
+                .build();
+            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            if (response.getFailureCount() > 0) {
+                List<SendResponse> responses = response.getResponses();
+                List<String> failedTokens = new ArrayList<>();
+                for (int i = 0; i < responses.size(); i++) {
+                    if (!responses.get(i).isSuccessful()) {
+                        // The order of responses corresponds to the order of the registration tokens.
+                        failedTokens.add(registrationTokens.get(i));
+                    }
+                }
+
+                System.out.println("List of tokens that caused failures: " + failedTokens);
+            }
+            return CompletableFuture.completedFuture(response);
+        } catch (Exception e){
+            log.info(e.getMessage());
+        }
+		return null;
+	}
+    private Notification convertToFirebaseNotification(FcmMessage.Notification customNotification) {
+        return new Notification(customNotification.getTitle(), customNotification.getBody());
     }
 
 }

@@ -29,6 +29,8 @@ public enum Success {
     BLOCK_USER_SUCCESS(HttpStatus.OK, "유저 차단 성공"),
     GET_ACHIEVEMENT_STATUS_SUCCESS(HttpStatus.OK, "레벨 달성 현황 조회 성공"),
 
+    SEND_ENTIRE_MESSAGE_SUCCESS(HttpStatus.OK, "전체 메시지 전송 성공"),
+
     /**
      * 201 CREATED
      */
