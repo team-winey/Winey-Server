@@ -16,7 +16,7 @@ import java.util.Properties;
 import static java.lang.System.exit;
 
 @Slf4j
-@Profile("local")
+@Profile({"local","set1","set2"})
 @Component
 @ConfigurationProperties(prefix = "ssh")
 @Validated
