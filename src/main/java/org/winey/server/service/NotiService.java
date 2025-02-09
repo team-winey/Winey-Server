@@ -1,6 +1,5 @@
 package org.winey.server.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -9,23 +8,17 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.javacrumbs.shedlock.core.SchedulerLock;
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.winey.server.controller.response.notification.GetAllNotiResponseDto;
 import org.winey.server.controller.response.notification.GetNotiResponseDto;
-import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
-import org.winey.server.exception.model.BadRequestException;
 import org.winey.server.exception.model.NotFoundException;
-import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
 
@@ -37,8 +30,6 @@ public class NotiService {
 
     private final NotiRepository notiRepository;
     private final UserRepository userRepository;
-    private final GoalRepository goalRepository;
-    private static final Logger logger = LoggerFactory.getLogger(NotiService.class);
 
     @Transactional(readOnly = true)
     public GetAllNotiResponseDto getAllNoti(Long userId) {
@@ -77,33 +68,33 @@ public class NotiService {
         return notifications.size() != 0;
     }
 
-    @Transactional
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
-    @SchedulerLock(name = "SchedulerLock", lockAtMostForString = "PT1M", lockAtLeastForString = "PT1M")
-    public void checkGoalDateNotification() {
-        logger.info("목표 달성 체크 스케줄러 작동");
-
-        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-        List<Goal> allGoals = goalRepository.findLatestGoalsForEachUser();
-        LocalDate today = LocalDate.now();
-
-        logger.info("오늘 날짜: {}", today);
-
-        for (Goal currentGoal : allGoals) {
-            if (currentGoal.getTargetDate().isEqual(today.minusDays(1))) {
-                logger.info("알림 생성 goalID: {}", currentGoal.getGoalId());
-
-                Notification notification = Notification.builder()
-                        .notiType(NotiType.GOALFAILED)
-                        .notiReciver(currentGoal.getUser())
-                        .notiMessage(NotiType.GOALFAILED.getType())
-                        .isChecked(false)
-                        .build();
-                notification.updateLinkId(null);
-                notiRepository.save(notification);
-            }
-        }
-    }
+//    @Transactional
+//    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+//    @SchedulerLock(name = "SchedulerLock", lockAtMostForString = "PT1M", lockAtLeastForString = "PT1M")
+//    public void checkGoalDateNotification() {
+//        logger.info("목표 달성 체크 스케줄러 작동");
+//
+//        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+//        List<Goal> allGoals = goalRepository.findLatestGoalsForEachUser();
+//        LocalDate today = LocalDate.now();
+//
+//        logger.info("오늘 날짜: {}", today);
+//
+//        for (Goal currentGoal : allGoals) {
+//            if (currentGoal.getTargetDate().isEqual(today.minusDays(1))) {
+//                logger.info("알림 생성 goalID: {}", currentGoal.getGoalId());
+//
+//                Notification notification = Notification.builder()
+//                        .notiType(NotiType.GOALFAILED)
+//                        .notiReciver(currentGoal.getUser())
+//                        .notiMessage(NotiType.GOALFAILED.getType())
+//                        .isChecked(false)
+//                        .build();
+//                notification.updateLinkId(null);
+//                notiRepository.save(notification);
+//            }
+//        }
+//    }
 
     @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul") //혹시 모를 racing에 대비해 새벽 2시에 시작되도록 함.
     @Transactional

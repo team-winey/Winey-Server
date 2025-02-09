@@ -13,9 +13,10 @@ import java.time.LocalDateTime;
 public class CreateFeedResponseDto {
     private Long feedId;
     private LocalDateTime createdAt;
+    private Boolean levelUpgraded;
 
-    public static CreateFeedResponseDto of(Long feedId, LocalDateTime createdAt){
-        return new CreateFeedResponseDto(feedId, createdAt);
+    public static CreateFeedResponseDto of(Long feedId, LocalDateTime createdAt, Boolean levelUpgraded){
+        return new CreateFeedResponseDto(feedId, createdAt, levelUpgraded);
     }
 
 }

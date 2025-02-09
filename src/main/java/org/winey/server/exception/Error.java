@@ -17,6 +17,7 @@ public enum Error {
     LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
     INVALID_PASSWORD_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 비밀번호가 입력됐습니다."),
     NOT_FOUND_IMAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 이미지 파일입니다"),
+    INVALID_FEEDTYPE(HttpStatus.BAD_REQUEST, "잘못된 피드유형 입니다"),
     VALIDATION_REQUEST_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청값이 입력되지 않았습니다."),
     VALIDATION_REQUEST_HEADER_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 헤더값이 입력되지 않았습니다."),
     VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 파라미터값이 입력되지 않았습니다."),
@@ -32,6 +33,7 @@ public enum Error {
     INVALID_APPLE_CLAIMS(HttpStatus.BAD_REQUEST, "Apple OAuth Claims 값이 올바르지 않습니다."),
     INVALID_ENCRYPT_COMMUNICATION(HttpStatus.BAD_REQUEST, "Apple OAuth 통신 암호화 과정 중 문제가 발생했습니다."),
     CREATE_PUBLIC_KEY_EXCEPTION(HttpStatus.BAD_REQUEST, "Apple OAuth 로그인 중 public verify 생성에 문제가 발생했습니다."),
+    INVALID_USER_LEVEL_EXCEPTION(HttpStatus.BAD_REQUEST, "존재하지 않는 유저 레벨입니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -64,6 +66,9 @@ public enum Error {
      * 422 UNPROCESSABLE ENTITY
      */
     UNPROCESSABLE_ENTITY_DELETE_EXCEPTION(HttpStatus.UNPROCESSABLE_ENTITY, "클라의 요청을 이해했지만 삭제하지 못했습니다."),
+    UNPROCESSABLE_FIND_USERS(HttpStatus.UNPROCESSABLE_ENTITY, "요청을 이해했지만 유저들을 찾을 수 없었습니다."),
+    UNPROCESSABLE_SEND_TO_FIREBASE(HttpStatus.UNPROCESSABLE_ENTITY, "파이어베이스로 전송하는 과정에서 에러가 발생했습니다."),
+    UNPROCESSABLE_KAKAO_SERVER_EXCEPTION(HttpStatus.UNPROCESSABLE_ENTITY, "요청을 이해했지만 카카오 서버에러가 발생했습니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR

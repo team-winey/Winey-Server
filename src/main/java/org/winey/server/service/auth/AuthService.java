@@ -1,7 +1,7 @@
 package org.winey.server.service.auth;
 
-import com.sun.net.httpserver.Authenticator;
-import feign.FeignException;
+import java.util.Random;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,27 +9,18 @@ import org.winey.server.config.jwt.JwtService;
 import org.winey.server.controller.request.auth.SignInRequestDto;
 import org.winey.server.controller.response.auth.SignInResponseDto;
 import org.winey.server.controller.response.auth.TokenResponseDto;
-import org.winey.server.domain.feed.Feed;
 import org.winey.server.domain.notification.NotiType;
 import org.winey.server.domain.notification.Notification;
 import org.winey.server.domain.user.SocialType;
-
 import org.winey.server.domain.user.User;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.model.NotFoundException;
 import org.winey.server.exception.model.UnprocessableEntityException;
 import org.winey.server.infrastructure.BlockUserRepository;
-import org.winey.server.infrastructure.FeedRepository;
-import org.winey.server.infrastructure.GoalRepository;
 import org.winey.server.infrastructure.NotiRepository;
 import org.winey.server.infrastructure.UserRepository;
 import org.winey.server.service.auth.apple.AppleSignInService;
 import org.winey.server.service.auth.kakao.KakaoSignInService;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +28,6 @@ public class AuthService {
     private final AppleSignInService appleSignInService;
     private final KakaoSignInService kakaoSignInService;
     private final JwtService jwtService;
-
     private final UserRepository userRepository;
     private final BlockUserRepository blockUserRepository;
 
@@ -53,7 +43,6 @@ public class AuthService {
         String socialId = login(socialType, socialAccessToken);
 
         Boolean isRegistered = userRepository.existsBySocialIdAndSocialType(socialId, socialType);
-
         if (!isRegistered) {
             String randomString= new Random().ints(6, 0, 36).mapToObj(i -> Character.toString("abcdefghijklmnopqrstuvwxyz0123456789".charAt(i))).collect(Collectors.joining());
             while (userRepository.existsByNickname("위니"+randomString)) {
@@ -135,12 +124,10 @@ public class AuthService {
         if (user == null) {
             throw new NotFoundException(Error.NOT_FOUND_USER_EXCEPTION, Error.NOT_FOUND_USER_EXCEPTION.getMessage());
         }
-        System.out.println("User: " + user);
-        System.out.println("Goals: " + user.getGoals());
-        System.out.println("Recommends: " + user.getRecommends());
-        System.out.println("Feeds: " + user.getFeeds());
-        System.out.println("FeedLikes: " + user.getFeedLikes());
-        System.out.println("Comments: "+ user.getComments());
+        if (user.getSocialType() == SocialType.KAKAO){
+            String deleteSocialId = kakaoSignInService.withdrawKakao(user.getSocialId());
+            System.out.println(deleteSocialId);
+        }
 
         // 유저가 생성한 반응과 관련된 알림 삭제
         notiRepository.deleteByRequestUserId(userId);

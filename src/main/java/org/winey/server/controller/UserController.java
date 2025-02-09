@@ -10,6 +10,7 @@ import org.winey.server.config.resolver.UserId;
 import org.winey.server.controller.request.UpdateAllowedPushDto;
 import org.winey.server.controller.request.UpdateFcmTokenDto;
 import org.winey.server.controller.request.UpdateUserNicknameDto;
+import org.winey.server.controller.response.user.GetAchievementStatusResponseDto;
 import org.winey.server.controller.response.user.UserResponseDto;
 import org.winey.server.exception.Error;
 import org.winey.server.exception.Success;
@@ -76,5 +77,12 @@ public class UserController {
             }
         };
         return ApiResponse.success(Success.UPDATE_PUSH_ALLOWED_SUCCESS, result);
+    }
+
+    @GetMapping("/achievement-status")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "레벨 달성 현황 조회 API", description = "유저의 레벨 달성 현황을 조회합니다.")
+    public ApiResponse<GetAchievementStatusResponseDto> getAchievementStatus(@UserId Long userId) {
+        return ApiResponse.success(Success.GET_ACHIEVEMENT_STATUS_SUCCESS, userService.getAchievementStatus(userId));
     }
 }

@@ -2,8 +2,8 @@ package org.winey.server.infrastructure;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.lang.Nullable;
 import org.winey.server.domain.feed.Feed;
-import org.winey.server.domain.goal.Goal;
 import org.winey.server.domain.recommend.Recommend;
 import org.winey.server.domain.user.SocialType;
 import org.winey.server.domain.user.User;
@@ -17,6 +17,9 @@ public interface UserRepository extends Repository<User, Long> {
 
     // READ
     Optional<User> findByUserId(Long userId);
+
+    List<User> findByFcmTokenNotNull();
+
 
     Boolean existsBySocialIdAndSocialType(String socialId, SocialType socialType);
 
